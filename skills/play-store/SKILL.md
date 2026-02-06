@@ -1,12 +1,6 @@
 ---
 name: play-store
-description: >
-  Google Play Store submission and compliance checklist. Triggers when preparing app
-  for release, configuring Play Console, discussing app publishing, store listing,
-  Data Safety section, privacy policy, content rating, target API level, AAB format,
-  app signing, or testing tracks. Also triggers on keywords like "上架", "发布",
-  "Play Store", "Play Console", "审核", "rejected", "compliance".
-model: sonnet
+description: Google Play Store submission and compliance checklist. Use when preparing app for release, configuring Play Console, discussing store listing, Data Safety section, privacy policy, content rating, or testing tracks.
 ---
 
 # Google Play Launch Checklist

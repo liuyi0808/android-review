@@ -1,12 +1,6 @@
 ---
 name: performance
-description: >
-  Android application performance optimization guidance. Triggers when discussing or
-  reviewing code related to app startup speed, memory management, Compose recomposition,
-  layout performance, ANR prevention, battery optimization, image loading, baseline
-  profiles, or benchmarking. Also triggers on keywords like "性能", "卡顿", "内存泄漏",
-  "ANR", "启动速度", "recomposition", "jank", "OOM", "benchmark", "slow".
-model: sonnet
+description: Android application performance optimization guidance. Use when reviewing code related to app startup speed, memory management, Compose recomposition, ANR prevention, battery optimization, image loading, or baseline profiles.
 ---
 
 # Android Performance Optimization

@@ -1,12 +1,6 @@
 ---
 name: compose-ui
-description: >
-  Jetpack Compose UI best practices and patterns. Triggers when writing or reviewing
-  Compose code involving state management, side effects, navigation, theming, accessibility,
-  animation, custom layouts, or responsive design. Also triggers on keywords like "Compose",
-  "Composable", "remember", "LaunchedEffect", "recomposition", "Material3", "state",
-  "无障碍", "主题", "动画".
-model: sonnet
+description: Jetpack Compose UI best practices and patterns. Use when writing or reviewing Compose code involving state management, side effects, navigation, theming, accessibility, animation, or responsive design.
 ---
 
 # Compose UI Best Practices

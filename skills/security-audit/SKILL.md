@@ -1,13 +1,6 @@
 ---
 name: security-audit
-description: >
-  Android application security audit and secure coding guidance based on OWASP MASVS v2.0
-  and Kotlin secure coding practices. Triggers when writing or reviewing code involving
-  sensitive data storage, cryptography, authentication, network communication, platform
-  interaction (Intent, Content Provider, WebView), code quality, reverse engineering
-  resilience, or user privacy. Also triggers on keywords like "security", "vulnerability",
-  "pentest", "hardening", "obfuscation", "certificate pinning", "keystore", "biometric".
-model: sonnet
+description: Android application security audit based on OWASP MASVS v2.0 and Kotlin secure coding practices. Use when writing or reviewing code involving sensitive data storage, cryptography, authentication, network communication, WebView, or reverse engineering resilience.
 ---
 
 # Android Security Audit Skill (OWASP MASVS v2.0)

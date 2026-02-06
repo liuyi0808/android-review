@@ -1,13 +1,6 @@
 ---
 name: architecture
-description: >
-  Android application architecture standards using Clean Architecture, MVVM/MVI patterns,
-  Hilt dependency injection, and modularization. Triggers when designing app structure,
-  creating ViewModels, implementing repository pattern, setting up dependency injection,
-  planning module boundaries, or discussing data/domain/presentation layers. Also triggers
-  on keywords like "架构", "ViewModel", "Repository", "UseCase", "Hilt", "模块化",
-  "MVVM", "MVI", "Clean Architecture", "数据层", "领域层".
-model: sonnet
+description: Android application architecture standards using Clean Architecture, MVVM/MVI patterns, Hilt dependency injection, and modularization. Use when designing app structure, creating ViewModels, implementing repository pattern, setting up dependency injection, or planning module boundaries.
 ---
 
 # Android Architecture Standards
