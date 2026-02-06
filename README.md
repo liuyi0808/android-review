@@ -12,11 +12,51 @@ Android development review skills for [Claude Code](https://claude.ai/claude-cod
 | `android-review:compose-ui` | Jetpack Compose state management, side effects, navigation, theming, accessibility |
 | `android-review:play-store` | Google Play Store submission and compliance checklist |
 
-## Install
+## Publish to GitHub
+
+First time only. Push the local repo to GitHub:
 
 ```bash
+# 1. Create an empty repo on GitHub (do NOT add README or LICENSE)
+#    https://github.com/new -> repo name: android-review
+
+# 2. Push local repo
+cd ~/Documents/android-review
+git branch -M main
+git remote add origin git@github.com:<your-github-username>/android-review.git
+git push -u origin main
+```
+
+After updating skills locally, push changes:
+
+```bash
+cd ~/Documents/android-review
+git add -A
+git commit -m "update skills"
+git push
+```
+
+## Install
+
+In Claude Code, run:
+
+```
 /plugin marketplace add <your-github-username>/android-review
 /plugin install android-review@android-review
+```
+
+To update after pushing new changes to GitHub:
+
+```
+/plugin install android-review@android-review
+```
+
+## Local Testing
+
+Test locally without GitHub, using `--plugin-dir`:
+
+```bash
+claude --plugin-dir ~/Documents/android-review
 ```
 
 ## Usage
