@@ -1,0 +1,21 @@
+{
+  "name": "android-review",
+  "version": "1.0.0",
+  "description": "Android development review skills covering OWASP MASVS security audit, Clean Architecture, performance optimization, Jetpack Compose best practices, and Google Play Store compliance",
+  "author": {
+    "name": "liuyi"
+  },
+  "repository": "https://github.com/liuyi/android-review",
+  "license": "MIT",
+  "keywords": [
+    "android",
+    "kotlin",
+    "security",
+    "architecture",
+    "performance",
+    "compose",
+    "play-store",
+    "review"
+  ],
+  "skills": ["./skills/"]
+}

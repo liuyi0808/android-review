@@ -1,0 +1,38 @@
+{
+  "name": "android-review",
+  "owner": {
+    "name": "liuyi"
+  },
+  "metadata": {
+    "description": "Android development review skills for security, architecture, performance, Compose UI, and Play Store compliance"
+  },
+  "plugins": [
+    {
+      "name": "android-review",
+      "source": "./",
+      "description": "Android development review skills covering OWASP MASVS security audit, Clean Architecture, performance optimization, Jetpack Compose best practices, and Google Play Store compliance",
+      "version": "1.0.0",
+      "author": {
+        "name": "liuyi"
+      },
+      "license": "MIT",
+      "keywords": [
+        "android",
+        "kotlin",
+        "security",
+        "architecture",
+        "performance",
+        "compose",
+        "play-store"
+      ],
+      "category": "review",
+      "tags": [
+        "android",
+        "review",
+        "security",
+        "architecture",
+        "performance"
+      ]
+    }
+  ]
+}
