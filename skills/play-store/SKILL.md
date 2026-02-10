@@ -9,14 +9,6 @@ Comprehensive pre-submission audit and compliance verification for Google Play S
 
 **Policy effective date**: January 28, 2026 (unless otherwise stated per section).
 
-## When to Use
-
-- Preparing an app for first submission or update to Google Play
-- Responding to Google Play policy violation notices
-- Configuring Play Console (Data Safety, Financial Features Declaration, content rating)
-- Auditing code for permission/policy compliance before submission
-- Debugging app rejection reasons
-
 ## Pre-Submission Audit Process
 
 Evaluate the app against ALL categories below. For detailed rules per category, load the corresponding reference file. Output findings as:
@@ -213,3 +205,7 @@ Each reference file contains the full policy details, code audit commands, and c
 - [Prominent Disclosure Requirements](https://support.google.com/googleplay/android-developer/answer/11150561?hl=en)
 - [Personal Loans Policy](https://support.google.com/googleplay/android-developer/answer/12005270?hl=en)
 - [Stalkerware Policy](https://support.google.com/googleplay/android-developer/answer/10065570?hl=en)
+
+---
+
+*For OWASP-level code security audit, see the `security-audit` skill.*
