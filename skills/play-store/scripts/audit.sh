@@ -154,6 +154,18 @@ run_check "Device settings modification" "BLOCKER" \
 run_check "Accessibility service usage" "BLOCKER" \
     grep -rn 'AccessibilityService\|BIND_ACCESSIBILITY_SERVICE' --include="*.xml" --include="*.kt" "$PROJECT_ROOT"
 
+run_check "Accessibility autonomous actions (PROHIBITED since Oct 2025)" "BLOCKER" \
+    grep -rn 'performAction\|performGlobalAction\|dispatchGesture' --include="*.kt" "$PROJECT_ROOT"
+
+run_check "Accessibility ACTION_ constants usage" "BLOCKER" \
+    grep -rn 'AccessibilityNodeInfo.*ACTION_' --include="*.kt" "$PROJECT_ROOT"
+
+run_check "Gesture injection (GestureDescription/StrokeDescription)" "BLOCKER" \
+    grep -rn 'GestureDescription\|StrokeDescription' --include="*.kt" "$PROJECT_ROOT"
+
+run_check "Accessibility cross-app window reading" "BLOCKER" \
+    grep -rn 'getRootInActiveWindow\|getWindows' --include="*.kt" "$PROJECT_ROOT"
+
 run_check "Device admin / prevent uninstall" "BLOCKER" \
     grep -rn 'DeviceAdminReceiver\|DevicePolicyManager\|BIND_DEVICE_ADMIN' --include="*.kt" --include="*.xml" "$PROJECT_ROOT"
 

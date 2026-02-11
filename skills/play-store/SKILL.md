@@ -81,6 +81,7 @@ Each reference file contains the full policy details, code audit commands, and c
 - [ ] Licensing documents uploaded for target countries
 - [ ] No short-term loans (< 60 days)
 - [ ] No access to photos/contacts for lending decisions (SMS governed by Section 3.1 exception policy)
+- [ ] EWA apps: fees transparent ($1–$5 or 1–5%), no debt creation, no credit bureau reporting
 
 ## Spyware & Privacy (Section 11)
 - [ ] Prominent disclosure shown BEFORE any data collection or SDK init
@@ -100,6 +101,7 @@ Each reference file contains the full policy details, code audit commands, and c
 ## Device Abuse (Section 12)
 - [ ] No device settings modification
 - [ ] No accessibility service abuse
+- [ ] No autonomous action initiation/planning/execution via Accessibility API (Oct 2025 update)
 - [ ] No app interference or preventing uninstallation
 
 ## Loan App Harassment (Section 14)

@@ -38,7 +38,38 @@ grep -rn "BIND_DEVICE_ADMIN\|device_admin" --include="*.xml"
 
 Accessibility services are heavily scrutinized. Using them for non-accessibility purposes is a **BLOCKER**.
 
-**Code audit**:
+#### Policy Update (October 30, 2025)
+
+Google's updated policy explicitly states:
+
+> "Any use of this API that enables an app to autonomously initiate, plan, and execute actions is prohibited."
+
+**Prohibited autonomous behaviors**:
+- Automatically modifying device settings or system preferences
+- Bypassing Android privacy controls or permission dialogs
+- Performing UI actions (clicks, scrolls, gestures) without real-time user awareness
+- Automated form filling, screenshot capture, or button clicks via Accessibility API
+- Executing UI operations in a deceptive manner (e.g., hidden overlay clicks)
+
+**Special warning for financial apps**: The following patterns are **explicitly prohibited** even when the Accessibility API is declared for a legitimate accessibility purpose:
+- Automated identity verification flows (auto-filling KYC forms)
+- Automated form submission on behalf of the user
+- Reading screen content from other apps (e.g., reading OTPs from SMS app, scraping bank balances)
+
+**Code audit — autonomous action detection**:
+```bash
+# Check for autonomous action APIs (PROHIBITED since Oct 2025):
+grep -rn "performAction\|performGlobalAction\|dispatchGesture" --include="*.kt"
+grep -rn "AccessibilityNodeInfo.*ACTION_" --include="*.kt"
+
+# Check for gesture injection:
+grep -rn "GestureDescription\|StrokeDescription" --include="*.kt"
+
+# Check for window content reading across apps:
+grep -rn "getRootInActiveWindow\|getWindows" --include="*.kt"
+```
+
+**Code audit — standard accessibility checks**:
 ```bash
 # Check for accessibility service declaration:
 grep -rn "AccessibilityService\|BIND_ACCESSIBILITY_SERVICE" --include="*.xml" --include="*.kt"
@@ -49,6 +80,10 @@ grep -rn "AccessibilityEvent\|AccessibilityNodeInfo\|performAction" --include="*
 ```
 
 - [ ] No AccessibilityService unless core functionality requires it
+- [ ] No autonomous action initiation, planning, or execution via Accessibility API (Oct 2025 update)
+- [ ] No `performAction` / `performGlobalAction` / `dispatchGesture` for non-user-initiated actions
+- [ ] No reading screen content from other apps via `getRootInActiveWindow` / `getWindows`
+- [ ] No automated form filling or UI interaction on behalf of the user
 - [ ] No using accessibility APIs for automated UI interaction
 - [ ] No using accessibility to scrape content from other apps
 - [ ] If AccessibilityService is used: Permissions Declaration Form submitted with video demo

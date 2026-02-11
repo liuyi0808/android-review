@@ -119,6 +119,12 @@ grep -rn "Settings.System\|Settings.Secure\|Settings.Global" --include="*.kt" | 
 # Accessibility service abuse:
 grep -rn "AccessibilityService\|BIND_ACCESSIBILITY_SERVICE" --include="*.xml" --include="*.kt"
 
+# Accessibility autonomous actions (PROHIBITED since Oct 2025):
+grep -rn "performAction\|performGlobalAction\|dispatchGesture" --include="*.kt"
+grep -rn "AccessibilityNodeInfo.*ACTION_" --include="*.kt"
+grep -rn "GestureDescription\|StrokeDescription" --include="*.kt"
+grep -rn "getRootInActiveWindow\|getWindows" --include="*.kt"
+
 # Device admin / preventing uninstall:
 grep -rn "DeviceAdminReceiver\|DevicePolicyManager\|BIND_DEVICE_ADMIN" --include="*.kt" --include="*.xml"
 
