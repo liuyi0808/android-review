@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate tag format
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if ! [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: tag must be vX.Y.Z, got $TAG"
+            exit 1
+          fi
+
+      - name: Verify plugin.json version matches tag
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          PLUGIN_VERSION=$(grep -oE '"version": *"[^"]*"' .claude-plugin/plugin.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          if [[ "$TAG" != "$PLUGIN_VERSION" ]]; then
+            echo "Error: tag v$TAG does not match plugin.json version $PLUGIN_VERSION"
+            exit 1
+          fi
+
+      - name: Validate plugin structure
+        run: |
+          for skill in skills/*/SKILL.md; do
+            echo "Found: $skill"
+          done
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          make_latest: true

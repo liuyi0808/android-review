@@ -88,6 +88,11 @@ android-review/
 ├── .claude-plugin/
 │   ├── plugin.json              # Plugin metadata
 │   └── marketplace.json         # Marketplace registration
+├── .github/
+│   └── workflows/
+│       └── release.yml          # Auto-create GitHub Release on tag push
+├── scripts/
+│   └── release.sh               # Version bump + tag + push
 ├── skills/
 │   ├── architecture/
 │   │   ├── SKILL.md             # Clean Architecture, MVVM/MVI, Hilt DI
@@ -104,6 +109,7 @@ android-review/
 │   └── security-audit/
 │       ├── SKILL.md             # OWASP MASVS v2.0 audit
 │       └── references/          # 8 detailed reference docs
+├── RELEASE-NOTES.md
 ├── LICENSE
 └── README.md
 ```
@@ -115,7 +121,7 @@ android-review/
 Reviews Android app structure against Clean Architecture standards.
 
 **Checks:**
-- Three-layer dependency rule (Presentation → Domain → Data, never reversed)
+- Three-layer dependency rule (Presentation -> Domain -> Data, never reversed)
 - One ViewModel per screen with immutable UiState
 - Single-purpose UseCases with `operator fun invoke`
 - Repository pattern with separate DTO/Entity/Domain Model mappers
@@ -178,6 +184,24 @@ Audits against all 8 OWASP MASVS v2.0 categories with CWE references.
 - **RESILIENCE** — Root/debugger/tamper detection, Play Integrity API
 - **PRIVACY** — Data minimization, granular consent, GDPR/CCPA deletion
 
+## Releasing
+
+Versions follow [semver](https://semver.org/). The `plugin.json` version, git tag, and GitHub Release are kept in sync.
+
+**To release a new version:**
+
+```bash
+./scripts/release.sh 1.2.0
+```
+
+This will:
+1. Validate you are on `main` with a clean working tree
+2. Bump the version in `plugin.json` and `marketplace.json`
+3. Commit, tag `v1.2.0`, and push
+4. GitHub Actions automatically creates a Release from the tag
+
+See [RELEASE-NOTES.md](RELEASE-NOTES.md) for the full changelog.
+
 ## Requirements
 
 - Claude Code CLI
@@ -194,11 +218,3 @@ Skill files live under `skills/<skill-name>/`. Each skill has a `SKILL.md` that 
 ## License
 
 MIT
-
-## Author
-
-liuyi
-
-## Version
-
-1.0.0
