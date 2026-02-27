@@ -1,6 +1,6 @@
 # Android Review
 
-A Claude Code plugin that provides expert-level Android code review across five domains: architecture, Compose UI, performance, security, and Google Play compliance. Each skill runs a structured audit, searches for anti-patterns, and produces actionable findings with severity ratings.
+A Claude Code plugin that provides expert-level Android code review across six domains: architecture, Compose UI, Kotlin quality, performance, security, and Google Play compliance. Each skill runs a structured audit, searches for anti-patterns, and produces actionable findings with severity ratings.
 
 Built for Android teams writing Kotlin and Jetpack Compose.
 
@@ -10,6 +10,7 @@ Built for Android teams writing Kotlin and Jetpack Compose.
 |-------|---------------|---------------|
 | **architecture** | Clean Architecture layers, MVVM/MVI, Hilt DI, modularization, error handling | `[ARCH-*]` |
 | **compose-ui** | State management, side effects, navigation, Material 3 theming, accessibility | `[COMPOSE-*]` |
+| **kotlin-quality** | Coroutines, Flow, null safety, type design, collections & functional patterns | `[KT-*]` |
 | **performance** | Startup time, recomposition waste, memory leaks, ANR, battery drain | `[PERF-*]` |
 | **play-store** | Build config, permissions, Data Safety, financial app declarations, spyware policy | `[GP-*]` |
 | **security-audit** | OWASP MASVS v2.0 — storage, crypto, auth, network, platform, code, resilience, privacy | Severity-based |
@@ -23,7 +24,7 @@ claude plugin marketplace add liuyi0808/android-review
 claude plugin install android-review
 ```
 
-Verify by starting a new Claude Code session. The five skills should appear in the available skills list.
+Verify by starting a new Claude Code session. The six skills should appear in the available skills list.
 
 ## Updating
 
@@ -100,6 +101,9 @@ android-review/
 │   ├── compose-ui/
 │   │   ├── SKILL.md             # Jetpack Compose, Material 3
 │   │   └── references/          # 5 detailed reference docs
+│   ├── kotlin-quality/
+│   │   ├── SKILL.md             # Coroutines, Flow, null safety, types, collections
+│   │   └── references/          # 5 detailed reference docs
 │   ├── performance/
 │   │   └── SKILL.md             # 7-category performance audit
 │   ├── play-store/
@@ -141,6 +145,17 @@ Reviews Jetpack Compose code against Material 3 best practices.
 - Accessibility (content descriptions, 48dp touch targets, 4.5:1 contrast)
 - Animation API selection and reduced-motion support
 - Composable function signature conventions
+
+### kotlin-quality
+
+Reviews Kotlin code for idiomatic patterns, safety, and correctness across five categories.
+
+**Checks:**
+- Coroutines: no `GlobalScope`, structured concurrency, exception handling, Dispatcher matching
+- Flow: lifecycle-aware collection, `MutableStateFlow` encapsulation, `catch`/`flowOn` positioning
+- Null safety: no unjustified `!!`, `lateinit` restrictions, safe casts, flattened null chains
+- Type design: exhaustive sealed `when`, `value class` wrappers, immutable `data class`, no `Pair` in API
+- Collections: no side effects in `map`, immutable public collections, `asSequence()` for large chains
 
 ### performance
 
