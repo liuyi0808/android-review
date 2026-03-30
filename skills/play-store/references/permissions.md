@@ -6,9 +6,10 @@
   - [3.1.2 Spyware Policy Constraints](#312-spyware-policy-constraints-critical-for-financial-apps)
   - [3.1.3 Personal Loan Apps — Additional Restrictions](#313-personal-loan-apps--additional-restrictions)
   - [3.1.4 Invalid Use Cases](#314-invalid-use-cases-will-be-rejected)
-  - [3.1.5 Recommended Alternatives](#315-recommended-alternatives)
-  - [3.1.6 Declaration Process](#316-declaration-process)
-  - [3.1.7 Checklist](#317-checklist)
+  - [3.1.5 Financial App SMS History Restrictions](#315-financial-app-sms-history-restrictions)
+  - [3.1.6 Recommended Alternatives](#316-recommended-alternatives)
+  - [3.1.7 Declaration Process](#317-declaration-process)
+  - [3.1.8 Checklist](#318-checklist)
 - [3.2 QUERY_ALL_PACKAGES](#32-query_all_packages-installed-apps-visibility)
 - [3.3 Photo & Video Permissions](#33-photo--video-permissions-updated-january-2025)
 - [3.4 Location Permissions](#34-location-permissions)
@@ -85,7 +86,33 @@ The **Personal Loans policy** (separate from SMS/Call Log policy) explicitly pro
 
 **Note on `READ_SMS` for loan apps**: `READ_SMS` is NOT in the explicit Personal Loans prohibited permissions list above. It is governed by the separate **SMS/Call Log permission policy** (Section 3.1.1). However, personal loan apps face heightened scrutiny — the Spyware Policy explicitly states that personal loans or budgeting apps may not exfiltrate or share non-financial or personal SMS history of a user (Section 3.1.2).
 
-#### 3.1.5 Invalid Use Cases (Will Be Rejected)
+#### 3.1.5 Financial App SMS Restrictions (Spyware Policy)
+
+Google's [Spyware policy](https://support.google.com/googleplay/android-developer/answer/14745000) explicitly lists the following as a spyware violation:
+
+> "Personal loans or budgeting apps exfiltrating or sharing non-financial or personal SMS history of a user."
+
+The [April 10, 2025 policy clarification](https://support.google.com/googleplay/android-developer/answer/15899442) further states: "clearer guidance on restrictions related to financial apps accessing users' SMS history in compliance with our policies."
+
+This means financial apps with an approved SMS exception must ensure:
+- SMS data access is limited to **policy-compliant functionality** (financial transactions, budget tracking)
+- **Non-financial or personal SMS** content must not be exfiltrated or shared
+- All SMS data handling must comply with the [User Data policy](https://support.google.com/googleplay/android-developer/answer/10144311) (Prominent Disclosure, Consent, Privacy Policy)
+
+**Code audit**:
+```bash
+# Check for broad SMS history queries (review scope — must be financial-only):
+grep -rn "Telephony.Sms\|content://sms" --include="*.kt" --include="*.java"
+
+# Check for SMS data sharing with third-party SDKs:
+grep -rn "sms.*upload\|sms.*send\|sms.*post\|sms.*api" --include="*.kt" --include="*.java"
+```
+
+- [ ] No exfiltration or sharing of non-financial or personal SMS history
+- [ ] SMS data access limited to declared financial functionality
+- [ ] SMS data handling disclosed in consent + privacy policy + Data Safety
+
+#### 3.1.6 Invalid Use Cases (Will Be Rejected)
 
 The following use cases will NOT be permitted to access SMS and Call Log permissions ([source](https://support.google.com/googleplay/android-developer/answer/10208820)):
 
@@ -109,7 +136,7 @@ The following use cases will NOT be permitted to access SMS and Call Log permiss
 
 > **Note**: This list is not exhaustive.
 
-#### 3.1.6 Recommended Alternatives
+#### 3.1.7 Recommended Alternatives
 
 From the [official alternatives table](https://support.google.com/googleplay/android-developer/answer/10208820):
 
@@ -120,7 +147,7 @@ From the [official alternatives table](https://support.google.com/googleplay/and
 | **Share content** | [Share Intent](https://developer.android.com/training/sharing/) — enables sharing content or sending invitations through supporting apps without sensitive permissions. |
 | **Initiate a phone call** | [Dial Intent](https://developer.android.com/reference/android/content/Intent#ACTION_DIAL) — opens the phone app with a specified number. Does not require `CALL_PHONE` permission. |
 
-#### 3.1.7 Declaration Process
+#### 3.1.8 Declaration Process
 
 If your app requires SMS/Call Log permissions:
 1. Submit **[Permissions Declaration Form](https://support.google.com/googleplay/android-developer/answer/9214102)** in Play Console
@@ -142,7 +169,7 @@ grep -n "READ_CONTACTS\|WRITE_CONTACTS\|READ_PHONE_NUMBERS" AndroidManifest.xml
 grep -rn "Telephony.Sms\|SmsMessage\|pdus" --include="*.kt"
 ```
 
-#### 3.1.8 Checklist
+#### 3.1.9 Checklist
 
 - [ ] Verify if SMS/Call Log permissions are truly needed for core functionality (app is "broken" without it)
 - [ ] Verify no alternative method exists (e.g., SMS Retriever API for OTP)

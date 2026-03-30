@@ -72,7 +72,7 @@ Each reference file contains the full policy details, code audit commands, and c
 - [ ] Privacy policy URL active and linked
 - [ ] Account deletion web link provided
 - [ ] Contact email configured
-- [ ] Pricing & distribution set
+- [ ] Pricing & distribution set (free/paid, target countries, in-app purchases declared)
 - [ ] All Permissions Declaration Forms submitted
 
 ## Financial App Specific
@@ -103,6 +103,7 @@ Each reference file contains the full policy details, code audit commands, and c
 - [ ] No accessibility service abuse
 - [ ] No autonomous action initiation/planning/execution via Accessibility API (Oct 2025 update)
 - [ ] No app interference or preventing uninstallation
+- [ ] App respects FLAG_SECURE set by other apps (no screen capture of secure content)
 
 ## Loan App Harassment (Section 14)
 - [ ] No contact access for debt collection
@@ -175,6 +176,7 @@ Each reference file contains the full policy details, code audit commands, and c
 | January 1, 2026 | Age Signals API data use restriction | Policy enforcement |
 | January 28, 2026 | Updated Developer Program Policies effective | Full enforcement |
 | March 4, 2026 | Thailand loan app listing requirements | Existing apps |
+| July 2025 | Short-term loan (<60 days) exception narrowed to Pakistan only | Loan apps |
 | September 2026 | Developer Verification (Brazil, Indonesia, Singapore, Thailand) | Install blocked |
 | 2027+ | Developer Verification (other regions) | Install blocked |
 
@@ -185,7 +187,7 @@ Each reference file contains the full policy details, code audit commands, and c
 - [Google Play Developer Program Policy](https://support.google.com/googleplay/android-developer/answer/16810878?hl=en)
 - [Policy Deadlines](https://support.google.com/googleplay/android-developer/table/12921780?hl=en)
 - [Policy Announcements](https://support.google.com/googleplay/android-developer/announcements/13412212?hl=en)
-- [Financial Features Declaration](https://support.google.com/googleplay/android-developer/answer/13849271?hl=en)
+- [Financial Features Declaration](https://support.google.com/googleplay/android-developer/answer/13849271?hl=en) (may redirect — see Financial Services Policy for current guidance)
 - [Financial Services Policy](https://support.google.com/googleplay/android-developer/answer/9876821?hl=en)
 - [Permissions and APIs that Access Sensitive Information](https://support.google.com/googleplay/android-developer/answer/16585319?hl=en)
 - [SMS/Call Log Permission Policy](https://support.google.com/googleplay/android-developer/answer/10208820?hl=en)
@@ -201,11 +203,11 @@ Each reference file contains the full policy details, code audit commands, and c
 - [Policy Announcement: July 10, 2025](https://support.google.com/googleplay/android-developer/answer/16296680?hl=en)
 - [Android Developer - Default Handlers](https://developer.android.com/guide/topics/permissions/default-handlers)
 - [Spyware Policy](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en)
-- [Deceptive Behavior Policy](https://support.google.com/googleplay/android-developer/answer/9888077?hl=en)
-- [Device and Network Abuse Policy](https://support.google.com/googleplay/android-developer/answer/9888379?hl=en)
+- [Deceptive Behavior Policy](https://support.google.com/googleplay/android-developer/answer/16680223?hl=en)
+- [Device and Network Abuse Policy](https://support.google.com/googleplay/android-developer/answer/16559646?hl=en)
 - [User Data Policy](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en)
 - [Prominent Disclosure Requirements](https://support.google.com/googleplay/android-developer/answer/11150561?hl=en)
-- [Personal Loans Policy](https://support.google.com/googleplay/android-developer/answer/12005270?hl=en)
+- [Personal Loans Policy](https://support.google.com/googleplay/android-developer/answer/9876821?hl=en#personal-loans)
 - [Stalkerware Policy](https://support.google.com/googleplay/android-developer/answer/10065570?hl=en)
 
 ---

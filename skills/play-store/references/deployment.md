@@ -13,6 +13,8 @@
 
 Starting September 2026, Google will require **all Android apps** installed on certified devices to be registered by **verified developers**.
 
+> Source: [Policy announcement: July 17, 2024](https://support.google.com/googleplay/android-developer/answer/14993590) — "We're requiring developers providing the following services to register as an Organization: financial products and services, health, VPN, and government."
+
 ### 15.2 Rollout Schedule
 
 | Date | Region |

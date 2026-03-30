@@ -68,8 +68,10 @@ For personal loan apps, the description MUST include:
 
 ### 9.2 Rules
 
+**Important** ([source](https://support.google.com/googleplay/android-developer/answer/9898843)): The content rating is specific to the content within your app. It does not include other features and practices, such as consumer agreements or ads. **However**, ads that appear in the app must not be significantly more mature in content than the primary content within the app itself.
+
 - [ ] Content rating questionnaire completed
-- [ ] Rating matches actual app content
+- [ ] Rating matches actual app content (not ads or ToS)
 - [ ] Re-submit questionnaire if app content changes significantly
 - [ ] Apps without rating will be removed from Google Play
 
@@ -77,5 +79,5 @@ For personal loan apps, the description MUST include:
 
 Starting January 1, 2026:
 - Apps with matchmaking, dating, real money gambling, or games/contests must use Play Console features to block minors
-- Data from Age Signals API may only be used for age-appropriate experiences
+- Data from Age Signals API may only be used for age-appropriate experiences (per [November 19, 2025 announcement](https://support.google.com/googleplay/android-developer/answer/16706838))
 - U.S. state age verification laws (Utah May 2026, Louisiana July 2026) may require additional compliance

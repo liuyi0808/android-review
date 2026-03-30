@@ -39,32 +39,32 @@ grep -n "allowBackup" AndroidManifest.xml
 
 ```bash
 # Debug logging in production — USE CONTEXT-AWARE CHECK (see Section 1.4 methodology):
-# WRONG: grep -rn "Log\.\(d\|v\|i\)\(" --include="*.kt" app/src/main/ | grep -v "BuildConfig.DEBUG"
+# WRONG: grep -rn "Log\.\(d\|v\|i\)\(" --include="*.kt" --include="*.java" app/src/main/ | grep -v "BuildConfig.DEBUG"
 #   ^^^ This produces FALSE POSITIVES when BuildConfig.DEBUG guard is on the line above!
 #
 # CORRECT: Check with surrounding context, then manually verify each match:
-grep -rn -B 3 "Log\.\(d\|v\|i\)\(" --include="*.kt" app/src/main/
+grep -rn -B 3 "Log\.\(d\|v\|i\)\(" --include="*.kt" --include="*.java" app/src/main/
 # For each match: verify if (BuildConfig.DEBUG) exists within 1-3 lines above.
 # Only flag matches where NO guard is found in the context window.
 
 # Unguarded printStackTrace() — same context-aware approach:
-grep -rn -B 3 "printStackTrace" --include="*.kt" app/src/main/
+grep -rn -B 3 "printStackTrace" --include="*.kt" --include="*.java" app/src/main/
 # Verify each has BuildConfig.DEBUG guard within 1-3 lines above.
 
 # Hardcoded secrets:
-grep -rn "apiKey\|api_key\|secret\|password\|token" --include="*.kt" --include="*.gradle*" | grep -v "BuildConfig\." | grep -v "test/"
+grep -rn "apiKey\|api_key\|secret\|password\|token" --include="*.kt" --include="*.java" --include="*.gradle*" | grep -v "BuildConfig\." | grep -v "test/"
 
 # Sensitive data in URLs:
-grep -rn "token=\|key=\|password=\|secret=" --include="*.kt" app/src/main/
+grep -rn "token=\|key=\|password=\|secret=" --include="*.kt" --include="*.java" app/src/main/
 
 # Device ID collection (must be declared in Data Safety):
-grep -rn "ANDROID_ID\|getAdvertisingIdInfo\|MediaDrm\|IMEI\|getDeviceId" --include="*.kt"
+grep -rn "ANDROID_ID\|getAdvertisingIdInfo\|MediaDrm\|IMEI\|getDeviceId" --include="*.kt" --include="*.java"
 
 # SMS content access (requires exception approval; must comply with Spyware Policy):
-grep -rn "Telephony.Sms\|SmsMessage\|pdus\|content://sms" --include="*.kt"
+grep -rn "Telephony.Sms\|SmsMessage\|pdus\|content://sms" --include="*.kt" --include="*.java"
 
 # Installed apps enumeration:
-grep -rn "getInstalledPackages\|getInstalledApplications\|queryIntentActivities" --include="*.kt"
+grep -rn "getInstalledPackages\|getInstalledApplications\|queryIntentActivities" --include="*.kt" --include="*.java"
 ```
 
 ### 18.3 Build Config Audit
@@ -80,7 +80,7 @@ grep -rn "minifyEnabled\|shrinkResources" --include="*.gradle*"
 grep -rn "storePassword\|keyPassword" --include="*.gradle*"
 
 # Check for debug-only code that might leak to release:
-grep -rn "BuildConfig.DEBUG" --include="*.kt" -c
+grep -rn "BuildConfig.DEBUG" --include="*.kt" --include="*.java" -c
 ```
 
 ---
@@ -89,71 +89,76 @@ grep -rn "BuildConfig.DEBUG" --include="*.kt" -c
 
 ```bash
 # Consent dialog — does "decline" actually prevent data collection?
-grep -rn "okListener\|confirmListener\|agreeListener" --include="*.kt" -A 3
-grep -rn "refuseListener\|cancelListener\|declineListener" --include="*.kt" -A 3
+grep -rn "okListener\|confirmListener\|agreeListener" --include="*.kt" --include="*.java" -A 3
+grep -rn "refuseListener\|cancelListener\|declineListener" --include="*.kt" --include="*.java" -A 3
 
 # SDK initialization before consent (BLOCKER if found):
-grep -rn "class.*Application.*:" --include="*.kt" -l
+grep -rn "class.*Application.*:" --include="*.kt" --include="*.java" -l
 # Then check each Application class for SDK init in onCreate()
 
-grep -rn "AppsFlyerLib.*init\|AppsFlyerLib.*start" --include="*.kt"
-grep -rn "FirebaseApp.initializeApp" --include="*.kt"
-grep -rn "FacebookSdk.*initialize" --include="*.kt"
+grep -rn "AppsFlyerLib.*init\|AppsFlyerLib.*start" --include="*.kt" --include="*.java"
+grep -rn "FirebaseApp.initializeApp" --include="*.kt" --include="*.java"
+grep -rn "FacebookSdk.*initialize" --include="*.kt" --include="*.java"
 
 # SMS body content upload — verify only financial SMS is uploaded, with user consent:
 # (Not an absolute blocker per policy; violation only if non-financial/personal SMS is transmitted
 #  or transmission is without policy compliant functionality / unexpected to user)
-grep -rn "SP_BODY\|sms_body\|message_body" --include="*.kt" | grep -i "add\|put\|property"
+grep -rn "SP_BODY\|sms_body\|message_body" --include="*.kt" --include="*.java" | grep -i "add\|put\|property"
 
 # Incremental/continuous SMS harvesting:
-grep -rn "SMS_SUCCESS_TIME\|last.*sms.*time\|sms.*timestamp" --include="*.kt"
+grep -rn "SMS_SUCCESS_TIME\|last.*sms.*time\|sms.*timestamp" --include="*.kt" --include="*.java"
 
 # SMS filtering adequacy — check SQL LIKE patterns:
-grep -rn "LIKE\|like" --include="*.kt" | grep -i "sms\|body\|message"
+grep -rn "LIKE\|like" --include="*.kt" --include="*.java" | grep -i "sms\|body\|message"
 ```
 
 ### 18.5 Device Abuse Audit
 
 ```bash
 # Device settings modification:
-grep -rn "Settings.System\|Settings.Secure\|Settings.Global" --include="*.kt" | grep -i "put\|write\|set"
+grep -rn "Settings.System\|Settings.Secure\|Settings.Global" --include="*.kt" --include="*.java" | grep -i "put\|write\|set"
 
 # Accessibility service abuse:
-grep -rn "AccessibilityService\|BIND_ACCESSIBILITY_SERVICE" --include="*.xml" --include="*.kt"
+grep -rn "AccessibilityService\|BIND_ACCESSIBILITY_SERVICE" --include="*.xml" --include="*.kt" --include="*.java"
 
 # Accessibility autonomous actions (PROHIBITED since Oct 2025):
-grep -rn "performAction\|performGlobalAction\|dispatchGesture" --include="*.kt"
-grep -rn "AccessibilityNodeInfo.*ACTION_" --include="*.kt"
-grep -rn "GestureDescription\|StrokeDescription" --include="*.kt"
-grep -rn "getRootInActiveWindow\|getWindows" --include="*.kt"
+grep -rn "performAction\|performGlobalAction\|dispatchGesture" --include="*.kt" --include="*.java"
+grep -rn "AccessibilityNodeInfo.*ACTION_" --include="*.kt" --include="*.java"
+grep -rn "GestureDescription\|StrokeDescription" --include="*.kt" --include="*.java"
+grep -rn "getRootInActiveWindow\|getWindows" --include="*.kt" --include="*.java"
 
 # Device admin / preventing uninstall:
-grep -rn "DeviceAdminReceiver\|DevicePolicyManager\|BIND_DEVICE_ADMIN" --include="*.kt" --include="*.xml"
+grep -rn "DeviceAdminReceiver\|DevicePolicyManager\|BIND_DEVICE_ADMIN" --include="*.kt" --include="*.java" --include="*.xml"
 
 # Remote code execution (CRITICAL):
-grep -rn "DexClassLoader\|PathClassLoader\|InMemoryDexClassLoader" --include="*.kt"
-grep -rn "Runtime.getRuntime().exec\|ProcessBuilder" --include="*.kt"
+grep -rn "DexClassLoader\|PathClassLoader\|InMemoryDexClassLoader" --include="*.kt" --include="*.java"
+grep -rn "Runtime.getRuntime().exec\|ProcessBuilder" --include="*.kt" --include="*.java"
 
 # System UI mimicry:
-grep -rn "AlertDialog" --include="*.kt" | grep -i "system\|update\|warning\|virus\|security"
+grep -rn "AlertDialog" --include="*.kt" --include="*.java" | grep -i "system\|update\|warning\|virus\|security"
+
+# FLAG_SECURE compliance (all apps must respect FLAG_SECURE):
+grep -rn "MediaProjection\|createScreenCapture\|PixelCopy" --include="*.kt" --include="*.java"
+grep -rn "FLAG_SECURE.*clear\|clearFlags.*FLAG_SECURE" --include="*.kt" --include="*.java"
+grep -rn "MediaRecorder.*setVideoSource\|createVirtualDisplay" --include="*.kt" --include="*.java"
 ```
 
 ### 18.6 Loan App Harassment Audit
 
 ```bash
 # Contact list access for collection:
-grep -rn "ContactsContract\|READ_CONTACTS" --include="*.kt"
+grep -rn "ContactsContract\|READ_CONTACTS" --include="*.kt" --include="*.java"
 
 # Automated SMS/calling to contacts:
-grep -rn "SmsManager\|sendTextMessage" --include="*.kt"
-grep -rn "ACTION_CALL\b" --include="*.kt"
+grep -rn "SmsManager\|sendTextMessage" --include="*.kt" --include="*.java"
+grep -rn "ACTION_CALL\b" --include="*.kt" --include="*.java"
 
 # Debt collection language:
-grep -rn "cobro\|cobranza\|mora\|deuda\|vencido\|atrasado" --include="*.xml" --include="*.kt" -i
+grep -rn "cobro\|cobranza\|mora\|deuda\|vencido\|atrasado" --include="*.xml" --include="*.kt" --include="*.java" -i
 
 # Aggressive notification scheduling:
-grep -rn "NotificationManager\|NotificationCompat" --include="*.kt" | grep -i "overdue\|payment\|remind\|cobr"
+grep -rn "NotificationManager\|NotificationCompat" --include="*.kt" --include="*.java" | grep -i "overdue\|payment\|remind\|cobr"
 
 # Data used for credit scoring (should NOT include SMS, apps, contacts):
-grep -rn "risk\|score\|credit\|assess" --include="*.kt" -i | grep -i "sms\|message\|app\|package\|contact"
+grep -rn "risk\|score\|credit\|assess" --include="*.kt" --include="*.java" -i | grep -i "sms\|message\|app\|package\|contact"
 ```

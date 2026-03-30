@@ -5,7 +5,8 @@
 - [12.2 Accessibility Service Abuse](#122-accessibility-service-abuse)
 - [12.3 App Interference](#123-app-interference)
 - [12.4 Network Abuse](#124-network-abuse)
-- [12.5 Device Abuse Checklist](#125-device-abuse-checklist)
+- [12.5 FLAG_SECURE Compliance](#125-flag_secure-compliance)
+- [12.6 Device Abuse Checklist](#126-device-abuse-checklist)
 
 ---
 
@@ -119,15 +120,41 @@ grep -rn "VpnService\|BIND_VPN_SERVICE" --include="*.kt" --include="*.xml"
 grep -rn "PeriodicWorkRequest\|repeatInterval\|setInitialDelay" --include="*.kt"
 ```
 
-- [ ] No VPN/proxy functionality unless core to app purpose
+- [ ] No VPN/proxy functionality unless core to app purpose (see [VpnService policy](https://support.google.com/googleplay/android-developer/answer/12564964) for permitted use cases)
 - [ ] No excessive background network polling
 - [ ] No mining cryptocurrency in background
 
-### 12.5 Device Abuse Checklist
+### 12.5 FLAG_SECURE Compliance
+
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/9888379#flag-secure)): `FLAG_SECURE` is a display flag declared in an app's code to indicate that its UI contains sensitive data intended to be limited to a secure surface. For security and privacy purposes, all apps distributed on Google Play are required to respect the `FLAG_SECURE` declaration of other apps. Apps must not facilitate or create workarounds to bypass the `FLAG_SECURE` settings in other apps.
+
+**Exemption**: Apps that qualify as an [Accessibility Tool](https://support.google.com/googleplay/android-developer/answer/10964491) are exempt, as long as they do not transmit, save, or cache `FLAG_SECURE` protected content for access outside of the user's device.
+
+**Financial app relevance**: Financial apps commonly encounter `FLAG_SECURE` when integrating with banking SDKs, payment flows, or secure document viewers.
+
+**Code audit**:
+```bash
+# Check for screen capture APIs that may violate FLAG_SECURE:
+grep -rn "MediaProjection\|createScreenCapture\|PixelCopy" --include="*.kt" --include="*.java"
+
+# Check for screenshot prevention bypass attempts:
+grep -rn "FLAG_SECURE.*clear\|clearFlags.*FLAG_SECURE" --include="*.kt" --include="*.java"
+
+# Check for screen recording functionality:
+grep -rn "MediaRecorder.*setVideoSource\|SURFACE\|createVirtualDisplay" --include="*.kt" --include="*.java"
+```
+
+- [ ] App respects `FLAG_SECURE` on all windows (no screen capture of secure content)
+- [ ] No `MediaProjection` usage unless core screen-sharing functionality
+- [ ] No attempt to clear or bypass `FLAG_SECURE` on other apps' windows
+- [ ] If app sets `FLAG_SECURE` on its own windows: verify it is applied consistently on sensitive screens (login, payment, KYC)
+
+### 12.6 Device Abuse Checklist
 
 - [ ] No device settings modification
 - [ ] No accessibility service abuse
 - [ ] No app interference
 - [ ] No network abuse
 - [ ] No preventing uninstallation
+- [ ] App respects FLAG_SECURE set by other apps
 - [ ] No root detection that blocks entire app (detecting root for security and warning user is acceptable; blocking app entirely may be flagged)

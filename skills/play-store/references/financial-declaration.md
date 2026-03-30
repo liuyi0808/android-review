@@ -1,4 +1,4 @@
-# Financial Features Declaration (Mandatory for ALL Apps)
+# Financial Features Declaration
 
 ## Table of Contents
 - [4.1 Requirement](#41-requirement)
@@ -13,7 +13,7 @@
 
 ## 4.1 Requirement
 
-**ALL apps** on Google Play must complete the Financial Features Declaration in Play Console, even apps without financial features. As of October 30, 2025, **updates cannot be published** until this declaration is completed.
+Any app that contains any financial features must complete the Financial Features Declaration form in Play Console ([source](https://support.google.com/googleplay/android-developer/answer/9876821)).
 
 **Path**: Play Console > App content > Financial features declaration
 
@@ -40,22 +40,23 @@ If your app includes personal loan features (direct lending, loan facilitation, 
 - [ ] Google must be able to verify connection between developer account and licenses
 
 **Prohibitions**:
-- [ ] No short-term loans (< 60 days repayment) — only Pakistan has limited exception
-- [ ] No access to photos, contacts for risk assessment (explicitly prohibited permissions: `READ_CONTACTS`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION`, `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_EXTERNAL_STORAGE`)
-- [ ] SMS data must NOT be used for credit scoring or lending decisions (see Section 3.1 for full SMS policy details)
+- [ ] No short-term loans (< 60 days repayment) — only Pakistan has rare exceptions when explicitly permitted by local laws ([source](https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans))
+- [ ] No access to sensitive data for risk assessment. Prohibited permissions ([source](https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans)): `READ_CONTACTS`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION`, `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEOS`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `QUERY_ALL_PACKAGES`
+- [ ] SMS data must NOT be used for credit scoring or lending decisions (see Section 3.1 for full SMS policy details, including stricter SMS history access restrictions for financial apps)
 - [ ] No predatory lending practices (excessive fees, harassment)
 - [ ] App category MUST be set to "Finance"
 
 ## 4.4 Country-Specific Requirements
 
-| Country | Requirement | Deadline |
-|---------|------------|---------|
-| India | Must be on RBI "Digital Lending Apps" list | Oct 30, 2025 |
-| Thailand | Display loan service provider, max interest rates, all fees | Mar 4, 2026 |
-| Philippines | SEC Registration + Certificate of Authority | Active |
-| Nigeria | FCCPC approval letter | Active |
-| Pakistan | Only country allowing < 60 day loans (with restrictions) | Active |
-| Colombia | Must comply with local financial regulations + global policy | Active |
+| Country | Requirement | Status |
+|---------|------------|--------|
+| India | Must be on RBI "Digital Lending Apps (DLAs) deployed by Regulated Entities" list; NBFC names in app description | Active |
+| Indonesia | Valid OJK license (OJK Regulation No. 77/POJK.01/2016) | Active |
+| Philippines | SEC Registration Number + Certificate of Authority (CA) from PSEC; disclose in app description | Active |
+| Nigeria | FCCPC approval letter for Digital Money Lenders (DML) | Active |
+| Kenya | CBK Digital Credit Provider (DCP) license; must be on CBK Directory | Active |
+| Pakistan | SECP approval required; each NBFC limited to 1 DLA; short-term loans rare exception only | Active |
+| Thailand | BoT or MoF license (if interest ≥ 15%); display loan service provider, max interest rates, all fees in listing | Active |
 
 ## 4.5 Line of Credit Apps (April 2025 Update)
 
@@ -66,7 +67,7 @@ As of May 28, 2025, apps providing lines of credit are subject to the same requi
 
 ### 4.5.1 Earned Wage Access (EWA) Apps
 
-**Definition (Google)**: EWA apps provide a financial service that allows users to access **wages they have already earned** but have not yet been paid through their regular payroll cycle. EWA is **not** lending against future income — it is early access to money the user has already worked for.
+**Definition (Google)** ([source](https://support.google.com/googleplay/android-developer/answer/9876821)): "We define earned wage access loans (EWA) as a financial service that allows individuals to access a portion of their wages that have already been earned but not yet paid by their employer."
 
 **Three defining characteristics of EWA**:
 
@@ -76,23 +77,20 @@ As of May 28, 2025, apps providing lines of credit are subject to the same requi
 | **Fee Structure** | Low, transparent fees: fixed ($1–$5 per advance) or percentage-based (1–5% of advance). Fees must reflect actual service cost, not disguised interest. |
 | **No Debt Creation** | Advances are NOT reported to credit bureaus. No impact on user's credit score. No debt obligation beyond payback from next paycheck. |
 
-**Key distinction from Personal Loans**: EWA is accessing **already-earned** wages, not borrowing against future income. However, Google classifies EWA under the broader Personal Loan policy umbrella for compliance purposes.
+**Note**: Google explicitly classifies EWA as a type of **loan** ("earned wage access loans") and applies the Personal Loan policy framework to EWA apps, including prohibited permissions and disclosure requirements.
 
-**Prohibited permissions** (same as Personal Loans):
+**Prohibited permissions** (same as Personal Loans — [source](https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans)):
 - `READ_CONTACTS`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION`
-- `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_EXTERNAL_STORAGE`
+- `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEOS`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`
+- `QUERY_ALL_PACKAGES`
 
-**Disclosure requirements** (same as Personal Loans — must appear in app description):
-- [ ] Maximum fee amount or percentage per advance
-- [ ] Equivalent APR (if applicable under local regulation)
-- [ ] Repayment terms (e.g., auto-deducted from next paycheck)
-- [ ] Representative cost example (e.g., "$200 advance → $5 fee → $205 repaid on payday")
+**Disclosure requirements** (must appear in app description — [source](https://support.google.com/googleplay/android-developer/answer/9876821)):
+- [ ] Repayment terms and conditions
+- [ ] All fees, including subscription fees, transaction fees, and all other fees related to providing the loan
+- [ ] Representative example of total cost, including all fees
 - [ ] Comprehensive privacy policy link
 
-**Additional Google requirements for EWA**:
-- Google may request **additional documentation** proving EWA status (employer partnerships, payroll integration evidence)
-- Google may require **regulatory licenses** specific to EWA in target countries
-- If the app's fee structure or repayment model resembles a loan (e.g., multi-cycle repayment, high fees), Google will reclassify it as a Personal Loan app
+**Additional requirements**: Google states "Additional information or documents may be requested to confirm your account is in compliance with all local laws and regulations." EWA apps are subject to country-specific requirements to the extent applicable ([source](https://support.google.com/googleplay/android-developer/answer/9876821)).
 
 **EWA checklist**:
 - [ ] Advance amount limited to verified earned wages only
