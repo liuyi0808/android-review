@@ -157,14 +157,21 @@ If the answer to #1 is "No" → the data point should be removed or justified wi
 
 ### 11.4 Category 4: Personal SMS/Call Log Exfiltration (CRITICAL for Loan Apps)
 
-**Policy (verbatim)**:
-> "Personal loans or budgeting apps may **not exfiltrate or share non-financial or personal SMS history** of a user."
+#### Policy Requirements
 
-This means even if your app has a valid SMS exception (Section 3.1), you MUST:
-1. Filter SMS to ONLY financial/transactional messages BEFORE upload
-2. NEVER upload personal SMS content
-3. NEVER use SMS data for credit scoring or lending decisions
-4. NEVER share SMS data with third parties
+The [Spyware policy](https://support.google.com/googleplay/android-developer/answer/9888380) provides a non-exhaustive list of practices that are considered spyware violations. From [Understanding Google Play's Spyware policy](https://support.google.com/googleplay/android-developer/answer/14745000):
+
+> Examples of Spyware policy violations:
+> - An app that uses an SDK which transmits data from audio or call recordings when it is not related to policy compliant app functionality.
+> - An application that steals information from other apps' notifications.
+> - Transmitting any of the following without policy compliant functionality or in a manner that is unexpected to the user (for example, if data collection occurs in the background when the user is not engaging with your app): Contact list, Photos or other files from the SD card, Content from user email, Call log, **SMS log**, Information from the /data/ directories of other apps.
+> - **Personal loans or budgeting apps exfiltrating or sharing non-financial or personal SMS history of a user.**
+
+Even if your app has a valid SMS exception (Section 3.1), all SMS and Call Log use case exceptions must comply with the Spyware Policy, which prohibits exfiltration of data not related to policy-compliant functionality.
+
+#### Recommended Practices (Audit Guidance)
+
+The following are **audit best practices** to help verify compliance with the policy requirements above. These are not verbatim policy text, but practical checks for auditors:
 
 **Code audit — SMS exfiltration check**:
 ```bash
@@ -174,9 +181,7 @@ grep -rn "Telephony.Sms\|content://sms\|SmsMessage" --include="*.kt"
 # Check what SMS fields are read:
 grep -rn "Telephony.Sms\.\(BODY\|ADDRESS\|DATE\|READ\|STATUS\|TYPE\)" --include="*.kt"
 
-# Check SMS filtering logic — is it BEFORE or AFTER query?
-# If filtering happens in SQL WHERE clause → better (less data loaded)
-# If filtering happens in code after query → all SMS is read first (worse)
+# Check SMS filtering logic — is filtering applied before or after query?
 grep -rn "LIKE\|like\|contains\|matches\|filter" --include="*.kt" | grep -i "sms\|message\|body"
 
 # Check what is uploaded — does the request include SMS body text?
@@ -186,19 +191,21 @@ grep -rn "SP_BODY\|sms_body\|message_body\|body" --include="*.kt" | grep -i "add
 grep -rn "SMS_SUCCESS_TIME\|last.*sms.*time\|sms.*timestamp" --include="*.kt"
 ```
 
-**SMS filtering adequacy test**:
-- Are filter patterns specific enough? (`%bank%` is too broad, matches personal messages about banks)
-- Does filtering happen at the SQL query level? (better) or in-memory? (worse — all SMS loaded into memory)
-- Is SMS body content uploaded, or only metadata (sender, timestamp)?
-- Is there a mechanism to exclude personal sender numbers (contacts, known personal numbers)?
+**SMS audit questions**:
+- Does the app access SMS data that is unrelated to its policy-compliant core functionality?
+- Is SMS data collected in the background when the user is not engaging with the app?
+- Is any non-financial or personal SMS content transmitted to a server?
+- For loan/budgeting apps: is any SMS history shared that is not directly related to financial transactions?
 
-- [ ] SMS filtering occurs in SQL WHERE clause (not post-query)
-- [ ] Filter patterns are specific to financial institutions (5-digit short codes, known bank sender IDs)
-- [ ] SMS body content is NOT uploaded to server (only metadata if needed)
-- [ ] If SMS body IS needed: strict regex filtering removes personal content BEFORE upload
-- [ ] No incremental/continuous SMS harvesting (one-time collection at specific user action only)
-- [ ] SMS data is NOT used for credit scoring or lending decisions
+**Checklist** (policy requirements + recommended practices):
+- [ ] No SMS data transmitted that is unrelated to policy-compliant functionality
+- [ ] No SMS data collected unexpectedly in the background
+- [ ] For loan/budgeting apps: no non-financial or personal SMS history exfiltrated or shared
+- [ ] SMS data is NOT used for credit scoring or lending decisions (Spyware Policy)
 - [ ] SMS data is NOT shared with third-party analytics or advertising services
+- [ ] *(Recommended)* SMS filtering applied at query level to minimize data loaded into memory
+- [ ] *(Recommended)* Filter patterns target financial institution senders, not broad keyword matches
+- [ ] *(Recommended)* SMS body content is not uploaded to server when only metadata is needed
 
 ### 11.5 Spyware Policy Checklist
 

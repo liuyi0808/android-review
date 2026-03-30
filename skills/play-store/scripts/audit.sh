@@ -56,7 +56,7 @@ print_section "18.1 Manifest Audit"
 
 if [ -f "$MANIFEST" ]; then
     run_check "SMS/Call Log permissions (requires Declaration Form)" "BLOCKER" \
-        grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|READ_CALL_LOG\|WRITE_CALL_LOG" "$MANIFEST"
+        grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|RECEIVE_MMS\|RECEIVE_WAP_PUSH\|WRITE_SMS\|READ_CALL_LOG\|WRITE_CALL_LOG\|PROCESS_OUTGOING_CALLS" "$MANIFEST"
 
     run_check "Contacts/Phone permissions (PROHIBITED for loan apps)" "BLOCKER" \
         grep -n "READ_CONTACTS\|WRITE_CONTACTS\|READ_PHONE_NUMBERS" "$MANIFEST"
@@ -140,7 +140,7 @@ run_check "Firebase init (verify consent order)" "WARNING" \
 run_check "Facebook SDK init (must be after consent)" "WARNING" \
     grep -rn 'FacebookSdk.*initialize' --include="*.kt" "$PROJECT_ROOT"
 
-run_check "SMS body content upload" "BLOCKER" \
+run_check "SMS body content upload (verify only financial SMS, with consent)" "WARNING" \
     bash -c "grep -rn 'SP_BODY\|sms_body\|message_body' --include='*.kt' '$PROJECT_ROOT' | grep -i 'add\|put\|property'"
 
 # ============================================================

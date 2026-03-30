@@ -24,40 +24,55 @@ This section covers permissions that trigger **mandatory Play Console declaratio
 
 ### 3.1 SMS & Call Log Permissions (Heavily Restricted)
 
-**Policy**: SMS/Call Log permissions (`READ_SMS`, `SEND_SMS`, `RECEIVE_SMS`, `READ_CALL_LOG`, `WRITE_CALL_LOG`, `PROCESS_OUTGOING_CALLS`) are restricted to apps that are the **default SMS/Phone/Assistant handler**. However, Google provides a **temporary exception** mechanism for non-default-handler apps whose core functionality requires these permissions and no alternative method exists.
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/16558241)): SMS and Call Log Permissions are regarded as personal and sensitive user data. Apps lacking default SMS, Phone, or Assistant handler capability may not declare use of these permissions in the manifest. This includes placeholder text in the manifest. Apps must be actively registered as the default handler before prompting users to accept any of these permissions and must immediately stop using the permission when they're no longer the default handler.
+
+Apps may only use the permission (and any data derived from it) to provide approved core app functionality. Core functionality is defined as the main purpose of the app — without the core feature(s), the app is "broken" or rendered unusable. The transfer, sharing, or licensed use of this data must only be for providing core features or services within the app, and its use may not be extended for any other purpose (for example, improving other apps or services, advertising, or marketing purposes). You may not use alternative methods (including other permissions, APIs, or third-party sources) to derive data attributed to Call Log or SMS related permissions.
 
 #### 3.1.1 Temporary Exception Use Cases (Non-Default Handlers)
 
-Google Play may grant temporary exceptions for specific use cases listed in the official exception table. Key financial-related exceptions include:
+Google Play may provide a temporary exception to apps that aren't Default SMS, Phone, or Assistant handlers when:
+1. Use of the permission enables the core app functionality listed in the exception table, **and**
+2. There's currently no alternative method to provide the core functionality.
 
-| Exception Category | Permitted Use | Required Permissions |
+**Financial-related exceptions** ([source](https://support.google.com/googleplay/android-developer/answer/10208820)):
+
+| Exception Category | Description (official) | Eligible Permissions |
 |---|---|---|
-| **SMS-based financial transactions** | Financial transactions via SMS (e.g., 5-digit bank messages), OTP account verification for financial transactions, fraud detection | `READ_SMS`, `RECEIVE_SMS`, `SEND_SMS` |
-| **Money management / budgeting** | Track, budget, manage SMS-based financial transactions (e.g., 5-digit messages) and related account verification | `READ_SMS`, `RECEIVE_SMS` |
+| **SMS-based financial transactions** | For example, Unified Payments Interface (UPI), verifications for financial transactions | `READ_SMS`, `RECEIVE_MMS`, `RECEIVE_SMS`, `RECEIVE_WAP_PUSH`, `SEND_SMS` |
+| **Call-based authentication and authorization in banking or brokerage apps** | Banking or brokerage apps that facilitate secure device-based financial transactions for their service | `READ_CALL_LOG`, `PROCESS_OUTGOING_CALLS` |
+| **SMS-based money management** | For example, apps that track and manage budget | `READ_SMS`, `RECEIVE_MMS`, `RECEIVE_SMS`, `RECEIVE_WAP_PUSH` |
+
+> **Note**: All eligible permissions are subject to Google Play review and approval. The full exception table includes additional non-financial categories (caller ID, backup & restore, connected device companion, device automation, enterprise archive, etc.) — see [full list](https://support.google.com/googleplay/android-developer/answer/10208820).
 
 **Requirements for exception approval**:
 1. SMS/Call Log access must enable **core app functionality** (without which the app is broken or unusable)
 2. There must be **no alternative method** to provide the core functionality
-3. The app's description must **prominently document** the core feature requiring SMS access
-4. Must submit **Permissions Declaration Form** in Play Console with clear justification
-5. Exception APKs must represent a **very small percentage** (low single-digit %) of total install base
-6. Exceptions are granted **case-by-case** and are rarely approved — Google explicitly states this
+3. The app's description must **prominently document and promote** the core feature(s) requiring SMS access
+4. Must submit **[Permissions Declaration Form](https://support.google.com/googleplay/android-developer/answer/9214102)** in Play Console
+5. Exception APKs must represent a **very small percentage** (no more than a low single-digit %) of total install base
+6. Google Play will review requests and grant exceptions on a **case-by-case basis**
 
-#### 3.1.2 Spyware Policy Constraints (CRITICAL for Financial Apps)
+#### 3.1.2 SMS & Call Log Policy Compliance
 
-Even when granted an SMS exception, **all apps must comply with the Spyware Policy**:
+All SMS and Call Log use case exceptions, if granted, must comply with all existing Play policies ([source](https://support.google.com/googleplay/android-developer/answer/10208820)):
 
-> "Personal loans or budgeting apps may **not exfiltrate or share non-financial or personal SMS history** of a user."
+1. **[Spyware Policy](https://support.google.com/googleplay/android-developer/answer/9888380)** — prohibits exfiltration of data not related to policy-compliant functionality. For example, personal loans or budgeting apps may not exfiltrate or share non-financial or personal SMS history of a user. See [Understanding Google Play's Spyware policy](https://support.google.com/googleplay/android-developer/answer/14745000).
+2. **[Permissions and APIs that Access Sensitive Information](https://support.google.com/googleplay/android-developer/answer/9888170)** — you may not use permissions or APIs that access sensitive information for undisclosed, unimplemented, or disallowed features or purposes.
+3. **[User Data Policy Requirements](https://support.google.com/googleplay/android-developer/answer/10144311)** — includes Privacy Policy, Prominent Disclosure, and Consent requirements.
 
-This means:
-- **Allowed**: Reading bank transaction SMS (5-digit numbers), OTP verification for financial transactions
-- **PROHIBITED**: Accessing personal SMS messages, sharing SMS data with third parties for non-core purposes, using SMS data for advertising/marketing, credit scoring based on SMS content analysis
+#### 3.1.3 Key Considerations — Do's & Don'ts
 
-Data use restrictions:
-- Transfer, sharing, or licensed use of SMS data must **only** be for providing core features within the app
-- Use may **not** be extended for any other purpose (improving other apps, advertising, marketing)
+From the [Permissions and APIs that Access Sensitive Information](https://support.google.com/googleplay/android-developer/answer/16558241) policy:
 
-#### 3.1.3 Personal Loan Apps — Additional Restrictions
+| Do | Don't |
+|----|-------|
+| Submit a [declaration form](https://support.google.com/googleplay/android-developer/answer/9214102) in your Play Console | Don't request SMS/Call Log permissions without a core need justification |
+| Clearly document the core functionality requiring access to your users | Don't use this data for advertising or other purposes |
+| Use policy-compliant alternatives like the [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview) where possible | Don't store or share unnecessary SMS or Call Log data |
+| Stop accessing data immediately upon losing default handler status | Don't attempt to derive this data using alternative methods |
+| Review the [permitted uses and exceptions](https://support.google.com/googleplay/android-developer/answer/10208820) of the SMS and Call Log permissions | |
+
+#### 3.1.4 Personal Loan Apps — Additional Restrictions
 
 The **Personal Loans policy** (separate from SMS/Call Log policy) explicitly prohibits personal loan apps from accessing certain sensitive data for risk assessment:
 
@@ -68,47 +83,57 @@ The **Personal Loans policy** (separate from SMS/Call Log policy) explicitly pro
 - `READ_EXTERNAL_STORAGE`
 - `READ_MEDIA_IMAGES` / `READ_MEDIA_VIDEO`
 
-**Note on `READ_SMS` for loan apps**: `READ_SMS` is NOT in the explicit Personal Loans prohibited permissions list above. It is governed by the separate **SMS/Call Log permission policy** (Section 3.1.1). However, personal loan apps face heightened scrutiny:
-- Using SMS data for **credit scoring or lending decisions** is prohibited under the Spyware Policy
-- SMS access purely for **transaction verification or OTP** may qualify for exception, but approval is case-by-case and rare
-- Google's ML review system cross-checks actual SMS usage patterns against declared purposes
+**Note on `READ_SMS` for loan apps**: `READ_SMS` is NOT in the explicit Personal Loans prohibited permissions list above. It is governed by the separate **SMS/Call Log permission policy** (Section 3.1.1). However, personal loan apps face heightened scrutiny — the Spyware Policy explicitly states that personal loans or budgeting apps may not exfiltrate or share non-financial or personal SMS history of a user (Section 3.1.2).
 
-#### 3.1.4 Invalid Use Cases (Will Be Rejected)
+#### 3.1.5 Invalid Use Cases (Will Be Rejected)
 
-These use cases will NOT be approved regardless of app type:
-- Account verification via SMS content (use SMS Retriever API instead)
-- Content sharing or invitations via SMS
-- Contact prioritization when not the default handler
-- Credit scoring based on SMS history analysis
-- Sharing SMS data with third parties for non-core purposes
+The following use cases will NOT be permitted to access SMS and Call Log permissions ([source](https://support.google.com/googleplay/android-developer/answer/10208820)):
 
-#### 3.1.5 Recommended Alternatives
+- Account verification via SMS (see Alternatives)
+- Content sharing or invites (see Alternatives)
+- Contact prioritization (when not the default handler or System level default contacts handler)
+- Social graph and personality profiling
+- Call recorder
+- Device performance booster
+- Device space or data management
+- Family or device locator
+- Smart or predictive keyboard
+- SMS or calls appearing in wallpaper, launcher, and other tools
+- SMS translation (when not the default handler)
+- Text to voice / speech-voice to text (when not the default handler or an eligible exception)
+- SMS and contacts management (when not the default handler or an eligible exception)
+- SMS or phone notification enhancement and alerts (when not the default handler or an eligible exception)
+- Research (like market research based on SMS)
+- Remote control of user phone or other devices
+- Any transfer that results in a sale of this data (including SDKs that sell this data)
 
-**For OTP auto-fill** (recommended for ALL apps):
-```kotlin
-// SMS Retriever API — does NOT require READ_SMS permission
-val client = SmsRetriever.getClient(context)
-val task = client.startSmsRetriever()
-```
+> **Note**: This list is not exhaustive.
 
-**For financial transaction tracking** (if exception not feasible):
-- Manual transaction entry by user
-- Bank API integration (Open Banking)
-- Transaction notification parsing via Notification Listener Service
+#### 3.1.6 Recommended Alternatives
 
-#### 3.1.6 Declaration Process
+From the [official alternatives table](https://support.google.com/googleplay/android-developer/answer/10208820):
+
+| Use | Alternative |
+|-----|-------------|
+| **SMS OTP & account verification** | [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview) — performs SMS-based user verification automatically, without requiring manual code entry and without extra app permissions. If not an option, users can manually enter verification codes. |
+| **Initiate a text message** | [SMS Intent](https://developer.android.com/guide/components/intents-common#SendMessage) — initiates an SMS or MMS text message via the default handler. |
+| **Share content** | [Share Intent](https://developer.android.com/training/sharing/) — enables sharing content or sending invitations through supporting apps without sensitive permissions. |
+| **Initiate a phone call** | [Dial Intent](https://developer.android.com/reference/android/content/Intent#ACTION_DIAL) — opens the phone app with a specified number. Does not require `CALL_PHONE` permission. |
+
+#### 3.1.7 Declaration Process
 
 If your app requires SMS/Call Log permissions:
-1. Submit **Permissions Declaration Form** in Play Console
-2. If use case is not listed in the standard form, submit **New use case form**
+1. Submit **[Permissions Declaration Form](https://support.google.com/googleplay/android-developer/answer/9214102)** in Play Console
+2. Select your app's core functionality from the list of supported use cases
 3. Provide clear documentation of core functionality
-4. Include demo video showing the feature in action
-5. Explain why no alternative method exists
+4. If you change the way your app uses these restricted permissions, you must submit the form again with updated information
+
+> **Important**: Deceptive and non-declared uses of permissions may result in a suspension of your app and/or termination of your developer account.
 
 **Code audit**:
 ```
 # HIGH RISK — requires Permissions Declaration Form and exception approval:
-grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|READ_CALL_LOG" AndroidManifest.xml
+grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|RECEIVE_MMS\|RECEIVE_WAP_PUSH\|WRITE_SMS\|READ_CALL_LOG\|WRITE_CALL_LOG\|PROCESS_OUTGOING_CALLS" AndroidManifest.xml
 
 # BLOCKER for loan apps — prohibited by Personal Loans policy:
 grep -n "READ_CONTACTS\|WRITE_CONTACTS\|READ_PHONE_NUMBERS" AndroidManifest.xml
@@ -117,16 +142,18 @@ grep -n "READ_CONTACTS\|WRITE_CONTACTS\|READ_PHONE_NUMBERS" AndroidManifest.xml
 grep -rn "Telephony.Sms\|SmsMessage\|pdus" --include="*.kt"
 ```
 
-#### 3.1.7 Checklist
+#### 3.1.8 Checklist
 
-- [ ] Verify if SMS/Call Log permissions are truly needed for core functionality
-- [ ] If needed: Permissions Declaration Form submitted with detailed justification
-- [ ] If loan app: Confirm `READ_SMS` is NOT used for credit scoring or lending decisions
-- [ ] SMS Retriever API used for OTP auto-fill (preferred over `READ_SMS`)
-- [ ] No `READ_CALL_LOG` / `WRITE_CALL_LOG` unless exception approved
-- [ ] App does NOT exfiltrate non-financial or personal SMS content
-- [ ] SMS data not shared with third parties for advertising/marketing
-- [ ] App description prominently documents SMS-dependent core features
+- [ ] Verify if SMS/Call Log permissions are truly needed for core functionality (app is "broken" without it)
+- [ ] Verify no alternative method exists (e.g., SMS Retriever API for OTP)
+- [ ] Permissions Declaration Form submitted with detailed justification
+- [ ] App description prominently documents and promotes SMS-dependent core features
+- [ ] Exception APKs represent low single-digit % of total install base
+- [ ] All SMS/Call Log exceptions comply with Spyware Policy, Permissions Policy, and User Data Policy (Section 3.1.2)
+- [ ] No exfiltration of non-financial or personal SMS history (loan/budgeting apps)
+- [ ] SMS data not used for advertising, marketing, or improving other apps/services
+- [ ] No alternative methods used to derive SMS/Call Log data
+- [ ] App stops using permissions immediately upon losing default handler status
 - [ ] Personal loan apps: No `READ_CONTACTS`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION`, `READ_MEDIA_IMAGES` in manifest
 
 ### 3.2 QUERY_ALL_PACKAGES (Installed Apps Visibility)

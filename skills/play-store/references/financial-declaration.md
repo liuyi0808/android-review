@@ -1,5 +1,16 @@
 # Financial Features Declaration (Mandatory for ALL Apps)
 
+## Table of Contents
+- [4.1 Requirement](#41-requirement)
+- [4.2 What to Declare](#42-what-to-declare)
+- [4.3 Personal Loan App Requirements](#43-personal-loan-app-requirements)
+- [4.4 Country-Specific Requirements](#44-country-specific-requirements)
+- [4.5 Line of Credit Apps (April 2025 Update)](#45-line-of-credit-apps-april-2025-update)
+  - [4.5.1 Earned Wage Access (EWA) Apps](#451-earned-wage-access-ewa-apps)
+- [4.6 Checklist](#46-checklist)
+
+---
+
 ## 4.1 Requirement
 
 **ALL apps** on Google Play must complete the Financial Features Declaration in Play Console, even apps without financial features. As of October 30, 2025, **updates cannot be published** until this declaration is completed.

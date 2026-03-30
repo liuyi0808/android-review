@@ -87,7 +87,7 @@ Each reference file contains the full policy details, code audit commands, and c
 - [ ] Prominent disclosure shown BEFORE any data collection or SDK init
 - [ ] User can DECLINE data collection and still use basic functionality
 - [ ] No SDK transmits data before user consent
-- [ ] No personal SMS content uploaded to server
+- [ ] No non-financial or personal SMS history exfiltrated or shared (loan/budgeting apps)
 - [ ] All collected data types disclosed in consent + privacy policy + Data Safety
 - [ ] No data collection unrelated to app functionality
 - [ ] No background data uploads without user-visible notification
@@ -151,7 +151,7 @@ Each reference file contains the full policy details, code audit commands, and c
 | No account deletion | Missing in-app or web deletion | Implement account + data deletion flow | BLOCKER |
 | Minimum functionality | App is essentially a WebView wrapper | Add native functionality beyond WebView | BLOCKER |
 | Spyware - no consent | Data collected before user consent shown | Move SDK init after consent dialog | BLOCKER |
-| Spyware - SMS exfiltration | Personal SMS content uploaded to server | Remove SMS body upload or use SMS Retriever API | BLOCKER |
+| Spyware - SMS exfiltration | Non-financial or personal SMS history exfiltrated or shared | Remove non-policy-compliant SMS data transmission; SMS Retriever API only replaces OTP use case | BLOCKER |
 | Spyware - covert transmission | SDKs transmit data before consent dialog | Delay SDK initialization until after consent | BLOCKER |
 | Consent decline ineffective | Decline/Cancel does same as Accept | Make decline genuinely prevent data collection | BLOCKER |
 | Disclosure gap | Collected data not in consent dialog | Update consent dialog to list all data types | BLOCKER |

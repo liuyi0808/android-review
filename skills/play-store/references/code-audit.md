@@ -16,7 +16,7 @@ Run these checks against your codebase before submission:
 
 ```bash
 # SMS/Call Log permissions — requires Permissions Declaration Form and exception approval:
-grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|READ_CALL_LOG\|WRITE_CALL_LOG" AndroidManifest.xml
+grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|RECEIVE_MMS\|RECEIVE_WAP_PUSH\|WRITE_SMS\|READ_CALL_LOG\|WRITE_CALL_LOG\|PROCESS_OUTGOING_CALLS" AndroidManifest.xml
 
 # BLOCKER for personal loan apps — explicitly prohibited by Personal Loans policy:
 grep -n "READ_CONTACTS\|WRITE_CONTACTS\|READ_PHONE_NUMBERS" AndroidManifest.xml
@@ -60,8 +60,8 @@ grep -rn "token=\|key=\|password=\|secret=" --include="*.kt" app/src/main/
 # Device ID collection (must be declared in Data Safety):
 grep -rn "ANDROID_ID\|getAdvertisingIdInfo\|MediaDrm\|IMEI\|getDeviceId" --include="*.kt"
 
-# SMS content access (requires exception approval; PROHIBITED for credit scoring in loan apps):
-grep -rn "Telephony.Sms\|SmsMessage\|pdus" --include="*.kt"
+# SMS content access (requires exception approval; must comply with Spyware Policy):
+grep -rn "Telephony.Sms\|SmsMessage\|pdus\|content://sms" --include="*.kt"
 
 # Installed apps enumeration:
 grep -rn "getInstalledPackages\|getInstalledApplications\|queryIntentActivities" --include="*.kt"
@@ -100,7 +100,9 @@ grep -rn "AppsFlyerLib.*init\|AppsFlyerLib.*start" --include="*.kt"
 grep -rn "FirebaseApp.initializeApp" --include="*.kt"
 grep -rn "FacebookSdk.*initialize" --include="*.kt"
 
-# SMS body content upload check:
+# SMS body content upload — verify only financial SMS is uploaded, with user consent:
+# (Not an absolute blocker per policy; violation only if non-financial/personal SMS is transmitted
+#  or transmission is without policy compliant functionality / unexpected to user)
 grep -rn "SP_BODY\|sms_body\|message_body" --include="*.kt" | grep -i "add\|put\|property"
 
 # Incremental/continuous SMS harvesting:
