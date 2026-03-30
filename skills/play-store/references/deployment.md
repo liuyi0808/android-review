@@ -74,7 +74,7 @@ Google's review system is increasingly AI-driven. To reduce false rejections:
 
 ## 17. Post-Launch Monitoring
 
-### 17.1 Play Vitals Thresholds
+### 17.1 Play Vitals Thresholds *(from [Android Vitals documentation](https://developer.android.com/topic/performance/vitals))*
 
 | Metric | Threshold | Action if Exceeded |
 |--------|-----------|-------------------|
@@ -90,7 +90,7 @@ If policy violated:
 2. **App removal** → fix and resubmit
 3. **Account suspension** → repeated violations or egregious breach
 
-**Scale of enforcement**: From early 2024 to April 2025, approximately 1.8 million apps were removed from the Play Store.
+**Scale of enforcement**: *(reported in Google developer blog/conference, not in official policy text)* From early 2024 to April 2025, approximately 1.8 million apps were removed from the Play Store.
 
 ### 17.3 Checklist
 

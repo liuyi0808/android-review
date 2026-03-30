@@ -85,7 +85,7 @@ grep -rn "finish()\|exitProcess\|System.exit" --include="*.kt" | grep -v "test"
 - [ ] App does NOT crash when any permission is denied
 - [ ] App does NOT call `finish()` or `System.exit()` when permission denied
 - [ ] App provides alternative flow when sensitive permissions denied
-- [ ] No repeated permission request loops (max 2 requests, then explain in settings)
+- [ ] No repeated permission request loops — be mindful of user fatigue, respect user's choice if declined ([source](https://support.google.com/googleplay/android-developer/answer/11150561))
 
 ### 13.3 Prominent Disclosure Content Requirements
 
@@ -111,11 +111,11 @@ The prominent disclosure (consent dialog) must meet ALL of these Google requirem
 - [ ] Link to full privacy policy
 - [ ] "You can decline and still use [basic features]"
 
-#### 13.3.1 Common Prominent Disclosure Violations (Google Examples)
+#### 13.3.1 Common Prominent Disclosure Violations (Audit Guidance)
 
-Google has published specific scenarios that constitute Prominent Disclosure violations. Use this list during audit to catch common failures:
+The following are common violation patterns observed in Google Play enforcement *(audit guidance — not verbatim from a single policy page)*:
 
-**Violation scenarios (from Google policy documentation)**:
+**Common violation scenarios**:
 
 1. **Undisclosed location purpose**: App collects location data but does not explain which feature uses it, or fails to disclose background location usage.
 2. **Installed apps / contacts not treated as sensitive**: App accesses the list of installed applications or the user's contact list but does not treat this data as personal/sensitive data requiring prominent disclosure.
@@ -139,7 +139,7 @@ Example of compliant disclosure:
 
 If a third-party SDK integrated in the app **defaults to collecting sensitive data** (device identifiers, location, etc.):
 - The app is still responsible for disclosing this collection in its Prominent Disclosure
-- If Google flags SDK-initiated collection, the developer must provide compliance evidence **within 2 weeks**
+- If Google flags SDK-initiated collection, the developer must provide compliance evidence promptly upon request
 - "I didn't know the SDK collected that" is not a valid defense
 
 **Auditor guidance — detecting "form-compliant but substance-violating" disclosures**:

@@ -18,7 +18,7 @@
 
 From August 31, 2025:
 - **New apps and updates** MUST target API 35 (Android 15) or higher
-- **Existing apps** MUST target at least API 34 to remain visible on Android 15+ devices
+- **Existing apps** MUST target at least API 34 to remain available to **new users** on devices running Android OS higher than the app's target API level (existing installs unaffected)
 - Wear OS / Android TV / Automotive: API 34 minimum
 - Extension available in Play Console to November 1, 2025
 

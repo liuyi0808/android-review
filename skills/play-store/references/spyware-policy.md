@@ -11,7 +11,7 @@
 
 Google Play's Spyware Policy defines four categories of prohibited behavior. **Financial/loan apps are under heightened scrutiny** because they handle sensitive financial data and historically have the highest violation rates.
 
-**Policy reference**: [Google Play Spyware Policy](https://support.google.com/googleplay/android-developer/answer/10144311)
+**Policy reference**: [Understanding Google Play's Spyware policy](https://support.google.com/googleplay/android-developer/answer/14745000) | [Spyware policy (full)](https://support.google.com/googleplay/android-developer/answer/9888380#spyware)
 
 ### 11.1 Category 1: Data Collection Without Adequate Notice
 
@@ -44,8 +44,8 @@ grep -rn "one_text_warrant\|consent_text\|disclosure_text\|privacy_notice" --inc
 **Critical validation points**:
 - **Decline must work**: If "Cancel" and "OK" execute the same code path → **BLOCKER**
 - **Decline must have consequences**: User who declines MUST NOT have their data collected silently
-- **Checkbox consent**: For sensitive data (SMS, location, apps), Google recommends explicit checkbox, not just "Continue" button
-- **Granular consent**: Ideally users can consent to some data types and decline others
+- **Explicit consent UI**: Official guidance requires at least two options — one to allow (e.g., "Agree") and one to decline. Using clear language such as "Agree" is recommended ([source](https://support.google.com/googleplay/android-developer/answer/11150561))
+- **Granular consent**: *(audit guidance)* Consider allowing users to consent to some data types and decline others
 
 - [ ] Prominent disclosure shown BEFORE any data collection starts
 - [ ] Disclosure clearly lists ALL data types collected (SMS, apps, location, device info, etc.)

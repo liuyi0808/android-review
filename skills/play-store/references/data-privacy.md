@@ -34,22 +34,22 @@ Only exempted: internal testing track.
 
 For EVERY piece of data your app or ANY SDK collects:
 
-| Data Category | Examples |
+| Data Category | Examples ([source](https://support.google.com/googleplay/android-developer/answer/10787469)) |
 |--------------|---------|
 | Location | Approximate, precise |
-| Personal info | Name, email, user ID, address, phone |
-| Financial info | Payment info, purchase history, credit info |
+| Personal info | Name, email, user ID, address, phone, race/ethnicity, political/religious beliefs, sexual orientation, other (DOB, gender identity, veteran status) |
+| Financial info | Payment info, purchase history, credit score, other financial info (salary, debts) |
 | Health & fitness | Health data, fitness data |
-| Messages | Emails, SMS, other messages |
+| Messages | Emails, SMS/MMS, other messages |
 | Photos & videos | Photos, videos |
-| Audio | Voice recordings, music files |
+| Audio | Voice/sound recordings, music files, other audio files |
 | Files & docs | Files, documents |
 | Calendar | Calendar events |
 | Contacts | Contacts |
-| App activity | Page views, in-app search, installed apps |
+| App activity | App interactions, in-app search history, installed apps, other user-generated content, other actions |
 | Web browsing | Web history |
-| App info & performance | Crash logs, diagnostics, performance data |
-| Device or other IDs | Device ID, advertising ID, GAID |
+| App info & performance | Crash logs, diagnostics, other app performance data |
+| Device or other IDs | IMEI, MAC address, Widevine Device ID, Firebase installation ID, advertising identifier |
 
 ### 5.3 For Each Data Type, Declare
 
@@ -62,7 +62,7 @@ For EVERY piece of data your app or ANY SDK collects:
 
 ### 5.4 SDK Audit (Critical)
 
-YOU are responsible for ALL data collected by third-party SDKs. Google uses ML to cross-check — inconsistencies trigger review.
+YOU are responsible for ALL data collected by third-party SDKs ([source](https://support.google.com/googleplay/android-developer/answer/10787469)). Google states: "When Google becomes aware of a discrepancy between your app behavior and your declaration, we may take appropriate action, including enforcement action."
 
 For each SDK:
 1. Check SDK documentation for data collection practices
@@ -107,7 +107,7 @@ You MUST answer data deletion questions in the Data Safety form:
 
 - [ ] Data Safety form completed in Play Console
 - [ ] ALL SDKs audited for data collection (see table above)
-- [ ] Collection matches actual app behavior (Google ML verifies this)
+- [ ] Collection matches actual app behavior (discrepancies may trigger enforcement)
 - [ ] Data handling matches privacy policy text
 - [ ] Encryption in transit declared accurately
 - [ ] Data deletion mechanism declared
@@ -127,13 +127,16 @@ If your app allows users to create an account, you MUST:
 
 ### 6.2 What Must Be Deleted
 
-All user data associated with the account:
+All user data associated with the account ([source](https://support.google.com/googleplay/android-developer/answer/13327111)):
 - Personal and sensitive user data
 - Personally identifiable information
 - Financial and payment information
 - Authentication information
-- Phonebook, contacts, location data
+- Phonebook, contacts, device location
 - SMS and call-related data
+- Health data, Health Connect data
+- Inventory of other apps on the device
+- Microphone, camera, and other sensitive device or usage data
 - Any other data linked to the account
 
 ### 6.3 Exceptions

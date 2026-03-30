@@ -50,7 +50,7 @@ Google Play may provide a temporary exception to apps that aren't Default SMS, P
 2. There must be **no alternative method** to provide the core functionality
 3. The app's description must **prominently document and promote** the core feature(s) requiring SMS access
 4. Must submit **[Permissions Declaration Form](https://support.google.com/googleplay/android-developer/answer/9214102)** in Play Console
-5. Exception APKs must represent a **very small percentage** (no more than a low single-digit %) of total install base
+5. For **old APKs published before Jan 1, 2019** that cannot be modified: exception APKs must represent a very small percentage (no more than a low single-digit %) of total install base ([source](https://support.google.com/googleplay/android-developer/answer/10208820))
 6. Google Play will review requests and grant exceptions on a **case-by-case basis**
 
 #### 3.1.2 SMS & Call Log Policy Compliance
@@ -175,7 +175,7 @@ grep -rn "Telephony.Sms\|SmsMessage\|pdus" --include="*.kt"
 - [ ] Verify no alternative method exists (e.g., SMS Retriever API for OTP)
 - [ ] Permissions Declaration Form submitted with detailed justification
 - [ ] App description prominently documents and promotes SMS-dependent core features
-- [ ] Exception APKs represent low single-digit % of total install base
+- [ ] For old APKs (pre-Jan 2019): exception APKs represent low single-digit % of total install base
 - [ ] All SMS/Call Log exceptions comply with Spyware Policy, Permissions Policy, and User Data Policy (Section 3.1.2)
 - [ ] No exfiltration of non-financial or personal SMS history (loan/budgeting apps)
 - [ ] SMS data not used for advertising, marketing, or improving other apps/services
@@ -204,7 +204,7 @@ grep -c "<package android:name" AndroidManifest.xml
 - [ ] `<queries>` block limited to packages with documented business justification
 - [ ] Permissions Declaration Form submitted if broad visibility needed
 
-### 3.3 Photo & Video Permissions (Updated January 2025)
+### 3.3 Photo & Video Permissions (Announced Oct 2023, Full Compliance May 2025)
 
 **Policy effective May 28, 2025**: Apps with `READ_MEDIA_IMAGES` or `READ_MEDIA_VIDEO` must either:
 1. Use **Android Photo Picker** (for one-time/infrequent access like profile photo upload)
@@ -245,10 +245,9 @@ grep -n "READ_MEDIA_IMAGES\|READ_MEDIA_VIDEO\|READ_EXTERNAL_STORAGE" AndroidMani
 
 **Policy**: Apps targeting API 34+ MUST declare a `foregroundServiceType` for each foreground service in the manifest.
 
-**Play Console requirement**: For each foreground service type, you must:
-1. Provide a description of the functionality
-2. Include a link to a demo video showing the feature
-3. Explain user impact
+**Play Console requirement** ([source](https://support.google.com/googleplay/android-developer/answer/13392821)): For each foreground service type, you must:
+1. Describe the use case for each FGS permission used
+2. Explain the user impact
 
 Available types: `camera`, `connectedDevice`, `dataSync`, `health`, `location`, `mediaPlayback`, `mediaProjection`, `microphone`, `phoneCall`, `remoteMessaging`, `shortService`, `specialUse`, `systemExempted`
 
@@ -268,7 +267,7 @@ grep -n "<service" AndroidManifest.xml | grep -v "foregroundServiceType"
 
 - [ ] All foreground services declare explicit `foregroundServiceType`
 - [ ] `FOREGROUND_SERVICE_<TYPE>` permission declared for each type
-- [ ] Play Console FGS declaration form completed with video demo
+- [ ] Play Console FGS declaration form completed with use case description and user impact
 
 ### 3.7 Exact Alarm Permissions
 

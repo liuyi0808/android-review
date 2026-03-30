@@ -13,7 +13,7 @@
 
 ---
 
-Google Play's Deceptive Behavior policy is the **#1 cause of app rejection**. This section requires deep code-level audit beyond simple checklist items.
+Google Play's Deceptive Behavior policy is a **leading cause of app rejection** *(commonly reported by developers, not officially ranked by Google)*. This section requires deep code-level audit beyond simple checklist items.
 
 ### 10.1 Misleading Claims & Metadata Mismatch
 
@@ -137,7 +137,7 @@ grep -rn "isOverdue\|isDefaulted\|loanStatus.*==\|delinquent" --include="*.kt" -
 ### 10.7 Ads Compliance (if applicable)
 
 - [ ] No ads mimicking app UI or system notifications
-- [ ] No fullscreen interstitial ads that can't be closed within 2 seconds
+- [ ] No fullscreen interstitial ads that can't be easily closed *(see [Better Ads Experiences policy](https://support.google.com/googleplay/android-developer/answer/12271244) for details)*
 - [ ] No ads triggered by accidental taps (misleading close buttons)
 - [ ] Ad SDKs declared in Data Safety section
 - [ ] No personalized ads for children under 12 (Families Policy)
