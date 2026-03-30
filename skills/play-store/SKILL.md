@@ -177,8 +177,7 @@ Each reference file contains the full policy details, code audit commands, and c
 | January 28, 2026 | Updated Developer Program Policies effective | Full enforcement |
 | March 4, 2026 | Thailand loan app listing requirements | Existing apps |
 | July 2025 | Short-term loan (<60 days) exception narrowed to Pakistan only | Loan apps |
-| September 2026 | Developer Verification (Brazil, Indonesia, Singapore, Thailand) | Install blocked |
-| 2027+ | Developer Verification (other regions) | Install blocked |
+| July 2024+ | Financial/health/VPN/government developers must register as Organization | Rolling out |
 
 ---
 

@@ -11,7 +11,7 @@
   - [3.1.7 Declaration Process](#317-declaration-process)
   - [3.1.8 Checklist](#318-checklist)
 - [3.2 QUERY_ALL_PACKAGES](#32-query_all_packages-installed-apps-visibility)
-- [3.3 Photo & Video Permissions](#33-photo--video-permissions-updated-january-2025)
+- [3.3 Photo & Video Permissions](#33-photo--video-permissions-announced-oct-2023-full-compliance-may-2025)
 - [3.4 Location Permissions](#34-location-permissions)
 - [3.5 Camera Permission](#35-camera-permission)
 - [3.6 Foreground Service Types](#36-foreground-service-types-android-14--api-34)

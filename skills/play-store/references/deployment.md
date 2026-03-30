@@ -9,31 +9,23 @@
 
 ## 15. Developer Verification (2026)
 
-### 15.1 New Requirement
+### 15.1 Organization Registration Requirement
 
-Starting September 2026, Google will require **all Android apps** installed on certified devices to be registered by **verified developers**.
+Developers providing the following services must register as an **Organization** account (not individual) in Play Console ([source](https://support.google.com/googleplay/android-developer/answer/14993590)):
+- Financial products and services
+- Health
+- VPN
+- Government
 
-> Source: [Policy announcement: July 17, 2024](https://support.google.com/googleplay/android-developer/answer/14993590) — "We're requiring developers providing the following services to register as an Organization: financial products and services, health, VPN, and government."
+> "This is to promote transparency and continuity for critical and sensitive services. This update will roll out to new developer accounts first. Existing developers will receive more information later this year."
 
-### 15.2 Rollout Schedule
+**Financial app impact**: All financial/loan app developers must ensure their Play Console account is registered as an Organization with verified identity.
 
-| Date | Region |
-|------|--------|
-| September 2026 | Brazil, Indonesia, Singapore, Thailand |
-| 2027+ | Other regions (gradual rollout) |
-| September 2027 | Managed devices (DO) and Work Profiles (BYOD/COPE) |
+### 15.2 Action Items
 
-### 15.3 Impact
-
-- Apps from unverified developers will not install on certified devices
-- Existing apps may need developer re-verification
-- Enterprise/MDM apps have extended timeline until September 2027
-
-### 15.4 Action Items
-
-- [ ] Verify developer identity in Play Console
-- [ ] Ensure organization details (name, address, DUNS) are up to date
-- [ ] Prepare for additional verification for Latin American regions (Brazil first batch)
+- [ ] Play Console account registered as Organization (not individual)
+- [ ] Organization identity verified (name, address, DUNS number)
+- [ ] Monitor Play Console for additional verification requirements as they are announced
 
 ---
 

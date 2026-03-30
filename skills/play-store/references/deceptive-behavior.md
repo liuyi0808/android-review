@@ -23,6 +23,19 @@ Google Play's Deceptive Behavior policy is a **leading cause of app rejection** 
 - [ ] App category correctly reflects primary functionality
 - [ ] No keyword stuffing in title or description
 
+#### 10.1.1 Minimum Functionality (WebView Wrapper Risk)
+
+Google's [Spam and Minimum Functionality policy](https://support.google.com/googleplay/android-developer/answer/14983486) requires apps to provide a minimum level of native functionality. Financial/loan apps that are essentially WebView wrappers around a mobile website risk rejection.
+
+Common financial app patterns that trigger rejection:
+- Loan application form is entirely a WebView loading a website
+- App provides no native features beyond the WebView (no biometric auth, no push notifications, no offline capability)
+- App can be fully replaced by a browser bookmark
+
+- [ ] App provides meaningful native functionality beyond WebView
+- [ ] Core financial features (KYC, loan application) have native UI components
+- [ ] App is not a simple wrapper around a mobile website
+
 ### 10.2 System UI Mimicry
 
 Apps must NEVER create UI that mimics Android system dialogs, notifications, or warnings.

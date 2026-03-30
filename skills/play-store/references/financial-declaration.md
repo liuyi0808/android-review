@@ -46,6 +46,15 @@ If your app includes personal loan features (direct lending, loan facilitation, 
 - [ ] No predatory lending practices (excessive fees, harassment)
 - [ ] App category MUST be set to "Finance"
 
+### 4.3.1 High APR Personal Loans (US)
+
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/9876821)): "In the United States, we do not allow apps for personal loans where the Annual Percentage Rate (APR) is 36% or higher. Apps for personal loans in the United States must display their maximum APR, calculated consistently with the [Truth in Lending Act (TILA)](https://www.ecfr.gov/cgi-bin/text-idx?c=ecfr&tpl=/ecfrbrowse/Title12/12cfr1026_main_02.tpl)."
+
+This applies to apps which offer loans directly, lead generators, and those who connect consumers with third-party lenders.
+
+- [ ] US-targeted loan apps: APR < 36%
+- [ ] US-targeted loan apps: maximum APR displayed, calculated per TILA
+
 ## 4.4 Country-Specific Requirements
 
 | Country | Requirement | Status |
@@ -57,6 +66,12 @@ If your app includes personal loan features (direct lending, loan facilitation, 
 | Kenya | CBK Digital Credit Provider (DCP) license; must be on CBK Directory | Active |
 | Pakistan | SECP approval required; each NBFC limited to 1 DLA; short-term loans rare exception only | Active |
 | Thailand | BoT or MoF license (if interest ≥ 15%); display loan service provider, max interest rates, all fees in listing | Active |
+
+### 4.4.1 Cryptocurrency / Blockchain (If Applicable)
+
+If your financial app handles cryptocurrency payments, exchanges, or wallets, additional policies apply:
+- [Blockchain-based Content policy](https://support.google.com/googleplay/android-developer/answer/13607354)
+- [Cryptocurrency Exchanges and Software Wallets — country-specific requirements](https://support.google.com/googleplay/android-developer/answer/16329703)
 
 ## 4.5 Line of Credit Apps (April 2025 Update)
 
