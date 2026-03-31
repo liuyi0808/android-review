@@ -174,14 +174,19 @@ Runs a 3-phase audit: triage applicable categories, parallel anti-pattern scan, 
 
 ### play-store
 
-Comprehensive pre-submission audit covering 18+ Google Play policy areas. Updated for the 2025-2026 policy cycle.
+Comprehensive pre-submission audit covering 18+ Google Play policy areas. Updated for the 2025-2026 policy cycle (policy effective date: March 4, 2026).
 
 **Key deadlines tracked:**
-- Target API 35 — August 2025
-- Financial Features Declaration — October 2025
-- Developer verification — September 2026
 
-**Special coverage for financial/loan apps:** Financial Features Declaration, Personal Loan policy, loan harassment, predatory lending, prohibited credit scoring data.
+| Deadline | Policy |
+|----------|--------|
+| May 28, 2025 | Photo/Video permissions full compliance; line of credit → Personal Loan policy |
+| August 31, 2025 | Target API 35 for new apps and updates |
+| November 1, 2025 | API 35 extension deadline (no more extensions) |
+| January 2026 | Age Signals API, Accessibility API autonomous action, India loan app list |
+| March 4, 2026 | Updated Developer Program Policies full enforcement |
+
+**Special coverage for financial/loan apps:** Financial Features Declaration, Personal Loan policy, loan harassment, predatory lending, prohibited credit scoring data, country-specific rules (India, Thailand).
 
 **Output uses three severity levels:** `BLOCKER` (will cause rejection), `WARNING` (risk of rejection), `INFO` (recommendation).
 
