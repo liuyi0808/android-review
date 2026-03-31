@@ -1,5 +1,14 @@
 # Android Review Release Notes
 
+## v1.2.0 (2026-03-31)
+
+### Play Store Skill — Policy Verification Overhaul
+- Align SMS/Call Log policy with 2025-2026 Google Play requirements
+- Verify and update all policy references against official documentation
+- Correct 12 factual errors found in policy verification audit
+- Address second-round verification findings
+- Deep policy verification — 24 substantive corrections across play-store skill
+
 ## v1.1.0 (2026-02-12)
 
 ### Improvements
