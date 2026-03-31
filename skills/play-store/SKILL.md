@@ -7,7 +7,7 @@ description: Google Play Store submission and compliance checklist for Android a
 
 Comprehensive pre-submission audit and compliance verification for Google Play Store publishing. Includes 2025-2026 policy updates with special sections for **financial/loan apps**.
 
-**Policy effective date**: January 28, 2026 (unless otherwise stated per section).
+**Policy effective date**: March 4, 2026 (unless otherwise stated per section).
 
 ## Pre-Submission Audit Process
 
@@ -80,7 +80,7 @@ Each reference file contains the full policy details, code audit commands, and c
 - [ ] Loan terms in app description (APR, repayment, representative cost)
 - [ ] Licensing documents uploaded for target countries
 - [ ] No short-term loans (< 60 days)
-- [ ] No access to photos/contacts for lending decisions (SMS governed by Section 3.1 exception policy)
+- [ ] No access to photos/contacts for lending decisions — applies to loan apps, accessory loan/credit apps (calculators, guides), and EWA apps (SMS governed by Section 3.1 exception policy)
 - [ ] EWA apps: fees transparent ($1–$5 or 1–5%), no debt creation, no credit bureau reporting
 
 ## Spyware & Privacy (Section 11)
@@ -171,12 +171,13 @@ Each reference file contains the full policy details, code audit commands, and c
 | May 28, 2025 | Photo/Video permissions full compliance | App removal if non-compliant |
 | May 28, 2025 | Line of credit apps must comply with Personal Loan policy | BLOCKER |
 | August 31, 2025 | Target API 35 for new apps and updates | Submission blocked |
-| October 30, 2025 | Financial Features Declaration required for all updates | Updates blocked |
 | November 1, 2025 | API 35 extension deadline | No more extensions |
-| January 1, 2026 | Age Signals API data use restriction | Policy enforcement |
-| January 28, 2026 | Updated Developer Program Policies effective | Full enforcement |
-| March 4, 2026 | Thailand loan app listing requirements | Existing apps |
-| July 2025 | Short-term loan (<60 days) exception narrowed to Pakistan only | Loan apps |
+| January 1, 2026 | Age Signals API data use restriction (announced Nov 19, 2025) | Policy enforcement |
+| January 28, 2026 | Age-Restricted Content: block minors from gambling/dating/matchmaking | Policy enforcement |
+| January 28, 2026 | Accessibility API: autonomous action prohibition enforced | Policy enforcement |
+| January 28, 2026 | India personal loan apps: must be on government approved list | Policy enforcement |
+| March 4, 2026 | Updated Developer Program Policies effective | Full enforcement |
+| March 4, 2026 | Thailand loan app listing requirements (service provider, rates, fees) | Existing apps |
 | July 2024+ | Financial/health/VPN/government developers must register as Organization | Rolling out |
 
 ---

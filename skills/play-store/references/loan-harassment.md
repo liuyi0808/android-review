@@ -12,8 +12,12 @@ Google Play has specific policies targeting predatory lending and aggressive deb
 
 ### 14.1 Prohibited Contact/Harassment Practices
 
-**Policy**: Loan apps must NOT:
-- Access user's contact list for debt collection
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans)): The `READ_CONTACTS` permission is **entirely prohibited** for personal loan apps, accessory loan/credit apps, and EWA apps — regardless of purpose (not just debt collection). This means contact data cannot be accessed for any reason including loan application, risk assessment, or debt collection.
+
+**Prohibited by policy**:
+- Access user's contact list for **any purpose** (permission entirely banned)
+
+**Enforcement-derived practices** (inferred from the blanket contact ban and consistent Google Play enforcement patterns against predatory loan apps, not verbatim policy text):
 - Send automated messages to user's contacts about overdue loans
 - Call/message user's emergency contacts for debt collection
 - Use aggressive notification patterns to pressure repayment
@@ -73,18 +77,19 @@ grep -rn "APR\|tasa.*anual\|interest.*rate\|tasa.*interes" --include="*.xml" --i
 
 ### 14.3 Data Usage for Lending Decisions
 
-**Policy**: Loan apps must NOT use certain data types for credit scoring or lending decisions:
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans)): Personal loan apps, accessory loan/credit apps, and EWA apps are prohibited from accessing sensitive data. The following permissions are **entirely banned** regardless of purpose:
 
-| Data Type | Use for Credit Scoring | Policy |
-|-----------|----------------------|--------|
-| SMS content | PROHIBITED | Spyware Policy |
-| Contact list | PROHIBITED | Personal Loans Policy |
-| Installed apps | PROHIBITED | QUERY_ALL_PACKAGES Policy |
-| Photos/media | PROHIBITED | Personal Loans Policy |
-| Fine location | PROHIBITED | Personal Loans Policy |
-| Coarse location | ALLOWED with disclosure | Must declare in Data Safety |
-| Device ID | ALLOWED with disclosure | Must declare in Data Safety |
-| Financial records (credit bureau) | ALLOWED | Standard practice |
+| Data Type | Permission Status | Policy Source |
+|-----------|------------------|---------------|
+| Contact list | **BANNED** — `READ_CONTACTS` entirely prohibited | Personal Loans Policy |
+| Photos/media | **BANNED** — `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEOS`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` entirely prohibited | Personal Loans Policy |
+| Fine location | **BANNED** — `ACCESS_FINE_LOCATION` entirely prohibited | Personal Loans Policy |
+| Phone numbers | **BANNED** — `READ_PHONE_NUMBERS` entirely prohibited | Personal Loans Policy |
+| Installed apps | **BANNED** — `QUERY_ALL_PACKAGES` entirely prohibited | Personal Loans Policy + QUERY_ALL_PACKAGES Policy |
+| SMS content | Governed by SMS/Call Log Policy (requires exception approval); non-financial SMS exfiltration prohibited | Spyware Policy ([source](https://support.google.com/googleplay/android-developer/answer/14745000)) |
+| Coarse location | Not in prohibited list; allowed with proper disclosure | Must declare in Data Safety |
+| Device ID | Not in prohibited list; allowed with proper disclosure | Must declare in Data Safety |
+| Financial records (credit bureau) | Allowed | Standard practice |
 
 **Code audit**:
 ```bash

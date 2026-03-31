@@ -1,4 +1,4 @@
-# Deceptive Behavior Policy (Top Rejection Reason)
+# Deceptive Behavior Policy (Common Rejection Cause)
 
 ## Table of Contents
 - [10.1 Misleading Claims & Metadata Mismatch](#101-misleading-claims--metadata-mismatch)
@@ -25,7 +25,7 @@ Google Play's Deceptive Behavior policy is a **leading cause of app rejection** 
 
 #### 10.1.1 Minimum Functionality (WebView Wrapper Risk)
 
-Google's [Spam and Minimum Functionality policy](https://support.google.com/googleplay/android-developer/answer/14983486) requires apps to provide a minimum level of native functionality. Financial/loan apps that are essentially WebView wrappers around a mobile website risk rejection.
+Google's [Spam and Minimum Functionality policy](https://support.google.com/googleplay/android-developer/answer/14983486) states: "We do not allow apps that only have limited functionality and content" and prohibits "apps that are static without app-specific functionalities." While the policy does not explicitly mention "WebView wrappers," financial/loan apps that are essentially WebView wrappers around a mobile website would likely fall under "limited functionality" and risk rejection.
 
 Common financial app patterns that trigger rejection:
 - Loan application form is entirely a WebView loading a website
@@ -133,7 +133,8 @@ grep -rn "feature.*flag\|remote.*config\|A/B.*test\|experiment" --include="*.kt"
 grep -rn "isOverdue\|isDefaulted\|loanStatus.*==\|delinquent" --include="*.kt" -i
 ```
 
-- [ ] No DexClassLoader or dynamic class loading from server
+- [ ] No DexClassLoader or dynamic class loading from server — policy ([source](https://support.google.com/googleplay/android-developer/answer/9888379)): "an app may not download executable code (such as dex, JAR, .so files) from a source other than Google Play"
+- [ ] **Exception**: "This restriction does not apply to code that runs in a virtual machine or an interpreter where either provides indirect access to Android APIs (such as JavaScript in a webview or browser)" ([source](https://support.google.com/googleplay/android-developer/answer/9888379))
 - [ ] No native library loading from URLs
 - [ ] No undisclosed remote configuration that changes core behavior
 - [ ] No behavior differences based on user's loan/debt status that aren't disclosed
@@ -150,19 +151,29 @@ grep -rn "isOverdue\|isDefaulted\|loanStatus.*==\|delinquent" --include="*.kt" -
 ### 10.7 Ads Compliance (if applicable)
 
 - [ ] No ads mimicking app UI or system notifications
-- [ ] No fullscreen interstitial ads that can't be easily closed *(see [Better Ads Experiences policy](https://support.google.com/googleplay/android-developer/answer/12271244) for details)*
+- [ ] No unexpected fullscreen interstitial ads (e.g., appearing at start of game level, content segment, or navigation action) *(see [Better Ads Experiences policy](https://support.google.com/googleplay/android-developer/answer/12271244): "prevent unexpected full screen interstitials")*
 - [ ] No ads triggered by accidental taps (misleading close buttons)
 - [ ] Ad SDKs declared in Data Safety section
 - [ ] No personalized ads for children under 12 (Families Policy)
 - [ ] Ad frequency reasonable (not overwhelming)
 
-### 10.8 Families Policy (if targeting children)
+### 10.8 Families Policy & Child Safety Standards
 
-- [ ] Child Safety Standards self-certification completed
-- [ ] No personalized advertising
+**Families Policy** (if targeting children — [source](https://support.google.com/googleplay/android-developer/answer/9893335)):
+- [ ] No personalized advertising to children
 - [ ] Age-appropriate content only
 - [ ] Parental consent mechanisms implemented
 - [ ] No data collection from children beyond minimum required
+
+**Child Safety Standards** (if app is a Social or Dating app — [source](https://support.google.com/googleplay/android-developer/answer/14747720)):
+- [ ] Published standards prohibiting CSAE (Child Sexual Abuse and Exploitation)
+- [ ] In-app mechanism for user feedback/reporting
+- [ ] Process to address CSAM (Child Sexual Abuse Material)
+- [ ] Compliance with applicable child safety laws
+- [ ] Designated child safety point of contact
+- [ ] Self-certification completed before publishing
+
+> **Note**: Child Safety Standards apply specifically to **Social and Dating apps**, not all apps targeting children. These are separate from the general Families Policy.
 
 ### 10.9 User-Generated Content (if applicable)
 

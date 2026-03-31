@@ -78,7 +78,7 @@ From the [Permissions and APIs that Access Sensitive Information](https://suppor
 The **Personal Loans policy** (separate from SMS/Call Log policy) explicitly prohibits personal loan apps from accessing certain sensitive data for risk assessment:
 
 **Prohibited permissions for personal loan apps** (since May 31, 2023, updated April 2025):
-- `READ_CONTACTS` / `WRITE_CONTACTS`
+- `READ_CONTACTS`
 - `READ_PHONE_NUMBERS`
 - `ACCESS_FINE_LOCATION`
 - `READ_EXTERNAL_STORAGE`
@@ -181,7 +181,7 @@ grep -rn "Telephony.Sms\|SmsMessage\|pdus" --include="*.kt"
 - [ ] SMS data not used for advertising, marketing, or improving other apps/services
 - [ ] No alternative methods used to derive SMS/Call Log data
 - [ ] App stops using permissions immediately upon losing default handler status
-- [ ] Personal loan apps: No `READ_CONTACTS`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION`, `READ_MEDIA_IMAGES` in manifest
+- [ ] Personal loan apps: No `READ_CONTACTS`, `READ_PHONE_NUMBERS`, `ACCESS_FINE_LOCATION`, `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `QUERY_ALL_PACKAGES` in manifest
 
 ### 3.2 QUERY_ALL_PACKAGES (Installed Apps Visibility)
 
@@ -249,7 +249,7 @@ grep -n "READ_MEDIA_IMAGES\|READ_MEDIA_VIDEO\|READ_EXTERNAL_STORAGE" AndroidMani
 1. Describe the use case for each FGS permission used
 2. Explain the user impact
 
-Available types: `camera`, `connectedDevice`, `dataSync`, `health`, `location`, `mediaPlayback`, `mediaProjection`, `microphone`, `phoneCall`, `remoteMessaging`, `shortService`, `specialUse`, `systemExempted`
+Available types: `camera`, `connectedDevice`, `dataSync`, `health`, `location`, `mediaPlayback`, `mediaProjection`, `mediaProcessing`, `microphone`, `phoneCall`, `remoteMessaging`, `shortService`, `specialUse`, `systemExempted`
 
 ```xml
 <!-- Manifest declaration required -->

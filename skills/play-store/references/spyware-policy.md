@@ -9,7 +9,9 @@
 
 ---
 
-Google Play's Spyware Policy defines four categories of prohibited behavior. **Financial/loan apps are under heightened scrutiny** because they handle sensitive financial data and historically have the highest violation rates.
+**Note**: The four categories below are an **organizational framework for this audit guide**, not Google's official categorization. Google's [Spyware policy](https://support.google.com/googleplay/android-developer/answer/9888380#spyware) addresses these concerns without using numbered categories. The categorization is derived from the policy requirements and violation examples listed in [Understanding Google Play's Spyware policy](https://support.google.com/googleplay/android-developer/answer/14745000).
+
+**Financial/loan apps are under heightened scrutiny** because they handle sensitive financial data and historically have the highest violation rates.
 
 **Policy reference**: [Understanding Google Play's Spyware policy](https://support.google.com/googleplay/android-developer/answer/14745000) | [Spyware policy (full)](https://support.google.com/googleplay/android-developer/answer/9888380#spyware)
 
@@ -103,9 +105,11 @@ For each upload endpoint found, trace backwards to answer:
 
 **Definition**: Collecting data that has no reasonable connection to the app's stated purpose.
 
+**Note**: The "justified" and "hard to justify" lists below are **audit guidance** based on the policy principle that data collection must be "necessary" and "reasonably expected" ([User Data policy](https://support.google.com/googleplay/android-developer/answer/10144311)). Google does not provide specific lists for financial apps — these categorizations reflect industry practice and enforcement patterns.
+
 **For financial/loan apps**, the following MAY be justified (with proper disclosure):
-- Financial SMS (for transaction verification)
-- Location (for fraud detection)
+- Financial SMS (for transaction verification — requires SMS exception approval per Section 3.1)
+- Location (for fraud detection — `ACCESS_FINE_LOCATION` is banned for loan apps; only coarse location allowed)
 - Device ID (for device binding)
 - Camera (for KYC document capture)
 
@@ -164,7 +168,7 @@ The [Spyware policy](https://support.google.com/googleplay/android-developer/ans
 > Examples of Spyware policy violations:
 > - An app that uses an SDK which transmits data from audio or call recordings when it is not related to policy compliant app functionality.
 > - An application that steals information from other apps' notifications.
-> - Transmitting any of the following without policy compliant functionality or in a manner that is unexpected to the user (for example, if data collection occurs in the background when the user is not engaging with your app): Contact list, Photos or other files from the SD card, Content from user email, Call log, **SMS log**, Information from the /data/ directories of other apps.
+> - Transmitting any of the following non-exhaustive list of information without policy compliant functionality or in a manner that is unexpected to the user (for example, if data collection occurs in the background when the user is not engaging with your app): Contact list, Photos or other files from the SD card **that aren't owned by the app**, Content from user email, Call log, **SMS log**, Information from the /data/ directories of other apps.
 > - **Personal loans or budgeting apps exfiltrating or sharing non-financial or personal SMS history of a user.**
 
 Even if your app has a valid SMS exception (Section 3.1), all SMS and Call Log use case exceptions must comply with the Spyware Policy, which prohibits exfiltration of data not related to policy-compliant functionality.

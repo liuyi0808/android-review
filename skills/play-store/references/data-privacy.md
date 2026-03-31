@@ -70,7 +70,7 @@ For each SDK:
 3. Include SDK's data collection in YOUR Data Safety form
 4. Update whenever SDK version changes
 
-Common SDKs and their data collection:
+Common SDKs and their data collection (**Note**: This table is compiled from each SDK's official documentation, not from Google Play policy. Actual data collection may vary by SDK version. Always check [Google Play SDK Index](https://play.google.com/sdks) and each SDK's own Data Safety guidance for current information):
 
 | SDK | Data Collected |
 |-----|---------------|
@@ -141,10 +141,12 @@ All user data associated with the account ([source](https://support.google.com/g
 
 ### 6.3 Exceptions
 
-You may retain data for legitimate reasons:
+**Exempt app types** ([source](https://support.google.com/googleplay/android-developer/answer/13327111)): "Permanently private and enterprise device management apps are exempt from this policy requirement." Non-mobile apps (Android TV, Wear OS) do not need in-app deletion but must provide a web resource.
+
+**Data retention**: You may retain data for legitimate reasons ([source](https://support.google.com/googleplay/android-developer/answer/13327111)):
 - Security and fraud prevention
 - Regulatory compliance (financial record retention)
-- BUT must clearly disclose retention in privacy policy
+- BUT must clearly inform users about data retention practices (e.g., in privacy policy)
 
 ### 6.4 What Does NOT Qualify
 
@@ -172,7 +174,7 @@ grep -rn "deleteAccount\|removeAccount\|accountDeletion" --include="*.kt"
 
 ### 7.1 Requirements
 
-- [ ] Hosted on active, publicly accessible URL (NOT PDF, NOT geofenced)
+- [ ] Hosted on active, publicly accessible, **non-editable** URL (NOT PDF, NOT geofenced) ([source](https://support.google.com/googleplay/android-developer/answer/10144311))
 - [ ] URL provided in Play Console designated field
 - [ ] Link accessible within the app itself
 - [ ] Entity name matches Play Console developer name
@@ -181,15 +183,18 @@ grep -rn "deleteAccount\|removeAccount\|accountDeletion" --include="*.kt"
 
 ### 7.2 Content Must Include
 
-- [ ] What personal/sensitive data is collected
-- [ ] How data is used (purposes for each data type)
-- [ ] How data is shared (and with whom — name third parties)
-- [ ] Data retention period
-- [ ] Data deletion procedure (how users can request deletion)
-- [ ] Security measures for data protection
-- [ ] Third-party SDK data practices (each SDK listed)
-- [ ] Children's data handling (if applicable)
-- [ ] Contact information for privacy inquiries
+**Required by policy** ([source](https://support.google.com/googleplay/android-developer/answer/10144311)):
+- [ ] Developer information and a privacy point of contact or inquiry mechanism
+- [ ] Types of personal and sensitive user data accessed, collected, used, and shared
+- [ ] Parties with which personal or sensitive user data is shared
+- [ ] Secure data handling procedures for personal and sensitive user data
+- [ ] Developer's data retention and deletion policy
+- [ ] Clear labeling as a privacy policy
+
+**Best practice** (recommended for comprehensive coverage):
+- [ ] Purposes for each data type collected
+- [ ] Children's data handling (required only if app targets children)
+- [ ] Third-party SDK data practices
 - [ ] Date of last update
 
 ### 7.3 Financial App Privacy Policy Additions

@@ -12,7 +12,7 @@
 
 ### 12.1 Device Settings Modification
 
-Apps must NEVER modify device settings without explicit user consent and clear disclosure.
+Apps must NEVER modify device settings without explicit user consent and clear disclosure. Any permitted changes must be **easily reversible** by the user ([source](https://support.google.com/googleplay/android-developer/answer/9888077): "Apps that modify device settings or features with the user's consent but do so in a way that is not easily reversible" are also prohibited).
 
 **Code audit**:
 ```bash
@@ -39,20 +39,24 @@ grep -rn "BIND_DEVICE_ADMIN\|device_admin" --include="*.xml"
 
 Accessibility services are heavily scrutinized. Using them for non-accessibility purposes is a **BLOCKER**.
 
-#### Policy Update (October 30, 2025)
+#### Policy Update (announced October 30, 2025; enforcement deadline January 28, 2026)
 
-Google's updated policy explicitly states:
+Google's updated policy states ([source](https://support.google.com/googleplay/android-developer/answer/10964491)):
 
-> "Any use of this API that enables an app to autonomously initiate, plan, and execute actions is prohibited."
+> "Any use of the Accessibility API that enables an app to autonomously initiate, plan, and execute actions **or decisions** is strictly prohibited."
 
-**Prohibited autonomous behaviors**:
+**Exception** ([source](https://support.google.com/googleplay/android-developer/answer/10964491)): "This does not prohibit deterministic, rule-based automation, where behavior follows a static, human-defined script (for example, 'If Trigger X occurs, perform Action Y')."
+
+**Exemption**: Verified accessibility tools identified by `isAccessibilityTool='true'` are exempt from this prohibition ([source](https://support.google.com/googleplay/android-developer/answer/10964491)).
+
+**Behaviors that would violate the policy** (audit guidance — these are inferred from the general prohibition, not individually named in policy text):
 - Automatically modifying device settings or system preferences
 - Bypassing Android privacy controls or permission dialogs
 - Performing UI actions (clicks, scrolls, gestures) without real-time user awareness
 - Automated form filling, screenshot capture, or button clicks via Accessibility API
 - Executing UI operations in a deceptive manner (e.g., hidden overlay clicks)
 
-**Special warning for financial apps**: The following patterns are **explicitly prohibited** even when the Accessibility API is declared for a legitimate accessibility purpose:
+**Financial app warning**: The following patterns would violate the policy even when the Accessibility API is declared for a legitimate accessibility purpose (audit guidance):
 - Automated identity verification flows (auto-filling KYC forms)
 - Automated form submission on behalf of the user
 - Reading screen content from other apps (e.g., reading OTPs from SMS app, scraping bank balances)
@@ -157,4 +161,5 @@ grep -rn "MediaRecorder.*setVideoSource\|SURFACE\|createVirtualDisplay" --includ
 - [ ] No network abuse
 - [ ] No preventing uninstallation
 - [ ] App respects FLAG_SECURE set by other apps
-- [ ] No root detection that blocks entire app (detecting root for security and warning user is acceptable; blocking app entirely may be flagged)
+- [ ] No autonomous actions or decisions via Accessibility API (exception: deterministic rule-based automation)
+- [ ] Device settings changes are easily reversible

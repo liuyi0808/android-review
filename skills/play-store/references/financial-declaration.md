@@ -19,14 +19,28 @@ Any app that contains any financial features must complete the Financial Feature
 
 ## 4.2 What to Declare
 
-- Whether app contains or promotes financial products/services
-- Types of financial features (personal loans, banking, insurance, cryptocurrency, etc.)
+You must declare whether your app contains or promotes financial products/services, and select all applicable categories ([source](https://support.google.com/googleplay/android-developer/answer/13849271)):
+
+| Category Group | Specific Types |
+|---------------|----------------|
+| **Banking and loans** | Personal loan direct lender, Loan facilitator, Payday loans, Banking, Line of credit, Earned wage advances, Microfinance banking |
+| **Payments and transfers** | Mobile payments / digital wallets, Money transfer / wire services |
+| **Purchase agreements** | Rewards / points, Buy now pay later |
+| **Trading and funds** | Crypto wallet, Crypto exchange, NFTs, Stock trading, Crowdfunding / chit funds |
+| **Support services** | Credit monitoring, Financial advice, Insurance, Other |
+
+You must also provide:
 - Licensing documentation for applicable countries
 - Lender relationships and business model
 
 ## 4.3 Personal Loan App Requirements
 
-If your app includes personal loan features (direct lending, loan facilitation, line of credit, EWA):
+**Personal Loan definition** ([source](https://support.google.com/googleplay/android-developer/answer/9876821)): "We define personal loans as lending money from one individual, organization, or entity to an individual consumer on a nonrecurring basis, not for the purpose of financing purchase of a fixed asset or education."
+
+- **Included**: Personal loans, payday loans, peer-to-peer loans, title loans
+- **Not included**: Mortgages, car loans, revolving lines of credit (such as credit cards, personal lines of credit)
+
+If your app includes personal loan features (direct lending, loan facilitation, line of credit, EWA), or is an **accessory loan/credit app** (loan calculators, loan guides, etc.):
 
 **Metadata disclosure (in app description)**:
 - [ ] Minimum and maximum repayment period
@@ -57,15 +71,15 @@ This applies to apps which offer loans directly, lead generators, and those who 
 
 ## 4.4 Country-Specific Requirements
 
-| Country | Requirement | Status |
-|---------|------------|--------|
-| India | Must be on RBI "Digital Lending Apps (DLAs) deployed by Regulated Entities" list; NBFC names in app description | Active |
-| Indonesia | Valid OJK license (OJK Regulation No. 77/POJK.01/2016) | Active |
-| Philippines | SEC Registration Number + Certificate of Authority (CA) from PSEC; disclose in app description | Active |
-| Nigeria | FCCPC approval letter for Digital Money Lenders (DML) | Active |
-| Kenya | CBK Digital Credit Provider (DCP) license; must be on CBK Directory | Active |
-| Pakistan | SECP approval required; each NBFC limited to 1 DLA; short-term loans rare exception only | Active |
-| Thailand | BoT or MoF license (if interest ≥ 15%); display loan service provider, max interest rates, all fees in listing | Active |
+| Country | Requirement | Deadline |
+|---------|------------|----------|
+| India | Must be on RBI "Digital Lending Apps (DLAs) deployed by Regulated Entities" [list](https://support.google.com/googleplay/android-developer/answer/16604194); NBFC names in app description. New apps: Oct 30, 2025. Existing apps: Jan 28, 2026. | Jan 28, 2026 |
+| Indonesia | Valid OJK license (OJK Regulation No. 77/POJK.01/2016, as may be amended from time to time) | Active |
+| Philippines | Corporate Name, Business Name, PSEC Registration Number, and Certificate of Authority (CA) — all four must be disclosed in app description ([source](https://support.google.com/googleplay/android-developer/answer/9876821)). | Active |
+| Nigeria | FCCPC approval letter for Digital Money Lenders (DML). Loan Aggregators must provide documentation and contact details for every partnered DML. | Active |
+| Kenya | CBK Digital Credit Provider (DCP) license; must be on CBK Directory. Platform/facilitators not directly lending must provide partner DCP license copies. | Active |
+| Pakistan | SECP approval required; each NBFC limited to 1 DLA; short-term loans rare exception only when explicitly permitted by local laws. | Active |
+| Thailand | BoT or MoF license (if interest ≥ 15%); apps below 15% must state "This is a non-regulated loan provider under the BoT/FPO". Listing must display: loan service provider name, legal entity name, max interest rates, all fees. New apps: immediate. Existing apps: Mar 4, 2026. | Mar 4, 2026 |
 
 ### 4.4.1 Cryptocurrency / Blockchain (If Applicable)
 
@@ -75,7 +89,7 @@ If your financial app handles cryptocurrency payments, exchanges, or wallets, ad
 
 ## 4.5 Line of Credit Apps (April 2025 Update)
 
-As of May 28, 2025, apps providing lines of credit are subject to the same requirements as personal loan apps:
+Effective since May 2025 ([announced April 10, 2025](https://support.google.com/googleplay/android-developer/answer/15899442)), apps providing lines of credit are subject to the same requirements as personal loan apps:
 - Disclosure of repayment terms, APR, representative cost
 - Prohibition on accessing photos, contacts, location for risk assessment (see Section 3.1 for SMS-specific rules)
 - Comprehensive privacy policy
@@ -84,13 +98,14 @@ As of May 28, 2025, apps providing lines of credit are subject to the same requi
 
 **Definition (Google)** ([source](https://support.google.com/googleplay/android-developer/answer/9876821)): "We define earned wage access loans (EWA) as a financial service that allows individuals to access a portion of their wages that have already been earned but not yet paid by their employer."
 
-**Three defining characteristics of EWA**:
+**Four defining characteristics of EWA** ([source](https://support.google.com/googleplay/android-developer/answer/9876821)):
 
-| Characteristic | Requirement |
+| Characteristic | Requirement (policy text) |
 |---------------|-------------|
+| **Repayment Mechanism** | "Repayment occurs automatically via payroll deduction or through an autopay transaction linked to the user's bank account. If the autopay transaction fails, no additional interest, penalties, or fees are charged." |
 | **Income-Based Access** | Amount strictly limited to wages earned in the current pay cycle. Must not exceed verified earned wages. |
-| **Fee Structure** | Low, transparent fees: fixed ($1–$5 per advance) or percentage-based (1–5% of advance). Fees must reflect actual service cost, not disguised interest. |
-| **No Debt Creation** | Advances are NOT reported to credit bureaus. No impact on user's credit score. No debt obligation beyond payback from next paycheck. |
+| **Fee Structure** | "EWA services charge **no interest** and instead charge a low, flat fee or a percentage based transaction fee for usage." Reasonable fee range: $1–$5 per transaction or 1–5% of the advance. |
+| **No Debt Creation** | "EWA services typically do not report transactions to credit bureaus, ensuring they do not impact the user's credit score or contribute to long-term debt accumulation." |
 
 **Note**: Google explicitly classifies EWA as a type of **loan** ("earned wage access loans") and applies the Personal Loan policy framework to EWA apps, including prohibited permissions and disclosure requirements.
 

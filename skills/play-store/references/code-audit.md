@@ -19,7 +19,7 @@ Run these checks against your codebase before submission:
 grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|RECEIVE_MMS\|RECEIVE_WAP_PUSH\|WRITE_SMS\|READ_CALL_LOG\|WRITE_CALL_LOG\|PROCESS_OUTGOING_CALLS" AndroidManifest.xml
 
 # BLOCKER for personal loan apps — explicitly prohibited by Personal Loans policy:
-grep -n "READ_CONTACTS\|WRITE_CONTACTS\|READ_PHONE_NUMBERS" AndroidManifest.xml
+grep -n "READ_CONTACTS\|READ_PHONE_NUMBERS" AndroidManifest.xml
 grep -n "QUERY_ALL_PACKAGES" AndroidManifest.xml
 
 # Photo/Video permissions (need declaration):
