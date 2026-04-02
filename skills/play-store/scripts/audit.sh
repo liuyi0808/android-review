@@ -118,7 +118,7 @@ if [ -d "$SRC_DIR" ]; then
     run_check "Device ID collection (must declare in Data Safety)" "WARNING" \
         grep -rn 'ANDROID_ID\|getAdvertisingIdInfo\|MediaDrm\|IMEI\|getDeviceId' --include="*.kt" --include="*.java" "$PROJECT_ROOT"
 
-    run_check "SMS content access" "BLOCKER" \
+    run_check "SMS content access (requires Permissions Declaration Form; verify financial-only filtering)" "WARNING" \
         grep -rn 'Telephony.Sms\|SmsMessage\|pdus' --include="*.kt" --include="*.java" "$PROJECT_ROOT"
 
     run_check "Installed apps enumeration" "WARNING" \
@@ -133,7 +133,7 @@ else
     run_check "Hardcoded secrets" "BLOCKER" \
         bash -c "grep -rn --binary-files=without-match 'apiKey\|api_key\|secret\|password\|token' --include='*.kt' --include='*.java' --include='*.gradle.kts' '$PROJECT_ROOT' | grep -v 'BuildConfig\.' | grep -v 'test/'"
 
-    run_check "SMS content access" "BLOCKER" \
+    run_check "SMS content access (requires Permissions Declaration Form; verify financial-only filtering)" "WARNING" \
         grep -rn 'Telephony.Sms\|SmsMessage\|pdus' --include="*.kt" --include="*.java" "$PROJECT_ROOT"
 fi
 
