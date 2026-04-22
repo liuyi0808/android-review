@@ -1,6 +1,6 @@
 ---
 name: play-store
-description: Google Play Store submission and compliance checklist for Android apps, with special focus on financial/loan apps. Covers build config, permissions, Data Safety, Financial Features Declaration, Personal Loan policy, sensitive permission restrictions, spyware policy, deceptive behavior, device abuse, consent flow transparency, data transmission audit, loan app harassment policy, account deletion, developer verification, and code-level audit. Updated for 2025-2026 policy cycle.
+description: Google Play Store submission and compliance checklist for Android apps, with special focus on financial/loan apps. Covers build config, permissions (including Contacts Permissions, Contact Picker, location button, Geofence API), Data Safety, Financial Features Declaration, Personal Loan policy, sensitive permission restrictions, spyware policy, deceptive behavior, device abuse, consent flow transparency, data transmission audit, loan app harassment policy, account deletion, developer verification, and code-level audit. Updated for 2025-2026 policy cycle including April 15, 2026 announcement.
 ---
 
 # Google Play Compliance & Launch Checklist
@@ -36,7 +36,7 @@ Each reference file contains the full policy details, code audit commands, and c
 | # | Reference File | Sections | When to Load |
 |---|---------------|----------|-------------|
 | 1 | [references/build-and-signing.md](references/build-and-signing.md) | 1-2 | Auditing build.gradle, targetSdk, AAB, R8, signing, log guards |
-| 2 | [references/permissions.md](references/permissions.md) | 3 | Auditing AndroidManifest permissions, SMS/Call Log, QUERY_ALL_PACKAGES, photo/video, location, FGS types, alarms |
+| 2 | [references/permissions.md](references/permissions.md) | 3 | Auditing AndroidManifest permissions, SMS/Call Log, QUERY_ALL_PACKAGES, photo/video, location (incl. location button), FGS types (Geofencing removed), alarms, Contacts Permissions (Contact Picker) |
 | 3 | [references/financial-declaration.md](references/financial-declaration.md) | 4 | Play Console Financial Features Declaration, loan app requirements, country-specific rules |
 | 4 | [references/data-privacy.md](references/data-privacy.md) | 5-7 | Data Safety form, SDK data audit, account deletion, privacy policy |
 | 5 | [references/store-listing.md](references/store-listing.md) | 8-9 | Store listing assets, metadata quality, content rating, IARC |
@@ -61,6 +61,9 @@ Each reference file contains the full policy details, code audit commands, and c
 - [ ] ProGuard mapping saved
 - [ ] SMS/Call Log permissions: either removed, or Permissions Declaration Form submitted with exception approval
 - [ ] Personal loan apps: no prohibited permissions (contacts, photos, phone numbers, fine location)
+- [ ] `READ_CONTACTS`: if declared, Contact Picker evaluated and documented as insufficient (effective Oct 28, 2026, Android 17+)
+- [ ] One-time precise location uses `onlyForLocationButton` flag; persistent precise location has Play Developer Declaration
+- [ ] Geofencing uses Geofence API, not a foreground service
 - [ ] All foreground services have declared types
 
 ## Play Console
@@ -159,6 +162,9 @@ Each reference file contains the full policy details, code audit commands, and c
 | Loan harassment | Contact access used for debt collection | Remove READ_CONTACTS, block collection use | BLOCKER |
 | Predatory lending | Loan terms < 60 days or hidden fees | Ensure minimum 60 day terms, disclose all fees | BLOCKER |
 | Hidden functionality | DexClassLoader or remote code execution | Remove dynamic code loading | BLOCKER |
+| Broad contacts access without justification | `READ_CONTACTS` declared without Contact Picker evaluation (Android 17+) | Switch to Android Contact Picker, or submit Play Developer Declaration for broad access | BLOCKER (Oct 28, 2026) |
+| Precise location without location button | Fine location for one-time use but no `onlyForLocationButton` flag and no persistent-location declaration | Add `onlyForLocationButton` for discrete use, or submit Play Developer Declaration for persistent access | WARNING (May 15, 2026) |
+| Geofencing via foreground service | Location FGS used as geofencing transport | Use Geofence API directly; remove FGS for geofencing | WARNING (May 15, 2026) |
 | Missing FGS type | Foreground service without type | Add foregroundServiceType in manifest | WARNING |
 | Photo permission without declaration | READ_MEDIA_IMAGES without form | Submit declaration or switch to Photo Picker | WARNING |
 
@@ -178,6 +184,9 @@ Each reference file contains the full policy details, code audit commands, and c
 | January 28, 2026 | India personal loan apps: must be on government approved list | Policy enforcement |
 | March 4, 2026 | Updated Developer Program Policies effective | Full enforcement |
 | March 4, 2026 | Thailand loan app listing requirements (service provider, rates, fees) | Existing apps |
+| May 15, 2026 | Location button (`onlyForLocationButton`) / Geofencing removed from FGS / Photo & Video clarifications (announced April 15, 2026) | Policy enforcement |
+| October 27, 2026 | Play Console pre-review checks for contacts and location permissions go live | Tooling |
+| October 28, 2026 | Contacts Permissions policy enforcement (Android 17+ / API 37+) — Contact Picker required for non-broad access | Policy enforcement |
 | July 2024+ | Financial/health/VPN/government developers must register as Organization | Rolling out |
 
 ---
@@ -201,6 +210,10 @@ Each reference file contains the full policy details, code audit commands, and c
 - [Policy Announcement: April 10, 2025](https://support.google.com/googleplay/android-developer/answer/15899442?hl=en)
 - [Policy Announcement: July 17, 2024](https://support.google.com/googleplay/android-developer/answer/14993590?hl=en)
 - [Policy Announcement: July 10, 2025](https://support.google.com/googleplay/android-developer/answer/16296680?hl=en)
+- [Policy Announcement: April 15, 2026](https://support.google.com/googleplay/android-developer/answer/16926792?hl=en)
+- [Understanding restricted permissions with minimum scope alternatives](https://support.google.com/googleplay/android-developer/answer/16935362?hl=en)
+- [Contact Picker: Privacy-First Contact Sharing — Android Developers Blog](https://android-developers.googleblog.com/2026/03/contact-picker-privacy-first-contact.html)
+- [Redefining Location Privacy — Android Developers Blog](https://android-developers.googleblog.com/2026/03/location-privacy.html)
 - [Android Developer - Default Handlers](https://developer.android.com/guide/topics/permissions/default-handlers)
 - [Spyware Policy](https://support.google.com/googleplay/android-developer/answer/9888380?hl=en#spyware)
 - [Understanding Spyware Policy](https://support.google.com/googleplay/android-developer/answer/14745000?hl=en)

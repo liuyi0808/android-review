@@ -185,6 +185,8 @@ Comprehensive pre-submission audit covering 18+ Google Play policy areas. Update
 | November 1, 2025 | API 35 extension deadline (no more extensions) |
 | January 2026 | Age Signals API, Accessibility API autonomous action, India loan app list |
 | March 4, 2026 | Updated Developer Program Policies full enforcement |
+| May 15, 2026 | Location button, Geofencing removed from FGS (April 15, 2026 announcement) |
+| October 28, 2026 | Contacts Permissions policy — Contact Picker required (Android 17+) |
 
 **Special coverage for financial/loan apps:** Financial Features Declaration, Personal Loan policy, loan harassment, predatory lending, prohibited credit scoring data, country-specific rules (India, Thailand).
 

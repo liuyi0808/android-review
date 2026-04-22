@@ -14,8 +14,11 @@ Google Play has specific policies targeting predatory lending and aggressive deb
 
 **Policy** ([source](https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans)): The `READ_CONTACTS` permission is **entirely prohibited** for personal loan apps, accessory loan/credit apps, and EWA apps — regardless of purpose (not just debt collection). This means contact data cannot be accessed for any reason including loan application, risk assessment, or debt collection.
 
+**Independent enforcement layer — Contacts Permissions Policy (effective Oct 28, 2026)** ([source](https://support.google.com/googleplay/android-developer/answer/16926792)): The new Contacts Permissions policy governs broad `READ_CONTACTS` access across all apps and requires Android Contact Picker as the default. For loan apps this is **an additional enforcement layer on top of** the Personal Loans ban — switching from broad `READ_CONTACTS` to the Contact Picker does **NOT** make contact collection permissible for loan apps. Any form of contact selection used for lending decisions or collection is still a Personal Loans violation. See `permissions.md` Section 3.9 for the full policy.
+
 **Prohibited by policy**:
 - Access user's contact list for **any purpose** (permission entirely banned)
+- Use Android Contact Picker to collect "emergency contacts" or references for credit scoring / collection (double violation)
 
 **Enforcement-derived practices** (inferred from the blanket contact ban and consistent Google Play enforcement patterns against predatory loan apps, not verbatim policy text):
 - Send automated messages to user's contacts about overdue loans
@@ -81,7 +84,7 @@ grep -rn "APR\|tasa.*anual\|interest.*rate\|tasa.*interes" --include="*.xml" --i
 
 | Data Type | Permission Status | Policy Source |
 |-----------|------------------|---------------|
-| Contact list | **BANNED** — `READ_CONTACTS` entirely prohibited | Personal Loans Policy |
+| Contact list | **BANNED** — `READ_CONTACTS` entirely prohibited (also subject to Contacts Permissions Policy effective Oct 28, 2026; Contact Picker does NOT make loan-app contact use permissible) | Personal Loans Policy + Contacts Permissions Policy |
 | Photos/media | **BANNED** — `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEOS`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` entirely prohibited | Personal Loans Policy |
 | Fine location | **BANNED** — `ACCESS_FINE_LOCATION` entirely prohibited | Personal Loans Policy |
 | Phone numbers | **BANNED** — `READ_PHONE_NUMBERS` entirely prohibited | Personal Loans Policy |

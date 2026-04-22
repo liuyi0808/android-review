@@ -1,5 +1,18 @@
 # Android Review Release Notes
 
+## v1.3.0 (2026-04-22)
+
+### Play Store Skill — April 15, 2026 Policy Update
+- Add new `3.9 Contacts Permissions` section covering the Contacts Permissions Policy (effective 2026-10-28, Android 17+ / API 37+) — Android Contact Picker mandatory for non-broad access
+- Update `3.4 Location Permissions` with the `onlyForLocationButton` flag (effective ~2026-05-15) and Play Developer Declaration path for persistent precise location
+- Update `3.6 Foreground Service Types` to flag geofencing as removed from approved FGS use cases; direct developers to the Geofence API
+- Note April 15, 2026 clarification on Photo & Video permissions in `3.3`
+- Strengthen `loan-harassment.md 14.1` with the double-violation warning — Contact Picker does NOT make loan-app contact collection permissible
+- Add new grep patterns in `code-audit.md` for direct `ContactsContract` queries, `onlyForLocationButton`, and geofencing-via-FGS
+- Add 3 new deadline rows to `SKILL.md` Section 21 (2026-05-15, 2026-10-27, 2026-10-28)
+- Add 3 new rejection reasons to Section 20 (broad contacts, precise location w/o button, geofencing via FGS)
+- Add 4 official references (April 15 announcement, minimum-scope alternatives, Contact Picker blog, Location Privacy blog)
+
 ## v1.2.0 (2026-03-31)
 
 ### Play Store Skill — Policy Verification Overhaul

@@ -17,7 +17,8 @@
 - [3.6 Foreground Service Types](#36-foreground-service-types-android-14--api-34)
 - [3.7 Exact Alarm Permissions](#37-exact-alarm-permissions)
 - [3.8 Full-Screen Intent Permission](#38-full-screen-intent-permission-january-2025)
-- [3.9 Permissions Checklist Summary](#39-permissions-checklist-summary)
+- [3.9 Contacts Permissions (NEW, effective Oct 28, 2026)](#39-contacts-permissions-new-effective-oct-28-2026)
+- [3.10 Permissions Checklist Summary](#310-permissions-checklist-summary)
 
 ---
 
@@ -206,7 +207,7 @@ grep -c "<package android:name" AndroidManifest.xml
 
 ### 3.3 Photo & Video Permissions (Announced Oct 2023, Full Compliance May 2025)
 
-**Policy effective May 28, 2025**: Apps with `READ_MEDIA_IMAGES` or `READ_MEDIA_VIDEO` must either:
+**Policy effective May 28, 2025** (clarified April 15, 2026 — see [Policy announcement](https://support.google.com/googleplay/android-developer/answer/16926792)): Apps with `READ_MEDIA_IMAGES` or `READ_MEDIA_VIDEO` must either:
 1. Use **Android Photo Picker** (for one-time/infrequent access like profile photo upload)
 2. Submit a **declaration form** in Play Console for broad access (only if core functionality)
 
@@ -225,12 +226,31 @@ grep -n "READ_MEDIA_IMAGES\|READ_MEDIA_VIDEO\|READ_EXTERNAL_STORAGE" AndroidMani
 
 ### 3.4 Location Permissions
 
-**Policy**: Location access must be core to app functionality and clearly disclosed.
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/16926792)): Location access must be core to app functionality and clearly disclosed. Updated April 15, 2026 to introduce the **location button** as the recommended minimum scope for precise location.
 
-**For loan apps**: Location for risk assessment may be acceptable with proper disclosure, but must be declared in Data Safety and explained to users.
+**Location button (Android 17+, effective ~May 15, 2026)**: Apps that use precise location for discrete, one-time actions (e.g., "find a store", "tag a photo") should implement the location button by adding the `onlyForLocationButton` flag in the manifest. This replaces the traditional precise-location permission dialog with a single-tap button.
 
-- [ ] `ACCESS_FINE_LOCATION` only if precise location is core functionality
+```xml
+<uses-permission
+    android:name="android.permission.ACCESS_FINE_LOCATION"
+    android:onlyForLocationButton="true" />
+```
+
+**Persistent precise location**: Apps that require always-on precise location to function must submit a **Play Developer Declaration** in Play Console justifying why the location button or coarse location is insufficient for core features. Pre-review checks in Play Console begin **October 27, 2026**.
+
+**For loan apps**: `ACCESS_FINE_LOCATION` is **entirely prohibited** by the Personal Loans policy regardless of purpose (see Section 3.1.4 and loan-harassment.md). If location is genuinely required for anti-fraud, use `ACCESS_COARSE_LOCATION` only, declare it in Data Safety, and explain the use to users.
+
+**Code audit**:
+```bash
+# Check for location button flag (required for one-time precise location, Android 17+):
+grep -n "onlyForLocationButton" AndroidManifest.xml
+grep -n "ACCESS_FINE_LOCATION\|ACCESS_COARSE_LOCATION\|ACCESS_BACKGROUND_LOCATION" AndroidManifest.xml
+```
+
+- [ ] `ACCESS_FINE_LOCATION` only if precise location is core functionality (prohibited for loan apps)
 - [ ] `ACCESS_COARSE_LOCATION` preferred over fine location when possible
+- [ ] One-time precise location uses `onlyForLocationButton` flag (Android 17+)
+- [ ] Persistent precise location has an approved Play Developer Declaration
 - [ ] No `ACCESS_BACKGROUND_LOCATION` unless absolutely necessary (triggers additional review)
 - [ ] Pre-permission dialog explaining why location is needed
 - [ ] Graceful degradation when location denied
@@ -250,6 +270,8 @@ grep -n "READ_MEDIA_IMAGES\|READ_MEDIA_VIDEO\|READ_EXTERNAL_STORAGE" AndroidMani
 2. Explain the user impact
 
 Available types: `camera`, `connectedDevice`, `dataSync`, `health`, `location`, `mediaPlayback`, `mediaProjection`, `mediaProcessing`, `microphone`, `phoneCall`, `remoteMessaging`, `shortService`, `specialUse`, `systemExempted`
+
+**Geofencing removed from approved FGS use cases (April 15, 2026, effective ~May 15, 2026)** ([source](https://support.google.com/googleplay/android-developer/answer/16926792)): Geofencing is no longer an approved foreground service use case. Apps must use the [Geofence API](https://developer.android.com/develop/sensors-and-location/location/geofencing) directly instead of running a foreground service. Using FGS for geofencing after the effective date will trigger policy rejection.
 
 ```xml
 <!-- Manifest declaration required -->
@@ -284,7 +306,53 @@ grep -n "<service" AndroidManifest.xml | grep -v "foregroundServiceType"
 - [ ] No `USE_FULL_SCREEN_INTENT` unless calling or alarm functionality
 - [ ] Use high-priority notifications instead for non-calling/alarm use cases
 
-### 3.9 Permissions Checklist Summary
+### 3.9 Contacts Permissions (NEW, effective Oct 28, 2026)
+
+**Policy** (announced April 15, 2026, [source](https://support.google.com/googleplay/android-developer/answer/16926792)): Google Play introduced the Contacts Permissions policy to govern **broad access** of users' contacts. Apps that do not need broad access must use the **Android Contact Picker**, a standardized secure picker introduced in Android 17 that grants access only to the specific contacts the user selects.
+
+**Scope**: Apps that target Android 17+ (API level 37+) may only request `READ_CONTACTS` if the Android Contact Picker is insufficient for core functionality. Apps that continue to request broad contacts access without a justified use case will be subject to enforcement, including removal from Google Play.
+
+**Enforcement timeline**:
+- **October 27, 2026** — Play Console pre-review checks flag potential contacts permission policy issues
+- **October 28, 2026** — Contacts Permissions policy enforcement begins
+
+**For personal loan apps**: `READ_CONTACTS` is **entirely prohibited** by the Personal Loans policy regardless of purpose (see Section 3.1.4). The new Contacts Permissions policy is an **additional enforcement layer** — even switching to Contact Picker does NOT satisfy the Personal Loans policy if contact selection is used for:
+- Credit scoring or risk assessment
+- Collecting "emergency contacts" for debt collection
+- Any form of lending decision or recovery workflow
+
+A loan app using Contact Picker to gather emergency contacts is in **double violation** (Personal Loans policy + Contacts Permissions policy).
+
+**Recommended implementation for apps with legitimate contact sharing**:
+
+```kotlin
+// Use Android Contact Picker — user selects specific contacts only, no READ_CONTACTS needed
+val pickContact = registerForActivityResult(ActivityResultContracts.PickContact()) { uri ->
+    // uri points to the single contact the user chose
+}
+```
+
+**Play Developer Declaration**: Apps that truly require broad contact access (e.g., messaging apps syncing full address book) must submit a declaration in Play Console justifying why Contact Picker is insufficient. See [Understanding restricted permissions with minimum scope alternatives](https://support.google.com/googleplay/android-developer/answer/16935362).
+
+**Code audit**:
+```bash
+# Broad contacts permission declared:
+grep -n "READ_CONTACTS\|WRITE_CONTACTS" AndroidManifest.xml
+
+# Direct ContactsContract query (indicates broad access rather than Contact Picker):
+grep -rn "ContactsContract\.Contacts\.CONTENT_URI\|CommonDataKinds\.Phone\.CONTENT_URI" --include="*.kt" --include="*.java"
+
+# Contact Picker usage (preferred pattern):
+grep -rn "ActivityResultContracts\.PickContact\|ACTION_PICK.*Contacts" --include="*.kt" --include="*.java"
+```
+
+- [ ] If `READ_CONTACTS` is declared, Contact Picker was evaluated and documented as insufficient
+- [ ] Play Developer Declaration submitted for broad contacts access, if required
+- [ ] No broad contacts access in personal loan / accessory loan / EWA apps (double violation with Personal Loans policy)
+- [ ] Contact Picker used for one-time contact selection use cases
+- [ ] Contact data not exfiltrated or transmitted beyond declared use
+
+### 3.10 Permissions Checklist Summary
 
 - [ ] Every permission in manifest has documented business justification
 - [ ] Pre-permission rationale dialog shown before runtime permission requests

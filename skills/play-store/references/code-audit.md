@@ -22,6 +22,22 @@ grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|RECEIVE_MMS\|RECEIVE_WAP_PUSH\|WRITE_S
 grep -n "READ_CONTACTS\|READ_PHONE_NUMBERS" AndroidManifest.xml
 grep -n "QUERY_ALL_PACKAGES" AndroidManifest.xml
 
+# Contacts Permissions Policy (effective 2026-10-28, Android 17+ / API 37+):
+# Direct ContactsContract query indicates broad access, not Contact Picker.
+grep -rn "ContactsContract\.Contacts\.CONTENT_URI\|CommonDataKinds\.Phone\.CONTENT_URI" --include="*.kt" --include="*.java"
+grep -rn "ActivityResultContracts\.PickContact\|ACTION_PICK.*Contacts" --include="*.kt" --include="*.java"
+# — If READ_CONTACTS is declared but Contact Picker is not used, broad access must be justified via Play Developer Declaration.
+
+# Location button flag (required for one-time precise location, Android 17+, effective ~2026-05-15):
+grep -n "onlyForLocationButton" AndroidManifest.xml
+grep -n "ACCESS_FINE_LOCATION" AndroidManifest.xml
+# — FINE_LOCATION without onlyForLocationButton flag and without persistent-location declaration = policy risk.
+
+# Geofencing via FGS (removed from approved FGS use cases 2026-04-15):
+grep -rn "GeofencingClient\|addGeofences" --include="*.kt" --include="*.java"
+grep -n "FOREGROUND_SERVICE_LOCATION\|foregroundServiceType=\"location\"" AndroidManifest.xml
+# — If GeofencingClient is used alongside a location FGS, confirm FGS is not the geofencing transport; use Geofence API directly.
+
 # Photo/Video permissions (need declaration):
 grep -n "READ_MEDIA_IMAGES\|READ_MEDIA_VIDEO\|READ_EXTERNAL_STORAGE" AndroidManifest.xml
 
