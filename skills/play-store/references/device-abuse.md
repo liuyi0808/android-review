@@ -126,7 +126,6 @@ grep -rn "PeriodicWorkRequest\|repeatInterval\|setInitialDelay" --include="*.kt"
 
 - [ ] No VPN/proxy functionality unless core to app purpose (see [VpnService policy](https://support.google.com/googleplay/android-developer/answer/12564964) for permitted use cases)
 - [ ] No excessive background network polling
-- [ ] No mining cryptocurrency in background
 
 ### 12.5 FLAG_SECURE Compliance
 

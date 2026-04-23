@@ -8,8 +8,6 @@
 - [10.5 Hidden Functionality](#105-hidden-functionality)
 - [10.6 Permissions Policy](#106-permissions-policy)
 - [10.7 Ads Compliance](#107-ads-compliance-if-applicable)
-- [10.8 Families Policy](#108-families-policy-if-targeting-children)
-- [10.9 User-Generated Content](#109-user-generated-content-if-applicable)
 
 ---
 
@@ -154,30 +152,4 @@ grep -rn "isOverdue\|isDefaulted\|loanStatus.*==\|delinquent" --include="*.kt" -
 - [ ] No unexpected fullscreen interstitial ads (e.g., appearing at start of game level, content segment, or navigation action) *(see [Better Ads Experiences policy](https://support.google.com/googleplay/android-developer/answer/12271244): "prevent unexpected full screen interstitials")*
 - [ ] No ads triggered by accidental taps (misleading close buttons)
 - [ ] Ad SDKs declared in Data Safety section
-- [ ] No personalized ads for children under 12 (Families Policy)
 - [ ] Ad frequency reasonable (not overwhelming)
-
-### 10.8 Families Policy & Child Safety Standards
-
-**Families Policy** (if targeting children — [source](https://support.google.com/googleplay/android-developer/answer/9893335)):
-- [ ] No personalized advertising to children
-- [ ] Age-appropriate content only
-- [ ] Parental consent mechanisms implemented
-- [ ] No data collection from children beyond minimum required
-
-**Child Safety Standards** (if app is a Social or Dating app — [source](https://support.google.com/googleplay/android-developer/answer/14747720)):
-- [ ] Published standards prohibiting CSAE (Child Sexual Abuse and Exploitation)
-- [ ] In-app mechanism for user feedback/reporting
-- [ ] Process to address CSAM (Child Sexual Abuse Material)
-- [ ] Compliance with applicable child safety laws
-- [ ] Designated child safety point of contact
-- [ ] Self-certification completed before publishing
-
-> **Note**: Child Safety Standards apply specifically to **Social and Dating apps**, not all apps targeting children. These are separate from the general Families Policy.
-
-### 10.9 User-Generated Content (if applicable)
-
-- [ ] Content moderation system in place
-- [ ] Reporting mechanism for objectionable content
-- [ ] Terms of service prohibit illegal/policy-violating content
-- [ ] In-app blocking functionality

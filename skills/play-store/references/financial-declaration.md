@@ -81,12 +81,6 @@ This applies to apps which offer loans directly, lead generators, and those who 
 | Pakistan | SECP approval required; each NBFC limited to 1 DLA; short-term loans rare exception only when explicitly permitted by local laws. | Active |
 | Thailand | BoT or MoF license (if interest ≥ 15%); apps below 15% must state "This is a non-regulated loan provider under the BoT/FPO". Listing must display: loan service provider name, legal entity name, max interest rates, all fees. New apps: immediate. Existing apps: Mar 4, 2026. | Mar 4, 2026 |
 
-### 4.4.1 Cryptocurrency / Blockchain (If Applicable)
-
-If your financial app handles cryptocurrency payments, exchanges, or wallets, additional policies apply:
-- [Blockchain-based Content policy](https://support.google.com/googleplay/android-developer/answer/13607354)
-- [Cryptocurrency Exchanges and Software Wallets — country-specific requirements](https://support.google.com/googleplay/android-developer/answer/16329703)
-
 ## 4.5 Line of Credit Apps (April 2025 Update)
 
 Effective since May 2025 ([announced April 10, 2025](https://support.google.com/googleplay/android-developer/answer/15899442)), apps providing lines of credit are subject to the same requirements as personal loan apps:

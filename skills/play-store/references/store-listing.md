@@ -9,8 +9,6 @@
 - [9. Content Rating](#9-content-rating-mandatory)
   - [9.1 Process](#91-process)
   - [9.2 Rules](#92-rules)
-  - [9.3 Age-Restricted Content](#93-age-restricted-content-2026-update)
-
 ---
 
 ## 8. Store Listing
@@ -74,10 +72,3 @@ For personal loan apps, the description MUST include:
 - [ ] Rating matches actual app content (not ads or ToS)
 - [ ] Re-submit questionnaire if app content changes significantly
 - [ ] Apps without rating will be removed from Google Play
-
-### 9.3 Age-Restricted Content (2026 Update)
-
-Starting January 28, 2026 (announced October 30, 2025):
-- Apps with matchmaking, dating, real money gambling, or games/contests must use Play Console features to block minors
-- Data from Age Signals API may only be used for age-appropriate experiences (per [November 19, 2025 announcement](https://support.google.com/googleplay/android-developer/answer/16706838))
-- U.S. state age verification laws (Utah May 2026, Louisiana July 2026) may require additional compliance

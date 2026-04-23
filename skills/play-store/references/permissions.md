@@ -293,18 +293,19 @@ grep -n "<service" AndroidManifest.xml | grep -v "foregroundServiceType"
 
 ### 3.7 Exact Alarm Permissions
 
-**Policy**: `USE_EXACT_ALARM` is restricted to alarm/timer/calendar core apps. Others must use `SCHEDULE_EXACT_ALARM` (user-granted, revocable).
+**Policy**: `USE_EXACT_ALARM` is restricted to alarm/timer/calendar core apps.
 
-- [ ] No `USE_EXACT_ALARM` unless core alarm/timer functionality
-- [ ] `SCHEDULE_EXACT_ALARM` check via `canScheduleExactAlarms()` before use
-- [ ] Fallback to inexact alarms when exact alarm denied
+**For loan apps**: Not applicable. Loan apps must NOT declare `USE_EXACT_ALARM`. If exact scheduling is genuinely needed, use `SCHEDULE_EXACT_ALARM` with `canScheduleExactAlarms()` check and fallback to inexact alarms.
+
+- [ ] No `USE_EXACT_ALARM` in loan apps
 
 ### 3.8 Full-Screen Intent Permission (January 2025)
 
-**Policy**: Starting January 22, 2025, for apps targeting API 34+, `USE_FULL_SCREEN_INTENT` is only auto-granted for calling/alarm apps. Others must request user permission.
+**Policy**: Starting January 22, 2025, for apps targeting API 34+, `USE_FULL_SCREEN_INTENT` is only auto-granted for calling/alarm apps.
 
-- [ ] No `USE_FULL_SCREEN_INTENT` unless calling or alarm functionality
-- [ ] Use high-priority notifications instead for non-calling/alarm use cases
+**For loan apps**: Not applicable. Loan apps must NOT declare `USE_FULL_SCREEN_INTENT`. Use high-priority notifications for repayment reminders instead.
+
+- [ ] No `USE_FULL_SCREEN_INTENT` in loan apps
 
 ### 3.9 Contacts Permissions (NEW, effective Oct 28, 2026)
 
