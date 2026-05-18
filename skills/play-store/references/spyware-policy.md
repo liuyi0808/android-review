@@ -173,30 +173,53 @@ The [Spyware policy](https://support.google.com/googleplay/android-developer/ans
 
 Even if your app has a valid SMS exception (Section 3.1), all SMS and Call Log use case exceptions must comply with the Spyware Policy, which prohibits exfiltration of data not related to policy-compliant functionality.
 
-#### Policy Nuance: Financial SMS vs Non-Financial SMS
+#### Severity Determination — Two Independent Gates
 
-The spyware policy specifically targets **non-financial or personal** SMS. This distinction is critical for audit severity:
+The policy creates **two independent compliance gates**. Final severity = the worst of the two.
 
-- **BLOCKER (Spyware Violation)**: App reads and uploads **all SMS** or **non-financial/personal SMS** — this directly violates the spyware policy.
-- **WARNING (High Risk)**: App reads and uploads only **financial SMS** (filtered by financial institution senders or financial keywords at SQL query level) — this does **not** directly violate the spyware policy's "non-financial or personal SMS" clause, but carries significant compliance risk:
+The auditor's job is to judge the **OUTCOME** against the policy text, not to prescribe **HOW** the developer must achieve it. Whether the developer uses sender allow-lists, keyword filters, server-side re-filtering, or any other mechanism is the developer's choice. The auditor's only question is: *does the actually-exfiltrated set include non-financial or personal SMS?*
 
-**Why financial-only SMS access is still high risk:**
+**Gate 1 — Permissions Declaration (right to use READ_SMS)**
 
-1. **Permissions Declaration Form required**: Non-default-handler apps must obtain a [temporary exception](https://support.google.com/googleplay/android-developer/answer/10208820) via the Permissions Declaration Form. Approved exception use cases include:
-   - (viii) SMS-based financial transactions and related activity including OTP and fraud detection
-   - (ix) Track, budget, manage SMS-based financial transactions and related account verification
-2. **Approval rate is extremely low** for loan/lending apps as of 2024-2026. Google has significantly tightened enforcement, and many lending apps in emerging markets have been delisted.
-3. **Uploading SMS body content** (even financial) to a server increases scrutiny. Google's data minimization expectations mean that uploading only metadata (sender, date, type) rather than full body text is strongly preferred.
-4. **Industry trend**: The practice of SMS scraping for credit scoring via Google Play is effectively ending. See [Lendsqr analysis (Feb 2026)](https://blog.lendsqr.com/does-android-still-allow-lenders-to-scrap-sms-from-phones-for-scoring/) and [TrustDecision compliance guide](https://trustdecision.com/articles/financial-service-apps-meet-new-google-sms-compliance-mandates).
+Source: [SMS and Call Log Permission Policy](https://support.google.com/googleplay/android-developer/answer/10208820). Approved exception use cases include:
+- (viii) SMS-based financial transactions and related activity including OTP and fraud detection
+- (ix) Track, budget, manage SMS-based financial transactions and related account verification
 
-**Audit severity determination**:
-- If the app reads **any** non-financial SMS → **BLOCKER**
-- If the app reads only financial SMS but uploads body content → **WARNING** (not a direct spyware violation, but high risk of Permissions Declaration Form rejection and app removal)
-- If the app reads only financial SMS and uploads only metadata (no body) → **INFO** (still requires Permissions Declaration Form approval)
+| Declaration Status | Severity |
+|--------------------|----------|
+| Approved for use case (viii)/(ix) | passes Gate 1 |
+| Pending, not submitted, or rejected | BLOCKER — no right to use READ_SMS |
+| Status unknown to auditor | NEEDS_CONFIRMATION |
 
-#### Recommended Practices (Audit Guidance)
+**Gate 2 — Spyware Cat.4 (actually-exfiltrated content)**
 
-The following are **audit best practices** to help verify compliance with the policy requirements above. These are not verbatim policy text, but practical checks for auditors:
+Policy text (verbatim): *"Personal loans or budgeting apps exfiltrating or sharing non-financial or personal SMS history of a user."*
+
+Source: [Understanding Google Play's Spyware policy](https://support.google.com/googleplay/android-developer/answer/14745000).
+
+| Actual SMS content transmitted | Severity |
+|--------------------------------|----------|
+| Includes any non-financial or personal SMS | BLOCKER |
+| Only financial SMS — developer has provided evidence | passes Gate 2 |
+| Cannot be determined from static code review | NEEDS_CONFIRMATION |
+
+**Final verdict** = the more severe of Gate 1 and Gate 2. Approval at Gate 1 does **not** exempt Gate 2. A code path that uploads all SMS to a server is a Gate 2 BLOCKER even if Permissions Declaration is approved.
+
+**To leave NEEDS_CONFIRMATION at Gate 2**, the developer must provide evidence that the actually-exfiltrated set contains no non-financial or personal SMS. The auditor does not specify what evidence is sufficient — that depends on the developer's implementation. The auditor only judges whether the evidence proves the outcome.
+
+#### Background Context (Informational — NOT Severity Inputs)
+
+The following facts inform long-term compliance risk but **must not be used as audit severity inputs**. The verdict is governed only by the two gates above.
+
+- Approval rates for SMS Permissions Declaration have been reported as low for loan/lending apps in the 2024–2026 cycle.
+- Industry direction is to phase out SMS scraping for credit scoring. See [Lendsqr analysis (Feb 2026)](https://blog.lendsqr.com/does-android-still-allow-lenders-to-scrap-sms-from-phones-for-scoring/) and [TrustDecision compliance guide](https://trustdecision.com/articles/financial-service-apps-meet-new-google-sms-compliance-mandates).
+- Uploading full SMS body content (versus metadata only) reportedly receives heightened review.
+
+These observations are useful when advising the developer on direction. They do **not** raise the audit severity of an otherwise compliant implementation.
+
+#### Detection Patterns (Auditor Tooling — NOT Compliance Recipe)
+
+The grep patterns below help the auditor **locate** SMS code paths to investigate. Presence of any pattern is not itself a violation, and absence does not prove compliance. The verdict is determined by the two gates above, applied to the actual transmission outcome.
 
 **Code audit — SMS exfiltration check**:
 ```bash
@@ -224,32 +247,37 @@ grep -rn "SMS_SUCCESS_TIME\|last.*sms.*time\|sms.*timestamp" --include="*.kt"
 - Is SMS filtering applied at SQL query level (WHERE clause) or only after full inbox read?
 - Does the app upload full SMS body content, or only metadata (sender, date, type)?
 
-**Checklist** (policy requirements + recommended practices):
-- [ ] No non-financial or personal SMS data transmitted (BLOCKER if violated)
-- [ ] SMS query uses SQL-level filtering for financial senders/keywords (not post-query filtering)
-- [ ] Permissions Declaration Form submitted and approved for SMS exception use case
-- [ ] No SMS data collected unexpectedly in the background
-- [ ] SMS data is NOT shared with third-party analytics or advertising services
-- [ ] *(Recommended)* Only upload SMS metadata (sender, date, type), not full body content
-- [ ] *(Recommended)* Use SMS Retriever API for OTP scenarios instead of READ_SMS
-- [ ] *(Recommended)* Minimize data retention period and collection volume
+**Policy Requirements (BLOCKER if violated)**:
+- [ ] Permissions Declaration Form submitted and approved for SMS exception use case (Gate 1)
+- [ ] No non-financial or personal SMS data transmitted or shared (Gate 2)
+- [ ] No SMS data collected in the background unrelated to policy-compliant functionality
+- [ ] SMS data is not shared with third-party analytics or advertising services for purposes outside the approved use case
+
+**Engineering Suggestions (auditor's preference — NOT policy requirements)**:
+
+The auditor MUST NOT use these as severity inputs. They are options the developer may evaluate when designing their own compliance approach. Listing or omitting them does not change the verdict at Gate 1 or Gate 2.
+
+- (Suggested) Apply filtering at SQL query level (WHERE clause) rather than post-query, to reduce the read surface
+- (Suggested) Upload SMS metadata (sender, date, type) instead of full body content where the use case allows
+- (Suggested) Use SMS Retriever API for OTP scenarios instead of READ_SMS
+- (Suggested) Minimize retention period and total volume of stored SMS data
 
 > **⚠ MAINTENANCE NOTE — SMS Policy Freshness Check**
 >
-> This section's severity logic (BLOCKER / WARNING / INFO) is derived from Google Play's
+> This section's two-gate severity model (Gate 1 Permissions Declaration / Gate 2 Spyware Cat.4 outcome) is derived from Google Play's
 > [SMS or Call Log permission groups](https://support.google.com/googleplay/android-developer/answer/10208820),
 > [Spyware policy](https://support.google.com/googleplay/android-developer/answer/9888380), and
 > [Understanding Spyware policy](https://support.google.com/googleplay/android-developer/answer/14745000).
 >
 > **Every time this skill is updated, you MUST re-check the above three URLs for policy changes.**
 > Key items to verify:
-> 1. Whether the temporary exception use cases (viii)/(ix) for financial apps still exist
-> 2. Whether "non-financial or personal SMS" wording has been tightened to cover all SMS
-> 3. Whether new restrictions on SMS body content upload have been added
-> 4. Whether the Permissions Declaration Form process has changed
+> 1. Whether the temporary exception use cases (viii)/(ix) for financial apps still exist (Gate 1)
+> 2. Whether the "non-financial or personal SMS" wording in the Spyware policy has changed (Gate 2 boundary)
+> 3. Whether the Permissions Declaration Form process has changed (Gate 1 evidence requirements)
+> 4. Whether Google has begun prescribing implementation mechanisms (sender lists, filtering, metadata-only) — currently the policy is silent on HOW, and the auditor must remain silent too
 > 5. Google Play [policy announcements page](https://support.google.com/googleplay/android-developer/announcements/13412212) for any SMS-related updates
 >
-> Last verified: 2026-04-02
+> Last verified: 2026-05-18
 
 ### 11.5 Spyware Policy Checklist
 

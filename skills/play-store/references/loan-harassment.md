@@ -106,11 +106,11 @@ grep -rn "risk\|score\|credit\|assess\|evalua" --include="*.kt" -i | grep -i "ap
 grep -rn "risk\|score\|credit\|assess\|evalua" --include="*.kt" -i | grep -i "contact"
 ```
 
-- [ ] SMS data NOT used for credit scoring (even if collected for other purposes)
-- [ ] Installed app data NOT used for credit scoring
-- [ ] Contact data NOT used for credit scoring
-- [ ] Photos/media NOT used for credit scoring
-- [ ] Fine location NOT used for credit scoring
+- [ ] SMS data use for credit scoring is governed by the two-gate model in [spyware-policy.md#114-category-4-personal-smscall-log-exfiltration-critical-for-loan-apps](spyware-policy.md#114-category-4-personal-smscall-log-exfiltration-critical-for-loan-apps): Gate 1 (Permissions Declaration approved for use case viii/ix) AND Gate 2 (only financial SMS actually exfiltrated). Financial SMS use for lending decisions is NOT prohibited per se — only non-financial/personal SMS exfiltration is.
+- [ ] `QUERY_ALL_PACKAGES` permission not declared (entirely banned for loan apps per 14.3 table). Targeted `<queries>` block is the allowed alternative; per [permissions.md#3.2](permissions.md#32-query_all_packages-installed-apps-visibility), `<queries>` packages must have documented business justification. Note: the QUERY_ALL_PACKAGES policy explicitly states credit-assessment use cases are "NOT eligible" for that permission's exception — this is a policy signal about the use case, but does not constitute a verbatim ban on `<queries>`-block-derived installed-app data. Auditor flags this as a risk for developer review, not as a direct BLOCKER.
+- [ ] Contact data NOT used for credit scoring (`READ_CONTACTS` entirely banned per 14.3 table)
+- [ ] Photos/media NOT used for credit scoring (entirely banned per 14.3 table)
+- [ ] Fine location NOT used for credit scoring (`ACCESS_FINE_LOCATION` entirely banned per 14.3 table)
 
 ### 14.4 Loan App Harassment Checklist
 

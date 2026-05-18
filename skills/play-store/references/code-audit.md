@@ -116,15 +116,16 @@ grep -rn "AppsFlyerLib.*init\|AppsFlyerLib.*start" --include="*.kt" --include="*
 grep -rn "FirebaseApp.initializeApp" --include="*.kt" --include="*.java"
 grep -rn "FacebookSdk.*initialize" --include="*.kt" --include="*.java"
 
-# SMS body content upload — verify only financial SMS is uploaded, with user consent:
-# (Not an absolute blocker per policy; violation only if non-financial/personal SMS is transmitted
-#  or transmission is without policy compliant functionality / unexpected to user)
+# SMS body content upload — locate transmission paths for investigation.
+# Verdict is governed by spyware-policy.md §11.4 two-gate model
+# (Gate 1 Permissions Declaration / Gate 2 actually-exfiltrated content),
+# not by the presence or absence of these patterns.
 grep -rn "SP_BODY\|sms_body\|message_body" --include="*.kt" --include="*.java" | grep -i "add\|put\|property"
 
-# Incremental/continuous SMS harvesting:
+# Incremental/continuous SMS collection — locate scheduling/state markers:
 grep -rn "SMS_SUCCESS_TIME\|last.*sms.*time\|sms.*timestamp" --include="*.kt" --include="*.java"
 
-# SMS filtering adequacy — check SQL LIKE patterns:
+# SQL LIKE patterns near SMS code — locate any in-query filtering logic:
 grep -rn "LIKE\|like" --include="*.kt" --include="*.java" | grep -i "sms\|body\|message"
 ```
 

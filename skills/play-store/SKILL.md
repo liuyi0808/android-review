@@ -14,7 +14,7 @@ Comprehensive pre-submission audit and compliance verification for Google Play S
 This skill has **14 reference files**. A full audit MUST load all 14.
 "Progressive disclosure" does NOT mean "skip files you think you know" — it means load each file before you make a claim against it, then cite the specific section.
 
-### The Five Rules
+### The Six Rules
 
 1. **All 14 references MUST be loaded.** If a reference does not apply to the target app (e.g., App has no store listing assets yet), the auditor MUST explicitly mark it "Not Applicable" with a one-line reason in the Coverage Report. Silent skipping is forbidden.
 
@@ -25,6 +25,14 @@ This skill has **14 reference files**. A full audit MUST load all 14.
 4. **The Reference Coverage Report is mandatory.** Before the audit report is complete, emit a Coverage table with 14 rows. No Coverage table → the report is incomplete.
 
 5. **No conclusions from memory.** If you cannot cite the reference file section you relied on, you do not have the finding. "I remember Personal Loans policy says X" is not acceptable — you must have actually loaded `loan-harassment.md` in this session before claiming a Personal Loans violation.
+
+6. **Judge outcome against policy. Never prescribe implementation as policy.** Every finding must answer two structural questions, with both answers visible in the Output Format:
+
+   - **Declaration gate**: Does Google provide a declaration channel for this policy (Permissions Declaration, Data Safety, Financial Declaration)? If yes and the developer's declaration status is unknown to the auditor, severity is **NEEDS_CONFIRMATION** — never BLOCKER/WARNING. If no channel exists (e.g., DexClassLoader, hidden functionality, using SMS data for credit underwriting), the policy is absolute and direct judgment is allowed.
+
+   - **Outcome vs. implementation**: The `Required by policy:` field must contain verbatim or near-verbatim policy text — if you cannot quote it, you do not have a policy requirement. Any engineering preference (sender allow-lists, keyword filters, server-side checks, SP-key guards, specific APIs like SMS Retriever) goes in `Suggested implementation:` and must be explicitly marked "non-policy, auditor's suggestion only." Code existence alone is not a violation — the auditor judges what is actually exfiltrated, transmitted, or done, not what the code might do under some interpretation.
+
+   **Why**: Past audits failed by packaging engineering preferences (e.g., "you must add a sender whitelist" or "OTP must use SMS Retriever API") as policy demands, and by judging code patterns (e.g., `READ_SMS + uploadInfo`) as violations without checking declaration status or actual transmission outcome. The Output Format below makes both gates structurally mandatory — a finding that fails either gate is invalid and must be rejected by the main agent.
 
 ---
 
@@ -52,55 +60,106 @@ Target app path: {absolute path}
 Instructions:
 1. Read EACH of your reference files in full before auditing.
 2. For each finding, produce the full Output Format block including
-   Reference: <file>#<anchor> and Policy Source: <official URL>.
-3. If a reference does not apply to the target app, return:
+   ALL ELEVEN mandatory fields:
+     status, Category, Finding, Evidence, Reference, Policy Source,
+     Declaration Channel, Declaration Status,
+     Required by policy, Suggested implementation, Deadline.
+3. Apply Rule 6 (Six Rules):
+   - If the policy has a declaration channel and you cannot confirm
+     the developer's declaration status, status = NEEDS_CONFIRMATION
+     (never BLOCKER/WARNING).
+   - `Required by policy:` must be a verbatim or near-verbatim quote
+     from the policy URL. If you cannot quote it, do not write the
+     finding — you do not have a policy requirement.
+   - Any implementation mechanism (sender allow-lists, specific APIs,
+     SP-key names, server-side filtering, etc.) goes ONLY in
+     `Suggested implementation:` prefixed "non-policy, auditor's
+     suggestion only" — never in Required by policy or Finding.
+4. If a reference does not apply to the target app, return:
    "Not Applicable: <one-line reason>" for that file.
-4. Return ALL findings as a single markdown list when done.
+5. Return ALL findings as a single markdown list when done.
 ```
 
 **Main agent responsibilities after subagents return**:
 1. Merge all 5 subagent outputs.
 2. Deduplicate overlapping findings (same file:line + same policy).
-3. Sort by severity: BLOCKER > WARNING > INFO.
-4. Produce the Reference Coverage Report.
-5. Emit the final report in the order: Summary → Findings → Coverage Report → Launch Day Checklist.
+3. **Validate every finding against Rule 6 hard constraints**:
+   - Missing `Reference:` or `Policy Source:` → drop.
+   - `Declaration Channel ≠ None` AND `Declaration Status = Unknown` AND `status ≠ NEEDS_CONFIRMATION` → downgrade to NEEDS_CONFIRMATION.
+   - `Required by policy:` contains prescriptive implementation language not in policy text → move to `Suggested implementation:` before emitting.
+   - `Required by policy:` cannot be traced to a quote at the cited URL → downgrade to INFO or drop.
+4. Sort by severity: BLOCKER > WARNING > INFO. **NEEDS_CONFIRMATION findings are listed in a separate section** after INFO, never tallied with the others.
+5. Produce the Reference Coverage Report.
+6. Emit the final report in this order:
+   Summary → Findings (BLOCKER → WARNING → INFO) → Pending Confirmation (NEEDS_CONFIRMATION) → Coverage Report → Launch Day Checklist.
 
 ---
 
 ## Pre-Submission Audit Process
 
-Output each finding as a full block with all six fields. **All fields are mandatory** — none may be omitted:
+Output each finding as a full block with all eleven fields. **All fields are mandatory** — none may be omitted:
 
 ```
-[GP-XXXXX] status: BLOCKER | WARNING | INFO
+[GP-XXXXX] status: BLOCKER | WARNING | INFO | NEEDS_CONFIRMATION
   Category: <section number, e.g. "3.1.4" or "IP.2">
-  Finding: <what is missing or wrong>
-  Evidence: <file:line or manifest entry>
+  Finding: <factual observation — what the code/manifest/listing actually does>
+  Evidence: <file:line — describe ACTUAL behavior (e.g. "uploads full SMS body via POST /api/sync"), not just code existence (e.g. "calls uploadInfo()")>
   Reference: <reference file>#<section anchor>
   Policy Source: <official Google Play policy URL>
-  Fix: <concrete action to resolve>
+  Declaration Channel: <Permissions Declaration | Data Safety | Financial Declaration | None>
+  Declaration Status: <Confirmed | Pending | Unknown | Not Applicable>
+  Required by policy: <verbatim or near-verbatim policy text + URL — if you cannot quote it, the requirement is not from policy>
+  Suggested implementation: <engineering option(s), explicitly prefixed "non-policy, auditor's suggestion only" — or "None">
   Deadline: <policy enforcement date if applicable, else "Active">
 ```
 
-**Example (correct form)**:
+**Hard constraints (main agent MUST enforce before emitting the report)**:
+
+1. **Missing reference** — A finding without both `Reference:` and `Policy Source:` is invalid. Drop it.
+2. **Declaration gate consistency** — If `Declaration Channel ≠ None` AND `Declaration Status = Unknown`, then `status:` MUST be `NEEDS_CONFIRMATION`. Findings that violate this are invalid; downgrade or drop.
+3. **Policy-quote consistency** — If `Required by policy:` does not contain a quote from a policy URL (or paraphrases beyond recognition), the policy basis is fabricated. Drop or downgrade to `INFO`.
+4. **Prescription leakage** — If `Required by policy:` contains specific implementation mechanisms (sender allow-lists, particular APIs, SP-key names, server-side filter requirements) that do not appear in the policy text, move that content to `Suggested implementation:` before emitting.
+
+**Example A — absolute prohibition, no declaration channel**:
 
 ```
-[GP-00123] status: BLOCKER
-  Category: 3.1.4 — Personal Loan Apps additional restrictions
-  Finding: READ_CONTACTS declared in manifest of a personal loan app
-  Evidence: app/src/main/AndroidManifest.xml:8
-  Reference: permissions.md#314-personal-loan-apps--additional-restrictions
+[GP-00101] status: BLOCKER
+  Category: 14.3 — Loan Harassment: prohibited data for credit scoring
+  Finding: App self-discloses that user SMS content feeds the credit-scoring model.
+  Evidence:
+    - app/src/main/res/values/strings.xml:9 — discloses SMS data used for "evaluación crediticia"
+    - app/src/main/java/.../AppInfoR.kt:79-86 — SMS body uploaded under field SP_SMS to api.example.com/uploadInfo
+  Reference: loan-harassment.md#14.3
   Policy Source: https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans
-  Fix: Remove READ_CONTACTS from manifest (or add tools:node="remove" for transitive SDK declarations)
+  Declaration Channel: None
+  Declaration Status: Not Applicable
+  Required by policy: Personal Loans apps may not use prohibited data sources (including SMS data) for credit underwriting decisions. See Personal Loans Policy (URL above).
+  Suggested implementation: None — the policy prohibition is on the use case itself; HOW the developer separates legitimate SMS use cases (e.g., OTP, transaction alerts) from credit scoring is the developer's choice.
   Deadline: Active
 ```
 
-**A finding without both `Reference:` and `Policy Source:` is invalid** — the main agent MUST reject such findings before emitting the report. If the subagent could not identify the reference anchor, the finding was not grounded in the reference file and should be dropped.
+**Example B — declaration-gated policy, status unknown**:
+
+```
+[GP-00102] status: NEEDS_CONFIRMATION
+  Category: 11.4 — Spyware Cat.4 (Personal SMS exfiltration)
+  Finding: App reads SMS via Telephony.Sms.CONTENT_URI and transmits filtered rows to a backend; auditor cannot determine from static review whether the actually-transmitted set excludes non-financial or personal SMS.
+  Evidence: app/src/main/java/.../SmsHelper.kt:42-88 — query + LIKE filter + POST /api/sms/sync (body field included)
+  Reference: spyware-policy.md#114-category-4-personal-smscall-log-exfiltration-critical-for-loan-apps
+  Policy Source: https://support.google.com/googleplay/android-developer/answer/14745000
+  Declaration Channel: Permissions Declaration
+  Declaration Status: Unknown
+  Required by policy: "Personal loans or budgeting apps exfiltrating or sharing non-financial or personal SMS history of a user." (Spyware policy — URL above). All SMS use cases also require Permissions Declaration approval per SMS/Call Log policy.
+  Suggested implementation: None — auditor judges only the outcome (whether non-financial/personal SMS leaves the device). The developer chooses the mechanism.
+  Deadline: Active
+  Resolution requires: (a) Permissions Declaration status (Confirmed/Pending/Rejected), and (b) evidence that the actually-transmitted SMS set contains no non-financial or personal records.
+```
 
 Severity definitions:
-- **BLOCKER**: App will be rejected or removed. Must fix before submission.
+- **BLOCKER**: App will be rejected or removed. Auditor has direct evidence of policy violation. Must fix before submission.
 - **WARNING**: May trigger review delay or future enforcement. Fix recommended.
 - **INFO**: Best practice improvement. No immediate enforcement risk.
+- **NEEDS_CONFIRMATION**: Code triggers a declaration-gated policy, but the declaration status or actual outcome cannot be determined from static review. The auditor MUST NOT escalate to BLOCKER/WARNING without (a) declaration evidence from the developer/Play Console, and (b) evidence that the actual runtime outcome meets the policy. Reported in a **separate section** of the final report, never mixed into BLOCKER/WARNING tallies.
 
 ---
 
@@ -153,6 +212,7 @@ Emit this table once, at the end of the audit report, immediately before the Lau
 
 Coverage: <M>/14 loaded, <K> marked Not Applicable
 Total findings: <T> (<B> BLOCKER, <W> WARNING, <I> INFO)
+Pending confirmation: <N> NEEDS_CONFIRMATION (not part of the verdict; require developer evidence to resolve)
 ```
 
 **Loaded column values**:
@@ -258,6 +318,13 @@ Total findings: <T> (<B> BLOCKER, <W> WARNING, <I> INFO)
 
 ## 20. Common Rejection Reasons & Fixes
 
+**How to use this table**: It is a quick reference for the most common compliance paths — NOT a finding template. When drafting an actual finding, use the Output Format above and per Rule 6 separate the `Fix` content below into:
+
+- `Required by policy:` — only the outcome-level requirement that maps to verbatim policy text (e.g., "stop using SMS data for credit underwriting").
+- `Suggested implementation:` — any specific mechanism listed below (e.g., "switch to Photo Picker", "use Geofence API", "delete the manifest entry") — prefixed "non-policy, auditor's suggestion only".
+
+The `Fix` column may bundle both for brevity; the Output Format must keep them apart.
+
 | Rejection | Root Cause | Fix | Priority |
 |-----------|-----------|-----|----------|
 | Deceptive behavior | Metadata doesn't match functionality | Align descriptions with actual features | BLOCKER |
@@ -269,11 +336,11 @@ Total findings: <T> (<B> BLOCKER, <W> WARNING, <I> INFO)
 | No account deletion | Missing in-app or web deletion | Implement account + data deletion flow | BLOCKER |
 | Minimum functionality | App is essentially a WebView wrapper | Add native functionality beyond WebView | BLOCKER |
 | Spyware - no consent | Data collected before user consent shown | Move SDK init after consent dialog | BLOCKER |
-| Spyware - SMS exfiltration | Non-financial or personal SMS history exfiltrated or shared | Remove non-policy-compliant SMS data transmission; SMS Retriever API only replaces OTP use case | BLOCKER |
+| Spyware - SMS exfiltration | Non-financial or personal SMS history exfiltrated or shared | Stop transmitting non-financial/personal SMS (HOW is the developer's choice — see spyware-policy.md §11.4 two-gate model) | BLOCKER |
 | Spyware - covert transmission | SDKs transmit data before consent dialog | Delay SDK initialization until after consent | BLOCKER |
 | Consent decline ineffective | Decline/Cancel does same as Accept | Make decline genuinely prevent data collection | BLOCKER |
 | Disclosure gap | Collected data not in consent dialog | Update consent dialog to list all data types | BLOCKER |
-| Loan harassment | Contact access used for debt collection | Remove READ_CONTACTS, block collection use | BLOCKER |
+| Loan harassment | Contact data used for debt collection | Stop using contact data for collection/harassment (policy outcome); removing READ_CONTACTS is one common implementation | BLOCKER |
 | Predatory lending | Loan terms < 60 days or hidden fees | Ensure minimum 60 day terms, disclose all fees | BLOCKER |
 | Hidden functionality | DexClassLoader or remote code execution | Remove dynamic code loading | BLOCKER |
 | Broad contacts access without justification | `READ_CONTACTS` declared without Contact Picker evaluation (Android 17+) | Switch to Android Contact Picker, or submit Play Developer Declaration for broad access | BLOCKER (Oct 28, 2026) |

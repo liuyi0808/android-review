@@ -118,7 +118,7 @@ if [ -d "$SRC_DIR" ]; then
     run_check "Device ID collection (must declare in Data Safety)" "WARNING" \
         grep -rn 'ANDROID_ID\|getAdvertisingIdInfo\|MediaDrm\|IMEI\|getDeviceId' --include="*.kt" --include="*.java" "$PROJECT_ROOT"
 
-    run_check "SMS content access (requires Permissions Declaration Form; verify financial-only filtering)" "WARNING" \
+    run_check "SMS content access detected (apply spyware-policy.md §11.4 two-gate review)" "INFO" \
         grep -rn 'Telephony.Sms\|SmsMessage\|pdus' --include="*.kt" --include="*.java" "$PROJECT_ROOT"
 
     run_check "Installed apps enumeration" "WARNING" \
@@ -133,7 +133,7 @@ else
     run_check "Hardcoded secrets" "BLOCKER" \
         bash -c "grep -rn --binary-files=without-match 'apiKey\|api_key\|secret\|password\|token' --include='*.kt' --include='*.java' --include='*.gradle.kts' '$PROJECT_ROOT' | grep -v 'BuildConfig\.' | grep -v 'test/'"
 
-    run_check "SMS content access (requires Permissions Declaration Form; verify financial-only filtering)" "WARNING" \
+    run_check "SMS content access detected (apply spyware-policy.md §11.4 two-gate review)" "INFO" \
         grep -rn 'Telephony.Sms\|SmsMessage\|pdus' --include="*.kt" --include="*.java" "$PROJECT_ROOT"
 fi
 
@@ -168,7 +168,7 @@ run_check "Firebase init (verify consent order)" "WARNING" \
 run_check "Facebook SDK init (must be after consent)" "WARNING" \
     grep -rn 'FacebookSdk.*initialize' --include="*.kt" --include="*.java" "$PROJECT_ROOT"
 
-run_check "SMS body content upload (verify only financial SMS, with consent)" "WARNING" \
+run_check "SMS body content upload path detected (apply spyware-policy.md §11.4 two-gate review)" "INFO" \
     bash -c "grep -rn 'SP_BODY\|sms_body\|message_body' --include='*.kt' --include='*.java' '$PROJECT_ROOT' | grep -i 'add\|put\|property'"
 
 # ============================================================
