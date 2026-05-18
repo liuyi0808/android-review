@@ -1,5 +1,36 @@
 # Android Review Release Notes
 
+## v1.5.0 (2026-05-18)
+
+### Play Store Skill — Outcome-vs-Implementation Audit Contract
+
+Root cause addressed: prior audits packaged engineering preferences (sender allow-lists, specific APIs, SP-key guards, server-side filters) as if Google Play policy required them, and judged code patterns (`READ_SMS + uploadInfo`) as violations without checking declaration status or actual transmission outcome. v1.5.0 makes both gates structurally mandatory in the Output Format — a finding that fails either gate is invalid and must be rejected by the main agent.
+
+**SKILL.md — Rule 6 added (Five Rules → Six Rules)**:
+- Every finding must answer two structural questions: (a) does this policy have a declaration channel (Permissions Declaration, Data Safety, Financial Declaration), and (b) does the `Required by policy:` field contain verbatim policy text rather than prescribed implementation.
+- New severity `NEEDS_CONFIRMATION` for declaration-gated policies where the developer's declaration status is unknown to the auditor. Reported in a separate section, never tallied with BLOCKER/WARNING/INFO.
+- Output Format extended from 6 fields to 11 mandatory fields — adds `Declaration Channel`, `Declaration Status`, `Required by policy` (verbatim quote), `Suggested implementation` (must be prefixed "non-policy, auditor's suggestion only").
+- Main agent hard constraints: drop findings missing reference/policy URL; downgrade declaration-gated findings with unknown status; move prescriptive implementation language out of `Required by policy`.
+- Two example blocks: Example A (absolute prohibition, no declaration channel — direct BLOCKER) and Example B (declaration-gated policy, status unknown — NEEDS_CONFIRMATION).
+- "Common Rejection Reasons" table re-framed as a quick reference, not a finding template; loan-harassment and SMS spyware rows rewritten to separate outcome from implementation.
+
+**spyware-policy.md §11.4 — single-severity model replaced by two-gate model**:
+- Gate 1 (Permissions Declaration / right to use READ_SMS) and Gate 2 (Spyware Cat.4 / actually-exfiltrated content) are independent. Final verdict = the more severe of the two.
+- "Recommended Practices" split into **Policy Requirements** (BLOCKER if violated) and **Engineering Suggestions** (auditor's preference, NOT severity inputs).
+- Background context (approval rates, industry direction, body-vs-metadata) explicitly demoted to informational — must not raise severity.
+- Detection grep patterns relabeled "Auditor Tooling" — presence is not violation, absence is not compliance.
+- Maintenance note updated to flag any future Google prescription of HOW (sender lists, filtering mechanisms) as a policy-shape change.
+
+**loan-harassment.md 14.3 — checklist alignment**:
+- SMS bullet rewritten to point at the spyware-policy.md two-gate model. Financial SMS use for lending decisions is NOT prohibited per se — only non-financial/personal SMS exfiltration is.
+- `QUERY_ALL_PACKAGES` bullet split: the permission itself is banned for loan apps; targeted `<queries>` blocks are allowed but credit-assessment use cases are flagged as developer-review risk, not direct BLOCKER.
+
+**code-audit.md + scripts/audit.sh — detection severity downgraded**:
+- SMS body upload, incremental SMS harvesting, and SQL LIKE patterns near SMS code are detection patterns only. They locate paths to investigate; they do not establish violation.
+- `audit.sh` SMS-related checks downgraded from `WARNING` to `INFO` with a pointer to the two-gate review in spyware-policy.md §11.4.
+
+**Why this release matters**: An audit skill that cannot distinguish "policy says X" from "auditor prefers X" produces unactionable findings — the developer cannot tell which item Google will actually reject on, and which is just engineering opinion. The Output Format change makes that distinction visible per finding.
+
 ## v1.4.0 (2026-04-23)
 
 ### Play Store Skill — Loan App Focus Cleanup + Universal Policy Coverage + Execution Contract
