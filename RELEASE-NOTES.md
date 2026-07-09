@@ -12,15 +12,13 @@ The six review skills now work with **Codex CLI** in addition to Claude Code. No
 - Documents the findings prefixes (`[ARCH-*]`, `[COMPOSE-*]`, `[KT-*]`, `[PERF-*]`, `[GP-*]`, severity-based), the `play-store/scripts/audit.sh` helper, and setup for both platforms.
 - States progressive disclosure explicitly: load the matching skill, then read its `references/` only when the review reaches that topic.
 
-**New — `scripts/install-codex.sh`**:
-- Links each `skills/<name>/` folder into `~/.codex/skills/` so Codex auto-discovers them on restart.
-- Symlinks by default (a `git pull` then updates Codex with no reinstall); `--copy` copies instead; honors `CODEX_HOME` override.
-- Idempotent — re-runs cleanly by removing any prior install first.
+**Codex install via plugin marketplace**:
+- `codex plugin marketplace add https://github.com/liuyi0808/android-review`, then `codex plugin add android-review@android-review`, then restart Codex.
 
 **`README.md`**:
 - Reframed from "a Claude Code plugin" to dual-platform (Claude Code + Codex CLI), with `skills/` called out as the shared source of truth.
 - Installation split into Claude Code and Codex CLI sections.
-- Structure tree adds `AGENTS.md` and `scripts/install-codex.sh`; Requirements now reads "Claude Code CLI **or** Codex CLI".
+- Structure tree adds `AGENTS.md`; Requirements now reads "Claude Code CLI **or** Codex CLI".
 
 **Unchanged**: `scripts/release.sh` still syncs only the `.claude-plugin/` version fields — the Codex-side files carry no version string, so the release flow needs no change.
 

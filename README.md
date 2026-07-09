@@ -39,15 +39,12 @@ claude plugin update android-review
 
 ### Codex CLI
 
-Clone the repo, then link the skills into Codex:
-
 ```bash
-git clone https://github.com/liuyi0808/android-review
-cd android-review
-scripts/install-codex.sh          # symlinks skills into ~/.codex/skills/
+codex plugin marketplace add https://github.com/liuyi0808/android-review
+codex plugin add android-review@android-review
 ```
 
-Restart Codex CLI and confirm the six skills appear in its available-skills list. Because the script symlinks by default, a `git pull` in this repo updates Codex with no reinstall. Use `scripts/install-codex.sh --copy` if you prefer copies over symlinks.
+Restart Codex CLI and confirm the six skills appear in its available-skills list.
 
 Alternatively, point Codex at the repo directly via the root [AGENTS.md](AGENTS.md), which documents when each skill applies.
 
@@ -112,8 +109,7 @@ android-review/
 │   └── workflows/
 │       └── release.yml          # Auto-create GitHub Release on tag push
 ├── scripts/
-│   ├── release.sh               # Version bump + tag + push
-│   └── install-codex.sh         # Link skills into ~/.codex/skills/
+│   └── release.sh               # Version bump + tag + push
 ├── skills/                      # Single source of truth for both platforms
 │   ├── architecture/
 │   │   ├── SKILL.md             # Clean Architecture, MVVM/MVI, Hilt DI

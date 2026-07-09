@@ -46,9 +46,9 @@ severity-based output for security-audit.
 
 ## Setup
 
-- Codex CLI: run `scripts/install-codex.sh` to link the skills into
-  `~/.codex/skills/`, then restart Codex. Or reference this `AGENTS.md` directly
-  from a project that vendors this repo.
+- Codex CLI: `codex plugin marketplace add https://github.com/liuyi0808/android-review`
+  then `codex plugin add android-review@android-review`, then restart Codex. Or
+  reference this `AGENTS.md` directly from a project that vendors this repo.
 - Claude Code: `claude plugin marketplace add liuyi0808/android-review` then
   `claude plugin install android-review`.
 
