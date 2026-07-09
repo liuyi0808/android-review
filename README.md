@@ -1,6 +1,8 @@
 # Android Review
 
-A Claude Code plugin that provides expert-level Android code review across six domains: architecture, Compose UI, Kotlin quality, performance, security, and Google Play compliance. Each skill runs a structured audit, searches for anti-patterns, and produces actionable findings with severity ratings.
+Expert-level Android code review across six domains: architecture, Compose UI, Kotlin quality, performance, security, and Google Play compliance. Each skill runs a structured audit, searches for anti-patterns, and produces actionable findings with severity ratings.
+
+Works with both **Claude Code** (as a plugin) and **Codex CLI** (as skills). The `skills/` directory is the single source of truth for both — see [AGENTS.md](AGENTS.md) for the agent-facing guide.
 
 Built for Android teams writing Kotlin and Jetpack Compose.
 
@@ -19,6 +21,8 @@ Each skill uses progressive disclosure: a concise SKILL.md drives the review pro
 
 ## Installation
 
+### Claude Code
+
 ```bash
 claude plugin marketplace add liuyi0808/android-review
 claude plugin install android-review
@@ -26,12 +30,26 @@ claude plugin install android-review
 
 Verify by starting a new Claude Code session. The six skills should appear in the available skills list.
 
-## Updating
+Update with:
 
 ```bash
 claude plugin marketplace update android-review
 claude plugin update android-review
 ```
+
+### Codex CLI
+
+Clone the repo, then link the skills into Codex:
+
+```bash
+git clone https://github.com/liuyi0808/android-review
+cd android-review
+scripts/install-codex.sh          # symlinks skills into ~/.codex/skills/
+```
+
+Restart Codex CLI and confirm the six skills appear in its available-skills list. Because the script symlinks by default, a `git pull` in this repo updates Codex with no reinstall. Use `scripts/install-codex.sh --copy` if you prefer copies over symlinks.
+
+Alternatively, point Codex at the repo directly via the root [AGENTS.md](AGENTS.md), which documents when each skill applies.
 
 ## Usage
 
@@ -86,15 +104,17 @@ fix: Either remove the permission or update the Data Safety declaration
 
 ```
 android-review/
+├── AGENTS.md                    # Agent-facing guide (Codex CLI + generic agents)
 ├── .claude-plugin/
-│   ├── plugin.json              # Plugin metadata
-│   └── marketplace.json         # Marketplace registration
+│   ├── plugin.json              # Claude Code plugin metadata
+│   └── marketplace.json         # Claude Code marketplace registration
 ├── .github/
 │   └── workflows/
 │       └── release.yml          # Auto-create GitHub Release on tag push
 ├── scripts/
-│   └── release.sh               # Version bump + tag + push
-├── skills/
+│   ├── release.sh               # Version bump + tag + push
+│   └── install-codex.sh         # Link skills into ~/.codex/skills/
+├── skills/                      # Single source of truth for both platforms
 │   ├── architecture/
 │   │   ├── SKILL.md             # Clean Architecture, MVVM/MVI, Hilt DI
 │   │   └── references/          # 6 detailed reference docs
@@ -226,7 +246,7 @@ See [RELEASE-NOTES.md](RELEASE-NOTES.md) for the full changelog.
 
 ## Requirements
 
-- Claude Code CLI
+- Claude Code CLI **or** Codex CLI
 - An Android project using Kotlin and Jetpack Compose
 
 ## Contributing
