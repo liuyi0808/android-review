@@ -1,5 +1,38 @@
 # Android Review Release Notes
 
+## v1.7.0 (2026-07-31)
+
+### Play Store Skill — Google July 2026 Policy Update
+
+Updates based on the [July 15, 2026 policy announcement](https://support.google.com/googleplay/android-developer/answer/17134731).
+
+**permissions.md — READ_CALL_LOG account verification removed**:
+- Mark "Call-based authentication and authorization in banking or brokerage apps" exception as **REMOVED** (July 15, 2026)
+- Add required alternatives: Digital Credentials API, SMS Retriever API
+- Add "Account verification via phone call" to Invalid Use Cases section
+- Add alternative row in Recommended Alternatives table
+- 30-day compliance window from July 15, 2026
+
+**data-privacy.md — Third-party AI integration compliance**:
+- Add new section 5.4.1: User Data policy now explicitly applies to third-party AI integrations
+- Developers responsible for AI service providers' compliance including "limited use, disclosure and consent"
+- Add code audit grep patterns for AI/LLM SDK detection
+- Add 4-item checklist for AI data handling disclosure
+
+**data-privacy.md — Location precision clarification**:
+- Add July 2026 clarification to Location data category
+- Guidance on declaring precise vs approximate location in Data Safety form
+
+**deployment.md — App registration requirement**:
+- Add new section 15.3: All Play apps must be registered in Play Console
+- 99% of apps auto-registered; check Play Console Home page for status
+- Non-compliance risks global removal from Google Play
+
+**SKILL.md updates**:
+- Add July 15, 2026 (READ_CALL_LOG removal) and August 31, 2026 (Target API level) to deadline table
+- Add report output requirement: audit report written to `play-store-audit-report.md`
+- Add July 15, 2026 policy announcement to References section
+
 ## v1.6.0 (2026-07-09)
 
 ### Codex CLI Support — Dual-Platform Skills
