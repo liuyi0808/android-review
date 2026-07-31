@@ -41,7 +41,7 @@ Google Play may provide a temporary exception to apps that aren't Default SMS, P
 | Exception Category | Description (official) | Eligible Permissions |
 |---|---|---|
 | **SMS-based financial transactions** | For example, Unified Payments Interface (UPI), verifications for financial transactions | `READ_SMS`, `RECEIVE_MMS`, `RECEIVE_SMS`, `RECEIVE_WAP_PUSH`, `SEND_SMS` |
-| **Call-based authentication and authorization in banking or brokerage apps** | Banking or brokerage apps that facilitate secure device-based financial transactions for their service | `READ_CALL_LOG`, `PROCESS_OUTGOING_CALLS` |
+| ~~**Call-based authentication and authorization in banking or brokerage apps**~~ | ⚠️ **REMOVED July 15, 2026** ([source](https://support.google.com/googleplay/android-developer/answer/17134731)): `READ_CALL_LOG` is no longer permitted for account verification via phone call. Google removed this exception because secure alternatives now exist — use [Digital Credentials API](https://developer.android.com/identity/sign-in/credential-manager) or [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview) instead. Apps still using this permission for verification have 30 days from July 15, 2026 to migrate. | ~~`READ_CALL_LOG`, `PROCESS_OUTGOING_CALLS`~~ |
 | **SMS-based money management** | For example, apps that track and manage budget | `READ_SMS`, `RECEIVE_MMS`, `RECEIVE_SMS`, `RECEIVE_WAP_PUSH` |
 
 > **Note**: All eligible permissions are subject to Google Play review and approval. The full exception table includes additional non-financial categories (caller ID, backup & restore, connected device companion, device automation, enterprise archive, etc.) — see [full list](https://support.google.com/googleplay/android-developer/answer/10208820).
@@ -118,6 +118,7 @@ grep -rn "sms.*upload\|sms.*send\|sms.*post\|sms.*api" --include="*.kt" --includ
 The following use cases will NOT be permitted to access SMS and Call Log permissions ([source](https://support.google.com/googleplay/android-developer/answer/10208820)):
 
 - Account verification via SMS (see Alternatives)
+- Account verification via phone call (removed July 2026 — use Digital Credentials API or SMS Retriever API)
 - Content sharing or invites (see Alternatives)
 - Contact prioritization (when not the default handler or System level default contacts handler)
 - Social graph and personality profiling
@@ -144,6 +145,7 @@ From the [official alternatives table](https://support.google.com/googleplay/and
 | Use | Alternative |
 |-----|-------------|
 | **SMS OTP & account verification** | [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview) — performs SMS-based user verification automatically, without requiring manual code entry and without extra app permissions. If not an option, users can manually enter verification codes. |
+| **Account verification via phone call** | ⚠️ **No longer permitted** (July 2026, [source](https://support.google.com/googleplay/android-developer/answer/17134731)). Use [Digital Credentials API](https://developer.android.com/identity/sign-in/credential-manager) or SMS Retriever API instead. |
 | **Initiate a text message** | [SMS Intent](https://developer.android.com/guide/components/intents-common#SendMessage) — initiates an SMS or MMS text message via the default handler. |
 | **Share content** | [Share Intent](https://developer.android.com/training/sharing/) — enables sharing content or sending invitations through supporting apps without sensitive permissions. |
 | **Initiate a phone call** | [Dial Intent](https://developer.android.com/reference/android/content/Intent#ACTION_DIAL) — opens the phone app with a specified number. Does not require `CALL_PHONE` permission. |

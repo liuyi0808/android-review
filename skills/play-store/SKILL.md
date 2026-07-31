@@ -92,6 +92,7 @@ Instructions:
 5. Produce the Reference Coverage Report.
 6. Emit the final report in this order:
    Summary → Findings (BLOCKER → WARNING → INFO) → Pending Confirmation (NEEDS_CONFIRMATION) → Coverage Report → Launch Day Checklist.
+7. **Write the final report to a markdown file** in the current working directory: `play-store-audit-report.md`. The file must contain the complete audit report in markdown format.
 
 ---
 
@@ -358,6 +359,8 @@ The `Fix` column may bundle both for brevity; the Output Format must keep them a
 
 | Date | Requirement | Impact |
 |------|------------|--------|
+| July 15, 2026 | READ_CALL_LOG for account verification removed ([source](https://support.google.com/googleplay/android-developer/answer/17134731)) | 30 days compliance — use Digital Credentials API or SMS Retriever API |
+| August 31, 2026 | Target API level requirement | Submission blocked |
 | May 28, 2025 | Photo/Video permissions full compliance | App removal if non-compliant |
 | May 28, 2025 | Line of credit apps must comply with Personal Loan policy | BLOCKER |
 | August 31, 2025 | Target API 35 for new apps and updates | Submission blocked |
@@ -376,6 +379,7 @@ The `Fix` column may bundle both for brevity; the Output Format must keep them a
 
 ## References
 
+- [Policy Announcement: July 15, 2026](https://support.google.com/googleplay/android-developer/answer/17134731?hl=en)
 - [Google Play Developer Program Policy](https://support.google.com/googleplay/android-developer/answer/16810878?hl=en)
 - [Policy Deadlines](https://support.google.com/googleplay/android-developer/table/12921780?hl=en)
 - [Policy Announcements](https://support.google.com/googleplay/android-developer/announcements/13412212?hl=en)

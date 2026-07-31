@@ -27,6 +27,20 @@ Developers providing the following services must register as an **Organization**
 - [ ] Organization identity verified (name, address, DUNS number)
 - [ ] Monitor Play Console for additional verification requirements as they are announced
 
+### 15.3 App Registration Requirement (July 2026)
+
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/17134731)): All Play apps must be registered in Play Console to meet Android developer verification requirements. This ensures Google can verify app ownership and enforce policies consistently across the ecosystem.
+
+> "Non-compliance risks global removal from Google Play."
+
+**Status**: 99% of apps were auto-registered in July 2026. Check your Play Console Home page to verify registration status.
+
+**Apps distributed outside Google Play**: Can also be registered voluntarily for certified Android device compatibility.
+
+- [ ] Verify app registration status in Play Console Home page
+- [ ] Ensure all published apps appear in registered apps list
+- [ ] For apps distributed outside Play: consider voluntary registration for device compatibility
+
 ---
 
 ## 16. Testing Tracks

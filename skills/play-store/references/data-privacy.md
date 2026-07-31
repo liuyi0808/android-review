@@ -36,7 +36,7 @@ For EVERY piece of data your app or ANY SDK collects:
 
 | Data Category | Examples ([source](https://support.google.com/googleplay/android-developer/answer/10787469)) |
 |--------------|---------|
-| Location | Approximate, precise |
+| Location | Approximate, precise — **July 2026 clarification** ([source](https://support.google.com/googleplay/android-developer/answer/17134731)): Declare the most precise level your app can access, even if rarely used. Clearly distinguish between approximate (coarse, city-level) and precise (fine, exact coordinates). |
 | Personal info | Name, email, user ID, address, phone, race/ethnicity, political/religious beliefs, sexual orientation, other (DOB, gender identity, veteran status) |
 | Financial info | Payment info, purchase history, credit score, other financial info (salary, debts) |
 | Health & fitness | Health data, fitness data |
@@ -69,6 +69,26 @@ For each SDK:
 2. Verify with SDK's own Data Safety guidance (most major SDKs publish this)
 3. Include SDK's data collection in YOUR Data Safety form
 4. Update whenever SDK version changes
+
+### 5.4.1 Third-Party AI Integrations (July 2026 Clarification)
+
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/17134731)): User Data policy now explicitly applies to third-party AI integrations. Developers are responsible for ensuring AI service providers comply with data handling requirements, including "limited use, disclosure and consent."
+
+This matters because AI services typically process user input data on external servers, which constitutes data sharing under the User Data policy. Even if the AI provider claims not to retain data, you must disclose the transmission.
+
+**Code audit**:
+```bash
+# Check for AI/LLM SDK integrations:
+grep -rn "openai\|anthropic\|gemini\|langchain\|huggingface" --include="*.kt" --include="*.java" --include="*.gradle"
+
+# Check for AI API endpoints:
+grep -rn "api.openai.com\|generativelanguage.googleapis.com\|api.anthropic.com" --include="*.kt" --include="*.java"
+```
+
+- [ ] Third-party AI service data handling disclosed in Data Safety
+- [ ] AI data processing explained in privacy policy
+- [ ] User consent obtained before sending data to AI services
+- [ ] AI provider's data retention and usage policies reviewed
 
 Common SDKs and their data collection (**Note**: This table is compiled from each SDK's official documentation, not from Google Play policy. Actual data collection may vary by SDK version. Always check [Google Play SDK Index](https://play.google.com/sdks) and each SDK's own Data Safety guidance for current information):
 
