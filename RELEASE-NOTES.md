@@ -1,5 +1,32 @@
 # Android Review Release Notes
 
+## v1.8.0 (2026-08-27)
+
+### New Skill — privacy-audit
+
+A seventh review domain: a "three-way comparison" privacy compliance audit for Android loan apps. Where `play-store` audits an app against Google Play policy, `privacy-audit` audits an app against its own published privacy promises — verifying that the **privacy policy**, the **in-app disclosure dialogs**, and the **code implementation** all agree.
+
+**New — `skills/privacy-audit/SKILL.md`**:
+- Mandatory 5-step workflow: code scan → choose policy source → fetch policy → three-way comparison → write report. Reading the privacy policy before the code scan invalidates the audit.
+- Step 1 is discovery-driven, not checklist-driven: trace every field of every API request body, data model, declared permission, and SDK init back to its source, rather than grepping a fixed keyword list.
+- Step 2 always asks the user which policy source to use; a URL found in the code is never used automatically.
+- Step 3 fetches via `WebFetch`, falling back to Playwright MCP, then to user-pasted text or a local file (.txt/.md/.html/.pdf).
+- Step 4 is bidirectional: collected-but-undisclosed is a `BLOCKER`, declared-but-not-collected is a `WARNING`. A generic phrase ("hardware information") does not count as explicit disclosure.
+- Step 5 writes `privacy-audit-report-[YYYY-MM-DD].md` in a mandated section structure, with itemized remediation — merging findings is forbidden.
+- Covers permissions banned for loan apps, READ_SMS keyword filtering, `queries` tag scope, and third-party SDK data sharing.
+
+**New — `skills/privacy-audit/references/google-play-policies.md`**:
+- 17-section digest of the Google Play policies relevant to a privacy audit: User Data, prominent disclosure and consent, privacy policy content and format, account deletion, Personal Loans (including the 10 banned permissions and country-specific licensing), spyware, deceptive behavior, misrepresentation, device and network abuse, SMS/call log, QUERY_ALL_PACKAGES, photo/video, sensitive-information APIs, Financial Features Declaration, Data Safety, foreground services, and the July 2026 update.
+- Every section cites its policy source URL, with a consolidated reference-link index.
+
+**New — `skills/privacy-audit/references/report-template.md`**:
+- Canonical report format: executive summary, eight comparison tables, policy quality check, four conditional focused checks (READ_SMS, installed app list, camera/photos, location), and the prioritized remediation template.
+
+**Registration across both platforms**:
+- `README.md` — "six domains" → seven; skills table, structure tree, usage example, and a full `### privacy-audit` details section.
+- `AGENTS.md` — "six domains" → seven; skills table row and the findings-output line, which now notes the written report alongside the existing findings prefixes.
+- `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` — descriptions mention privacy compliance auditing; `privacy` added to keywords and tags.
+
 ## v1.7.0 (2026-07-31)
 
 ### Play Store Skill — Google July 2026 Policy Update

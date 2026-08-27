@@ -1,6 +1,6 @@
 # Android Review
 
-Expert-level Android code review across six domains: architecture, Compose UI, Kotlin quality, performance, security, and Google Play compliance. Each skill runs a structured audit, searches for anti-patterns, and produces actionable findings with severity ratings.
+Expert-level Android code review across seven domains: architecture, Compose UI, Kotlin quality, performance, security, privacy compliance, and Google Play compliance. Each skill runs a structured audit, searches for anti-patterns, and produces actionable findings with severity ratings.
 
 Works with both **Claude Code** (as a plugin) and **Codex CLI** (as skills). The `skills/` directory is the single source of truth for both — see [AGENTS.md](AGENTS.md) for the agent-facing guide.
 
@@ -15,6 +15,7 @@ Built for Android teams writing Kotlin and Jetpack Compose.
 | **kotlin-quality** | Coroutines, Flow, null safety, type design, collections & functional patterns | `[KT-*]` |
 | **performance** | Startup time, recomposition waste, memory leaks, ANR, battery drain | `[PERF-*]` |
 | **play-store** | Build config, permissions, Data Safety, financial app declarations, spyware policy | `[GP-*]` |
+| **privacy-audit** | Privacy policy vs in-app disclosure vs code — three-way consistency for loan apps | Report file |
 | **security-audit** | OWASP MASVS v2.0 — storage, crypto, auth, network, platform, code, resilience, privacy | Severity-based |
 
 Each skill uses progressive disclosure: a concise SKILL.md drives the review process, with detailed reference files loaded only when the audit reaches that topic.
@@ -28,7 +29,7 @@ claude plugin marketplace add liuyi0808/android-review
 claude plugin install android-review
 ```
 
-Verify by starting a new Claude Code session. The six skills should appear in the available skills list.
+Verify by starting a new Claude Code session. The seven skills should appear in the available skills list.
 
 Update with:
 
@@ -44,7 +45,7 @@ codex plugin marketplace add https://github.com/liuyi0808/android-review
 codex plugin add android-review@android-review
 ```
 
-Restart Codex CLI and confirm the six skills appear in its available-skills list.
+Restart Codex CLI and confirm the seven skills appear in its available-skills list.
 
 Alternatively, point Codex at the repo directly via the root [AGENTS.md](AGENTS.md), which documents when each skill applies.
 
@@ -70,6 +71,10 @@ Audit Compose UI code in the feature/home module
 
 ```
 Run a performance audit — cold start is over 1 second
+```
+
+```
+Run a privacy compliance audit on this loan app
 ```
 
 ### What a review looks like
@@ -126,6 +131,9 @@ android-review/
 │   │   ├── SKILL.md             # Google Play compliance (2025-2026)
 │   │   ├── scripts/audit.sh     # Automated grep-based audit script
 │   │   └── references/          # 12 detailed reference docs
+│   ├── privacy-audit/
+│   │   ├── SKILL.md             # Three-way privacy compliance audit (loan apps)
+│   │   └── references/          # Google Play policy digest + report template
 │   └── security-audit/
 │       ├── SKILL.md             # OWASP MASVS v2.0 audit
 │       └── references/          # 8 detailed reference docs
@@ -207,6 +215,26 @@ Comprehensive pre-submission audit covering 18+ Google Play policy areas. Update
 **Special coverage for financial/loan apps:** Financial Features Declaration, Personal Loan policy, loan harassment, predatory lending, prohibited credit scoring data, country-specific rules (India, Thailand).
 
 **Output uses three severity levels:** `BLOCKER` (will cause rejection), `WARNING` (risk of rejection), `INFO` (recommendation).
+
+### privacy-audit
+
+Runs a "three-way comparison" for loan apps, verifying that the **privacy policy**, the **in-app disclosure dialogs**, and the **code implementation** all agree. Where `play-store` audits an app against Google Play policy, `privacy-audit` audits an app against its own published privacy promises.
+
+**Fixed 5-step workflow** — the order is mandatory, and reading the privacy policy before the code scan invalidates the audit:
+
+| Step | What happens |
+|------|--------------|
+| 1 | Scan the code — manifest, build files, strings, API request bodies, data models, SDK init |
+| 2 | Ask the user which privacy policy source to use (never auto-use a URL found in code) |
+| 3 | Fetch the policy (WebFetch, Playwright MCP fallback, or a local file) |
+| 4 | Bidirectional comparison against the scan results |
+| 5 | Write `privacy-audit-report-[YYYY-MM-DD].md` in the mandated structure |
+
+**Comparison is bidirectional:** data collected in code but not disclosed is a `BLOCKER`; data declared in the policy but never collected is a `WARNING` (over-promising). A generic phrase such as "hardware information" does not count as explicit disclosure.
+
+**Also checks:** permissions banned for loan apps (`READ_CONTACTS`, `QUERY_ALL_PACKAGES`, `ACCESS_FINE_LOCATION`, …), READ_SMS keyword filtering, `queries` tag scope, third-party SDK data sharing, and privacy policy quality (retention, deletion, contact details).
+
+Step 3 falls back to Playwright MCP when `WebFetch` cannot render the policy page; without it, paste the policy text or pass a local file instead.
 
 ### security-audit
 
