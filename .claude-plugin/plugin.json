@@ -1,6 +1,6 @@
 {
   "name": "android-review",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Android development review skills covering OWASP MASVS security audit, Clean Architecture, performance optimization, Jetpack Compose best practices, privacy compliance auditing, and Google Play Store compliance",
   "author": {
     "name": "liuyi"
