@@ -159,6 +159,8 @@ Account deletion must delete:
 - Health data
 - Every data type marked as "collected" in the Data Safety section
 
+Verify deletion on the developer's servers and deletion requests to applicable service providers. Check the public web path can initiate a request and clearly explains any prerequisite. Record missing backend or provider evidence as `NEEDS_CONFIRMATION`.
+
 ### 4.3 Data retention disclosure
 
 If some data must be retained for the reasons below, the privacy policy must say so explicitly:
@@ -204,29 +206,26 @@ The following permissions are **completely banned** for personal loan apps, loan
 | `READ_MEDIA_VIDEO` | Read media video |
 | `QUERY_ALL_PACKAGES` | Query all installed packages |
 | `WRITE_EXTERNAL_STORAGE` | Write external storage |
-| `READ_SMS` | Read SMS |
-| `READ_CALL_LOG` | Read call log |
+
+SMS and Call Log are not listed in this permission ban. Apply §10 and the Spyware/User Data rules separately. Do not treat a disclosure match, a picker, a location-button flag, or a general permission declaration as overriding the loan restrictions.
 
 ### 5.4 Repayment period restriction
 
 Personal loans that require full repayment within **60 days or less** of disbursement are **prohibited**.
 
-### 5.5 United States specific requirements
+### 5.5 United States specific requirements (outside the default audit scope)
 
 - **APR cap**: the APR must not reach or exceed **36%**
 - **Disclosure requirement**: the maximum APR must be calculated and displayed consistently with the Truth in Lending Act (TILA)
 
 ### 5.6 Country / region specific requirements
 
+Verify the actual distribution markets in Africa and Latin America. Apply global Play rules and verify applicable local requirements with the responsible regulator. The [Financial Services policy](https://support.google.com/googleplay/android-developer/answer/9876821) lists Kenya and Nigeria within the default scope.
+
 | Country / region | Requirement |
 |------------------|-------------|
-| India | Only licensed apps on the RBI "Digital lending apps (DLAs)" list may be submitted |
-| Indonesia | A valid copy of the OJK license must be submitted |
-| Philippines | A PSEC registration number and CA number are required and must be disclosed in the description |
-| Nigeria | Registration under the FCCPC digital lending framework must be completed, with an approval letter |
-| Kenya | A CBK license is required; only digital credit providers published on the CBK website are accepted |
-| Pakistan | Each NBFC may publish only one DLA; short-term loan apps are banned |
-| Thailand | An interest rate ≥15% requires a BoT or MoF license |
+| Nigeria | Verify the FCCPC approval letter. For aggregators verify documentation or certification and contact details for every partnered lender. |
+| Kenya | Verify CBK licence and directory listing. Facilitators must accurately declare their role and provide their partners' DCP licence copies. |
 
 ---
 
@@ -374,11 +373,13 @@ These permissions may only be accessed by apps that fall into an "allowed use" c
 - SMS-based financial transactions
 - SMS-based money management
 
+For backup/restore, verify that the app can restore the data to the device's original default handler, not merely copy it to a cloud service. The `READ_CALL_LOG` exception for government-mandated telecommunications quality-of-service reporting applies only to qualifying government or authorized mobile network operator apps. Neither exception by itself establishes approval or a permitted loan use.
+
 ### 10.4 Prohibited use cases
 
 | Prohibited use | Notes |
 |----------------|-------|
-| SMS OTP verification | Use the SMS Retriever API instead |
+| SMS OTP verification using restricted SMS permissions | Permissionless options include SMS Retriever, SMS User Consent for a single approved verification message, or manual entry; do not read SMS history for OTP. |
 | Content sharing or invitations | Use a Share Intent instead |
 | Social graph and personality analysis | Completely prohibited |
 | Call recording | Completely prohibited |
@@ -390,7 +391,7 @@ These permissions may only be accessed by apps that fall into an "allowed use" c
 
 ### 10.5 Upcoming changes
 
-**From January 27, 2027**: READ_CALL_LOG may no longer be used for "account verification via phone call"; use the Digital Credentials API or the SMS Retriever API instead.
+**From January 27, 2027**: `READ_CALL_LOG` is no longer permitted for phone-call account verification ([preview](https://support.google.com/googleplay/android-developer/answer/17225965)). Before the cutoff, verify whether the current, narrow bank/brokerage exception and approval apply; a loan workflow does not qualify by default. Check the actual purpose and data handling separately from the permission name.
 
 ---
 
@@ -479,6 +480,7 @@ Apps targeting Android 13+ (API 33+) may request `READ_MEDIA_IMAGES` and `READ_M
 - Every app published on Google Play
 - Including apps on closed testing, open testing, and production tracks
 - Even apps with no financial features must complete the form and declare "no financial features"
+- Apps active only on the internal testing track are exempt
 
 ### 14.2 Financial features that must be declared
 
@@ -534,6 +536,7 @@ The reason for collecting/sharing data must be declared:
 
 ### 15.3 Relationship with the privacy policy
 
+- Compare the form with actual flows across the applicable versions distributed on Play under the same package name, including differences by market and SDK. Record unverified package-wide coverage as `NEEDS_CONFIRMATION`.
 - The Data Safety form and the privacy policy must be consistent
 - A privacy policy link is required to complete the form
 - Misrepresentation can result in removal of the app from Google Play
@@ -579,7 +582,7 @@ Starting July 15, 2026, developers have at least 30 days to update their apps.
 
 | Update | Notes |
 |--------|-------|
-| SMS / call log permissions | READ_CALL_LOG may no longer be used for account verification |
+| SMS / call log permissions | `READ_CALL_LOG` phone-call account verification removed effective January 27, 2027; see §10.5 |
 | User Data policy | Clarified to apply to third-party AI integrations |
 | Target API level | The latest requirement must be met by August 31, 2026 |
 

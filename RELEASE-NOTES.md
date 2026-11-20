@@ -1,5 +1,26 @@
 # Android Review Release Notes
 
+## v1.9.0 (2026-11-20)
+
+### Personal loan publishing and policy audit
+
+- Update the Play Store skill for the October 2026 policy cycle. Default to personal loan apps in Africa and Latin America, and verify licensing for each actual distribution market.
+- Check the verified Organization account, app registration, trader status, and reviewer access separately. Track readiness for the 2027 Play Vitals memory, DEX optimization, and zero-tap sign-in requirements.
+- Review the effective target SDK, applicable Play Billing version, and 16 KB compatibility for the package being submitted. Apply upcoming platform and feature rules when the app meets their scope.
+- Check the loan-specific permission bans against the submission manifest. Review SMS and Call Log eligibility, declaration status, and actual data transmission as separate findings.
+
+### Privacy and security audit
+
+- Use the effective manifest for the three-way privacy audit. Compare package-wide Data Safety disclosures with actual SDK and app data flows, and require evidence for account deletion through the app and public web path.
+- Compare reviewer and ordinary test account behavior when flows differ. Record future requirements and gaps in Console, backend, or artifact evidence separately from confirmed current violations.
+- Verify the effective expiry and rotation of configured certificate pin sets.
+
+### Automated Play Store scanner
+
+- Add `--manifest` to read the audited variant's merged or packaged text XML. List source permission removals separately from permission declarations.
+- Detect common literal credential assignments in Kotlin, Java, and Gradle. Skip generated and test sources, and report locations without printing credential values.
+- Distinguish an automated blocker from an argument or evidence read error using exit statuses `1` and `2`. Add regression coverage for removal directives, SDK or variant permissions, credential false positives, redaction, and exit statuses.
+
 ## v1.8.0 (2026-08-27)
 
 ### New Skill — privacy-audit

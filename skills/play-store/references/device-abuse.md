@@ -37,7 +37,7 @@ grep -rn "BIND_DEVICE_ADMIN\|device_admin" --include="*.xml"
 
 ### 12.2 Accessibility Service Abuse
 
-Accessibility services are heavily scrutinized. Using them for non-accessibility purposes is a **BLOCKER**.
+Apply the [Accessibility API policy](https://support.google.com/googleplay/android-developer/answer/16558241#accessibility), not a blanket ban on non-accessibility-tool apps. For target API 31+ using `AccessibilityService`, verify Play Console declaration and approval, including any required video. For non-tools also verify listing documentation, prominent in-app disclosure and affirmative consent. Review designation eligibility and actual behavior as described in `permissions.md` §3.12.
 
 #### Policy Update (announced October 30, 2025; enforcement deadline January 28, 2026)
 
@@ -47,23 +47,23 @@ Google's updated policy states ([source](https://support.google.com/googleplay/a
 
 **Exception** ([source](https://support.google.com/googleplay/android-developer/answer/10964491)): "This does not prohibit deterministic, rule-based automation, where behavior follows a static, human-defined script (for example, 'If Trigger X occurs, perform Action Y')."
 
-**Exemption**: Verified accessibility tools identified by `isAccessibilityTool='true'` are exempt from this prohibition ([source](https://support.google.com/googleplay/android-developer/answer/10964491)).
+**Exemption**: An eligible, verified accessibility tool may use autonomous functionality only for its core purpose of assisting people with disabilities. `isAccessibilityTool='true'` is not proof of verification and does not waive other restrictions ([source](https://support.google.com/googleplay/android-developer/answer/10964491)).
 
-**Behaviors that would violate the policy** (audit guidance — these are inferred from the general prohibition, not individually named in policy text):
+**Behaviors to investigate** (check the actual behavior and applicable restriction, not merely the presence of an API):
 - Automatically modifying device settings or system preferences
 - Bypassing Android privacy controls or permission dialogs
 - Performing UI actions (clicks, scrolls, gestures) without real-time user awareness
 - Automated form filling, screenshot capture, or button clicks via Accessibility API
 - Executing UI operations in a deceptive manner (e.g., hidden overlay clicks)
 
-**Financial app warning**: The following patterns would violate the policy even when the Accessibility API is declared for a legitimate accessibility purpose (audit guidance):
+**Loan app evidence**: Inspect whether the service is used during KYC, submission or to read other apps. Determine who initiates and controls the action, what data is accessed, why the scope is necessary and whether access bypasses privacy controls or reaches an unauthorized destination. Examples of leads:
 - Automated identity verification flows (auto-filling KYC forms)
 - Automated form submission on behalf of the user
 - Reading screen content from other apps (e.g., reading OTPs from SMS app, scraping bank balances)
 
 **Code audit — autonomous action detection**:
 ```bash
-# Check for autonomous action APIs (PROHIBITED since Oct 2025):
+# Locate action APIs and trace whether the behavior is autonomous:
 grep -rn "performAction\|performGlobalAction\|dispatchGesture" --include="*.kt"
 grep -rn "AccessibilityNodeInfo.*ACTION_" --include="*.kt"
 
@@ -84,14 +84,9 @@ grep -rn "accessibilityservice" --include="*.xml" app/src/main/
 grep -rn "AccessibilityEvent\|AccessibilityNodeInfo\|performAction" --include="*.kt"
 ```
 
-- [ ] No AccessibilityService unless core functionality requires it
-- [ ] No autonomous action initiation, planning, or execution via Accessibility API (Oct 2025 update)
-- [ ] No `performAction` / `performGlobalAction` / `dispatchGesture` for non-user-initiated actions
-- [ ] No reading screen content from other apps via `getRootInActiveWindow` / `getWindows`
-- [ ] No automated form filling or UI interaction on behalf of the user
-- [ ] No using accessibility APIs for automated UI interaction
-- [ ] No using accessibility to scrape content from other apps
-- [ ] If AccessibilityService is used: Permissions Declaration Form submitted with video demo
+- [ ] Confirm eligible `isAccessibilityTool` designation, or verify listing disclosure, prominent in-app disclosure and affirmative consent
+- [ ] Verify Play Console declaration and approval for target API 31+ with `AccessibilityService`, including video evidence where required
+- [ ] Distinguish prohibited autonomy, security/privacy bypass or covert data collection from a user-driven or deterministic action; validate actual scope and outcome
 
 ### 12.3 App Interference
 
@@ -160,5 +155,5 @@ grep -rn "MediaRecorder.*setVideoSource\|SURFACE\|createVirtualDisplay" --includ
 - [ ] No network abuse
 - [ ] No preventing uninstallation
 - [ ] App respects FLAG_SECURE set by other apps
-- [ ] No autonomous actions or decisions via Accessibility API (exception: deterministic rule-based automation)
+- [ ] Check autonomous actions or decisions against §12.2; distinguish deterministic rules from autonomy and require evidence for any verified-tool exemption
 - [ ] Device settings changes are easily reversible

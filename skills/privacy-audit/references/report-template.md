@@ -66,9 +66,9 @@ App version: X.X.X (Build)
 
 ### 2.2 Banned permission check (loan app)
 
-| Banned permission | AndroidManifest.xml status | Status |
-|-------------------|----------------------------|--------|
-| [permission name] | ✅ tools:node="remove" / ❌ declared / ❌ not handled | ✅/❌ |
+| Banned permission | Submitted variant and effective manifest evidence | Status |
+|-------------------|--------------------------------------------------|--------|
+| [permission name] | [artifact or merged manifest and effective declaration, or source-only lead] | Absent / Confirmed prohibited / Needs confirmation |
 
 ### 2.3 User identity data collection comparison
 
@@ -126,15 +126,17 @@ Used to verify that data which is banned, or declared as not collected, really i
 
 ## 4. Focused Check Templates
 
-### 4.1 READ_SMS focused check
+### 4.1 SMS and Call Log focused check
 
-**Include this section only when the app declares the READ_SMS permission.**
+**Include this section when restricted SMS/Call Log access or related data flow is found.**
 
 | Check item | Result |
 |------------|--------|
-| Permission status | [declared / removed] |
-| Code implementation | [location and status] |
-| Policy disclosure | [disclosed content] |
+| Permission and artifact evidence | [effective declaration, absent, or source-only] |
+| Actual core use and Console approval | [specific eligible use, approval scope, evidence or needs confirmation] |
+| Data flow | [source, fields, recipients, downstream decision/collection use, evidence gaps] |
+| Policy and in-app disclosure | [text and when shown; mismatch if any] |
+| Applicable deadline | [current rule or upcoming change and date; report separately] |
 
 ### 4.2 Installed app list focused check (queries tag)
 

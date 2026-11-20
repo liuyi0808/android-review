@@ -12,13 +12,7 @@ Google Play has specific policies targeting predatory lending and aggressive deb
 
 ### 14.1 Prohibited Contact/Harassment Practices
 
-**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans)): The `READ_CONTACTS` permission is **entirely prohibited** for personal loan apps, accessory loan/credit apps, and EWA apps — regardless of purpose (not just debt collection). This means contact data cannot be accessed for any reason including loan application, risk assessment, or debt collection.
-
-**Independent enforcement layer — Contacts Permissions Policy (effective Oct 28, 2026)** ([source](https://support.google.com/googleplay/android-developer/answer/16926792)): The new Contacts Permissions policy governs broad `READ_CONTACTS` access across all apps and requires Android Contact Picker as the default. For loan apps this is **an additional enforcement layer on top of** the Personal Loans ban — switching from broad `READ_CONTACTS` to the Contact Picker does **NOT** make contact collection permissible for loan apps. Any form of contact selection used for lending decisions or collection is still a Personal Loans violation. See `permissions.md` Section 3.9 for the full policy.
-
-**Prohibited by policy**:
-- Access user's contact list for **any purpose** (permission entirely banned)
-- Use Android Contact Picker to collect "emergency contacts" or references for credit scoring / collection (double violation)
+**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/9876821)): `READ_CONTACTS` is prohibited for the covered loan categories regardless of purpose. For picker and manually entered reference flows, trace the exact fields, destinations and documented purpose, including any use for underwriting, collections, or disclosure of the user's debt to other people. Do not treat the existence of a picker as either compliance or a second permission violation; apply the sensitive-data and harassment rules to what the app actually does. See `permissions.md` §§3.1.4 and 3.9.
 
 **Enforcement-derived practices** (inferred from the blanket contact ban and consistent Google Play enforcement patterns against predatory loan apps, not verbatim policy text):
 - Send automated messages to user's contacts about overdue loans
@@ -51,7 +45,7 @@ grep -rn "emergency.*contact\|contacto.*emergencia\|reference.*contact" --includ
 - [ ] No READ_CONTACTS permission (or explicitly removed via tools:node="remove")
 - [ ] No automated SMS sending to user's contacts
 - [ ] No automated calling to user's contacts
-- [ ] Emergency contact data used ONLY for loan application, NOT for collection
+- [ ] Any reference/contact processing has been traced to its real use; no prohibited access or use for harassment
 - [ ] Notification frequency is reasonable (not spamming overdue reminders)
 - [ ] No threatening or shaming language in any UI or notification
 
@@ -63,7 +57,7 @@ Google flags apps that exhibit predatory lending patterns:
 ```bash
 # Check for extremely short loan terms:
 grep -rn "repayment.*day\|plazo.*dia\|term.*day\|loan.*period" --include="*.kt" --include="*.xml" -i
-# Verify minimum repayment period >= 60 days
+# Verify when the actual offer requires full repayment from the date of issuance.
 
 # Check for hidden fees:
 grep -rn "fee\|cargo\|comision\|cuota.*manejo\|penalty\|penalidad\|recargo" --include="*.xml" --include="*.kt" -i
@@ -72,7 +66,7 @@ grep -rn "fee\|cargo\|comision\|cuota.*manejo\|penalty\|penalidad\|recargo" --in
 grep -rn "APR\|tasa.*anual\|interest.*rate\|tasa.*interes" --include="*.xml" --include="*.kt" -i
 ```
 
-- [ ] Minimum loan repayment period >= 60 days (< 60 days = **BLOCKER**)
+- [ ] A personal loan requiring full repayment in **60 days or less** from issuance is a **BLOCKER** absent a verified exception (`financial-declaration.md` §4.3). An earlier installment or optional early payoff is not evidence that full repayment is required by day 60.
 - [ ] All fees clearly disclosed before loan agreement
 - [ ] APR clearly displayed and not misleading
 - [ ] No hidden fees or charges added after loan agreement
@@ -84,13 +78,13 @@ grep -rn "APR\|tasa.*anual\|interest.*rate\|tasa.*interes" --include="*.xml" --i
 
 | Data Type | Permission Status | Policy Source |
 |-----------|------------------|---------------|
-| Contact list | **BANNED** — `READ_CONTACTS` entirely prohibited (also subject to Contacts Permissions Policy effective Oct 28, 2026; Contact Picker does NOT make loan-app contact use permissible) | Personal Loans Policy + Contacts Permissions Policy |
-| Photos/media | **BANNED** — `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEOS`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` entirely prohibited | Personal Loans Policy |
+| Contact list | **BANNED** — `READ_CONTACTS` is prohibited; assess any picker/manual flows separately | Financial Services General Requirements |
+| Photos/media | **BANNED** — `READ_MEDIA_IMAGES`, `READ_MEDIA_VIDEO`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE` | Financial Services General Requirements |
 | Fine location | **BANNED** — `ACCESS_FINE_LOCATION` entirely prohibited | Personal Loans Policy |
 | Phone numbers | **BANNED** — `READ_PHONE_NUMBERS` entirely prohibited | Personal Loans Policy |
 | Installed apps | **BANNED** — `QUERY_ALL_PACKAGES` entirely prohibited | Personal Loans Policy + QUERY_ALL_PACKAGES Policy |
 | SMS content | Governed by SMS/Call Log Policy (requires exception approval); non-financial SMS exfiltration prohibited | Spyware Policy ([source](https://support.google.com/googleplay/android-developer/answer/14745000)) |
-| Coarse location | Not in prohibited list; allowed with proper disclosure | Must declare in Data Safety |
+| Coarse location | Not in the prohibited list; verify core need, minimum scope and actual handling | Location, User Data and Data Safety policies |
 | Device ID | Not in prohibited list; allowed with proper disclosure | Must declare in Data Safety |
 | Financial records (credit bureau) | Allowed | Standard practice |
 
@@ -106,7 +100,7 @@ grep -rn "risk\|score\|credit\|assess\|evalua" --include="*.kt" -i | grep -i "ap
 grep -rn "risk\|score\|credit\|assess\|evalua" --include="*.kt" -i | grep -i "contact"
 ```
 
-- [ ] SMS data use for credit scoring is governed by the two-gate model in [spyware-policy.md#114-category-4-personal-smscall-log-exfiltration-critical-for-loan-apps](spyware-policy.md#114-category-4-personal-smscall-log-exfiltration-critical-for-loan-apps): Gate 1 (Permissions Declaration approved for use case viii/ix) AND Gate 2 (only financial SMS actually exfiltrated). Financial SMS use for lending decisions is NOT prohibited per se — only non-financial/personal SMS exfiltration is.
+- [ ] Trace SMS data to downstream decisions. Verify the actual use falls under the permitted and approved core purpose (§3.1); cleaning or filtering the payload does not extend a transaction/budgeting approval to underwriting or collection. Apply the [Spyware policy data-sharing check](spyware-policy.md#114-category-4-personal-smscall-log-exfiltration-critical-for-loan-apps) separately.
 - [ ] `QUERY_ALL_PACKAGES` permission not declared (entirely banned for loan apps per 14.3 table). Targeted `<queries>` block is the allowed alternative; per [permissions.md#3.2](permissions.md#32-query_all_packages-installed-apps-visibility), `<queries>` packages must have documented business justification. Note: the QUERY_ALL_PACKAGES policy explicitly states credit-assessment use cases are "NOT eligible" for that permission's exception — this is a policy signal about the use case, but does not constitute a verbatim ban on `<queries>`-block-derived installed-app data. Auditor flags this as a risk for developer review, not as a direct BLOCKER.
 - [ ] Contact data NOT used for credit scoring (`READ_CONTACTS` entirely banned per 14.3 table)
 - [ ] Photos/media NOT used for credit scoring (entirely banned per 14.3 table)
@@ -119,6 +113,6 @@ grep -rn "risk\|score\|credit\|assess\|evalua" --include="*.kt" -i | grep -i "co
 - [ ] Emergency contacts protected from collection use
 - [ ] Reasonable notification frequency
 - [ ] No threatening or shaming language
-- [ ] Loan terms >= 60 days minimum
+- [ ] No personal loan requires full repayment in 60 days or less from issuance, unless a documented exception applies
 - [ ] All fees disclosed upfront
 - [ ] Prohibited data types not used for lending decisions

@@ -137,6 +137,12 @@ grep -rn "isOverdue\|isDefaulted\|loanStatus.*==\|delinquent" --include="*.kt" -
 - [ ] No undisclosed remote configuration that changes core behavior
 - [ ] No behavior differences based on user's loan/debt status that aren't disclosed
 
+**Play review manipulation** ([Deceptive Behavior policy](https://support.google.com/googleplay/android-developer/answer/17006354), clarified October 29, 2026): Do not mislead reviewers about the app's purpose or functionality or change behavior to hide noncompliant features during review. For a personal loan app:
+
+1. Compare the supplied reviewer account with a normal test account under equivalent eligibility, locale, loan status and app version. Walk onboarding, consent, offer and fees, application, repayment, and any enabled collection flow. Use test identities and avoid submitting a live loan or payment.
+2. Inspect account routing, server flags, rollout and time/locale rules when flows differ. Record the condition, actual user-facing difference, listing/Console disclosures and any missing server evidence. A reviewer demo account, staged rollout, legitimate country restriction or borrower-state difference is not proof of manipulation by itself.
+3. Report a current violation when evidence shows the reviewer path misrepresents real functionality or hides noncompliant behavior. If routine-user or backend behavior cannot be verified, report `NEEDS_CONFIRMATION`. Apply any independently proven loan disclosure or sensitive-data violation separately.
+
 ### 10.6 Permissions Policy
 
 - [ ] Request ONLY permissions necessary for core functionality

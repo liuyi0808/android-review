@@ -1,13 +1,22 @@
 ---
 name: play-store
-description: Google Play Store submission and compliance checklist for Android apps, with special focus on financial/loan apps. Covers build config, permissions (including Contacts Permissions, Contact Picker, location button, Geofence API), Data Safety, Financial Features Declaration, Personal Loan policy, sensitive permission restrictions, spyware policy, deceptive behavior, device abuse, consent flow transparency, data transmission audit, loan app harassment policy, intellectual property (trademark/copyright/counterfeit), restricted content, account deletion, developer verification, and code-level audit. Updated for 2025-2026 policy cycle including April 15, 2026 announcement.
+description: Google Play submission and compliance audit for personal loan apps targeting Africa and Latin America. Covers organization account verification, market-specific licensing, loan restrictions, data and permissions, reviewer access, and general Play publishing requirements.
 ---
 
 # Google Play Compliance & Launch Checklist
 
-Comprehensive pre-submission audit and compliance verification for Google Play Store publishing. Includes 2025-2026 policy updates with special sections for **financial/loan apps**.
+Default scope: **personal loan apps distributed in Africa and Latin America**. Apply global Play rules and assess country-specific rules for each actual target country. Expand geographic scope only when the user explicitly requests it. An app's package-wide Data Safety declaration still covers all applicable versions distributed on Play.
 
-**Policy effective date**: March 4, 2026 (unless otherwise stated per section).
+**Policy baseline**: October 29, 2026 announcement. Determine enforcement dates per applicable rule from the official Policy Deadlines; the announcement date is not the enforcement date.
+
+### Loan-first decision order
+
+1. Identify the product category and exact countries using Play Console distribution settings, the listing, actual flows and Financial Features Declaration. Record the submitted variant, effective target SDK, and artifact evidence. If the country list is unknown, flag the market assessment as `NEEDS_CONFIRMATION` and continue evaluating global requirements. See `financial-declaration.md` §4.4.
+2. Apply the Financial Services prohibitions first (see `permissions.md` §3.1.4). A confirmed, effective loan-banned permission is a `BLOCKER` without a declaration path. A source-only hit, unknown category or unresolved manifest removal is not conclusive.
+3. For other restricted permissions, map the runtime flow and data destinations to the actual core use and Play Console declaration. Determine whether alternatives are required or sufficient. Assess restrictions on purpose and data handling separately, even if a permission declaration is approved.
+4. For each dated rule record `Effective` or `Upcoming` and its enforcement date. Use the planned submission date if supplied, otherwise the audit date. Upcoming-only issues go in a separate readiness section, not present violations. A currently effective loan, User Data, or Deceptive Behavior violation is still reported under that rule.
+5. Check new feature-specific rules (AppFunctions, local network, contact management, eligibility-based subscriptions) only when relevant. Record missing Console/backend or artifact evidence as `NEEDS_CONFIRMATION`; never treat a keyword hit or a clean scan as proof of a verdict.
+6. Verify the loan app's **Organization** developer account and identity in Play Console (`deployment.md` §§15.1–15.2). Confirmed ownership by a Personal account is a `BLOCKER` for the covered loan app. Missing account evidence is `NEEDS_CONFIRMATION`. Personal developer account production-access criteria are out of scope. Assess app registration, trader status, reviewer access, memory, DEX optimization and zero-tap restoration separately.
 
 ## Execution Contract (MUST read before starting)
 
@@ -24,11 +33,11 @@ This skill has **14 reference files**. A full audit MUST load all 14.
 
 4. **The Reference Coverage Report is mandatory.** Before the audit report is complete, emit a Coverage table with 14 rows. No Coverage table → the report is incomplete.
 
-5. **No conclusions from memory.** If you cannot cite the reference file section you relied on, you do not have the finding. "I remember Personal Loans policy says X" is not acceptable — you must have actually loaded `loan-harassment.md` in this session before claiming a Personal Loans violation.
+5. **Read the policy, not just the announcement.** Load the relevant local reference and verify the current official requirement, including linked enforcement dates, tables, FAQs or exceptions that affect the decision. Record scope, effective date, required action, evidence and enforcement consequence. An item labeled a reminder can still carry an account or publishing requirement. If the source does not specify an exact date or action, do not invent one; identify what still needs confirmation in Console.
 
 6. **Judge outcome against policy. Never prescribe implementation as policy.** Every finding must answer two structural questions, with both answers visible in the Output Format:
 
-   - **Declaration gate**: Does Google provide a declaration channel for this policy (Permissions Declaration, Data Safety, Financial Declaration)? If yes and the developer's declaration status is unknown to the auditor, severity is **NEEDS_CONFIRMATION** — never BLOCKER/WARNING. If no channel exists (e.g., DexClassLoader, hidden functionality, using SMS data for credit underwriting), the policy is absolute and direct judgment is allowed.
+   - **Declaration gate**: Does Google provide a declaration channel for this policy (Permissions Declaration, Data Safety, Financial Declaration)? If yes and the developer's declaration status is unknown to the auditor, severity is **NEEDS_CONFIRMATION** — never BLOCKER/WARNING. If no channel applies (e.g., a confirmed loan-banned permission or proven review manipulation), judge against the policy and verified evidence.
 
    - **Outcome vs. implementation**: The `Required by policy:` field must contain verbatim or near-verbatim policy text — if you cannot quote it, you do not have a policy requirement. Any engineering preference (sender allow-lists, keyword filters, server-side checks, SP-key guards, specific APIs like SMS Retriever) goes in `Suggested implementation:` and must be explicitly marked "non-policy, auditor's suggestion only." Code existence alone is not a violation — the auditor judges what is actually exfiltrated, transmitted, or done, not what the code might do under some interpretation.
 
@@ -46,7 +55,7 @@ Launch **5 Task subagents in parallel** (a single assistant message with 5 tool 
 | **B — Money & Privacy** | `financial-declaration.md`, `data-privacy.md`, `loan-harassment.md` | Play Console financial declaration, SDK list, Data Safety alignment, lending data use, harassment patterns |
 | **C — Spyware, Consent & Deception** | `spyware-policy.md`, `consent-flow.md`, `deceptive-behavior.md` | Startup sequence, SDK init order, consent dialog, disclosure-vs-reality, hidden functionality |
 | **D — Abuse, Content & IP** | `device-abuse.md`, `restricted-content.md`, `intellectual-property.md` | Accessibility service, FLAG_SECURE, app strings, logos/icons, brand misuse |
-| **E — Listing & Deployment** | `store-listing.md`, `deployment.md` | Store listing assets, testing tracks, Play Vitals, developer verification |
+| **E — Listing & Deployment** | `store-listing.md`, `deployment.md` | Listing, testing tracks, developer verification, trader declaration, Play Vitals, bundle quality and sign-in restoration |
 
 **Subagent prompt template** (use this when dispatching each subagent):
 
@@ -68,6 +77,7 @@ Instructions:
    - If the policy has a declaration channel and you cannot confirm
      the developer's declaration status, status = NEEDS_CONFIRMATION
      (never BLOCKER/WARNING).
+   - Apply the loan-first decision order; keep upcoming-only findings out of current severity totals.
    - `Required by policy:` must be a verbatim or near-verbatim quote
      from the policy URL. If you cannot quote it, do not write the
      finding — you do not have a policy requirement.
@@ -91,7 +101,8 @@ Instructions:
 4. Sort by severity: BLOCKER > WARNING > INFO. **NEEDS_CONFIRMATION findings are listed in a separate section** after INFO, never tallied with the others.
 5. Produce the Reference Coverage Report.
 6. Emit the final report in this order:
-   Summary → Findings (BLOCKER → WARNING → INFO) → Pending Confirmation (NEEDS_CONFIRMATION) → Coverage Report → Launch Day Checklist.
+   Summary → Findings (BLOCKER → WARNING → INFO) → Pending Confirmation (NEEDS_CONFIRMATION) → Upcoming Policy Readiness → Coverage Report → Launch Day Checklist.
+   In the Coverage Report, always include the deployment evidence table below.
 7. **Write the final report to a markdown file** in the current working directory: `play-store-audit-report.md`. The file must contain the complete audit report in markdown format.
 
 ---
@@ -107,7 +118,7 @@ Output each finding as a full block with all eleven fields. **All fields are man
   Evidence: <file:line — describe ACTUAL behavior (e.g. "uploads full SMS body via POST /api/sync"), not just code existence (e.g. "calls uploadInfo()")>
   Reference: <reference file>#<section anchor>
   Policy Source: <official Google Play policy URL>
-  Declaration Channel: <Permissions Declaration | Data Safety | Financial Declaration | None>
+  Declaration Channel: <Permissions Declaration | Data Safety | Financial Declaration | Trader Status | Console Exemption Request | None>
   Declaration Status: <Confirmed | Pending | Unknown | Not Applicable>
   Required by policy: <verbatim or near-verbatim policy text + URL — if you cannot quote it, the requirement is not from policy>
   Suggested implementation: <engineering option(s), explicitly prefixed "non-policy, auditor's suggestion only" — or "None">
@@ -125,17 +136,17 @@ Output each finding as a full block with all eleven fields. **All fields are man
 
 ```
 [GP-00101] status: BLOCKER
-  Category: 14.3 — Loan Harassment: prohibited data for credit scoring
-  Finding: App self-discloses that user SMS content feeds the credit-scoring model.
+  Category: 3.1.4 — Financial Services loan permission ban
+  Finding: The submitted personal-loan artifact declares android.permission.READ_CONTACTS.
   Evidence:
-    - app/src/main/res/values/strings.xml:9 — discloses SMS data used for "evaluación crediticia"
-    - app/src/main/java/.../AppInfoR.kt:79-86 — SMS body uploaded under field SP_SMS to api.example.com/uploadInfo
-  Reference: loan-harassment.md#14.3
-  Policy Source: https://support.google.com/googleplay/android-developer/answer/9876821#personal-loans
+    - Store listing and loan application flow confirm personal lending.
+    - Submitted artifact's manifest contains the effective uses-permission entry.
+  Reference: permissions.md#314-personal-loan-apps--additional-restrictions
+  Policy Source: https://support.google.com/googleplay/android-developer/answer/9876821
   Declaration Channel: None
   Declaration Status: Not Applicable
-  Required by policy: Personal Loans apps may not use prohibited data sources (including SMS data) for credit underwriting decisions. See Personal Loans Policy (URL above).
-  Suggested implementation: None — the policy prohibition is on the use case itself; HOW the developer separates legitimate SMS use cases (e.g., OTP, transaction alerts) from credit scoring is the developer's choice.
+  Required by policy: Covered apps may not use the listed permissions, including READ_CONTACTS.
+  Suggested implementation: non-policy, auditor's suggestion only: locate the manifest contributor and remove the declaration from the submitted variant.
   Deadline: Active
 ```
 
@@ -170,7 +181,7 @@ Each reference file contains the full policy details, code audit commands, and c
 
 | # | Reference File | Subagent Group | Sections | Scope |
 |---|---------------|----------------|----------|-------|
-| 1 | [references/build-and-signing.md](references/build-and-signing.md) | A | 1-2 | `build.gradle`, targetSdk, AAB, R8, signing, log guards |
+| 1 | [references/build-and-signing.md](references/build-and-signing.md) | A | 1-2 | Effective target API, submitted AAB, billing, 16 KB compatibility, R8, signing, log guards |
 | 2 | [references/permissions.md](references/permissions.md) | A | 3 | Manifest permissions, SMS/Call Log, QUERY_ALL_PACKAGES, photo/video, location (incl. location button), FGS types, alarms, Contacts Permissions (Contact Picker) |
 | 3 | [references/financial-declaration.md](references/financial-declaration.md) | B | 4 | Play Console Financial Features Declaration, loan app requirements, country-specific rules |
 | 4 | [references/data-privacy.md](references/data-privacy.md) | B | 5-7 | Data Safety form, SDK data audit, account deletion, privacy policy |
@@ -180,7 +191,7 @@ Each reference file contains the full policy details, code audit commands, and c
 | 8 | [references/device-abuse.md](references/device-abuse.md) | D | 12 | Device settings modification, accessibility abuse, app interference, network abuse |
 | 9 | [references/consent-flow.md](references/consent-flow.md) | C | 13 | End-to-end consent flow audit, permission denial handling, disclosure content requirements |
 | 10 | [references/loan-harassment.md](references/loan-harassment.md) | B | 14 | Loan app harassment, predatory lending, prohibited data for credit scoring |
-| 11 | [references/deployment.md](references/deployment.md) | E | 15-17 | Developer verification (2026), testing tracks, post-launch monitoring, Play Vitals |
+| 11 | [references/deployment.md](references/deployment.md) | E | 15-17 | Developer verification, trader status, testing tracks, and technical quality requirements |
 | 12 | [references/code-audit.md](references/code-audit.md) | A | 18 | Grep/code audit commands — manifest, code, build config, spyware, device abuse, harassment |
 | 13 | [references/intellectual-property.md](references/intellectual-property.md) | D | IP | Trademark, copyright, counterfeit, financial-app brand-misuse risks |
 | 14 | [references/restricted-content.md](references/restricted-content.md) | D | RC | Restricted content categories applicable to all apps; loan-app surfaces (strings, notifications, support scripts) |
@@ -221,43 +232,58 @@ Pending confirmation: <N> NEEDS_CONFIRMATION (not part of the verdict; require d
 - `⏭ Not Applicable` — Reference was read, but scope does not apply. Must include reason in Notes.
 - `❌ Skipped` — Any row with this value means the audit is incomplete and the report must be treated as a draft, not a decision.
 
+**Mandatory deployment evidence**: Add these rows under reference 11 even if none is a current finding. Record the applicable deadline, evidence, status and next action. Use `Not Applicable` only with a verified scope reason. An inaccessible Console or unavailable Vitals history is `NEEDS_CONFIRMATION`.
+
+| Check | Evidence to record |
+|-------|--------------------|
+| Organization account | App's owning Play Console account type, organization verification status and linkage to the licence holder where applicable |
+| Reviewer access | App access instructions and replay of restricted flows with supplied test credentials where applicable |
+| Trader status | Account declaration, any required per-app confirmation, trader self-certification and terms link, outstanding notices and due dates |
+| Memory | Play Vitals period, cohort, P90, RAM tier, app state and any threshold warning |
+| DEX optimization | App bundle version, DEX size and all three optimization percentages |
+| Zero-tap sign-in restoration | Device migration test evidence, qualifying existing integration or applicable Console exemption status |
+
 ---
 
 ## 19. Launch Day Checklist (Final)
 
 ```markdown
 ## Pre-Submit
-- [ ] Target API level >= 35
+- [ ] Mobile new app/update targets API 36+; assess the separate API 35+ discoverability threshold for existing apps (§1.1)
 - [ ] AAB format (not APK)
+- [ ] For submissions using Play Billing, verify the resolved library version against the applicable deadline (§1.3)
+- [ ] Check the submitted bundle for 16 KB compatibility, including packaged SDK native libraries, and record readiness for the February 1, 2027 update block (§1.5)
 - [ ] R8/ProGuard enabled, resources shrunk
-- [ ] Version code incremented
+- [ ] Submitted version code is unused, above the version it replaces and at most 2,100,000,000 (§1.4)
 - [ ] ProGuard mapping saved
 - [ ] SMS/Call Log permissions: either removed, or Permissions Declaration Form submitted with exception approval
 - [ ] Personal loan apps: no prohibited permissions (contacts, photos, phone numbers, fine location)
-- [ ] `READ_CONTACTS`: if declared, Contact Picker evaluated and documented as insufficient (effective Oct 28, 2026, Android 17+)
-- [ ] One-time precise location uses `onlyForLocationButton` flag; persistent precise location has Play Developer Declaration
-- [ ] Geofencing uses Geofence API, not a foreground service
+- [ ] For covered loan apps, verify the eight banned permissions against the submitted variant. A picker, location-button flag, or Console declaration does not waive these bans.
+- [ ] Where allowed and applicable, check Contact Picker, minimum location scope, the location button flag in the effective manifest and the precise-location declaration, and the actual purpose of location FGS (January 27, 2027; permissions.md §§3.4, 3.6, 3.9).
+- [ ] When present, check all-files access (including SDK/partner purpose), and Accessibility approval, designation and disclosure; record readiness for AppFunctions, LAN access and contact management (permissions.md §§3.11–3.13).
 - [ ] All foreground services have declared types
 
 ## Play Console
+- [ ] App is owned by a verified Organization developer account (§§15.1–15.2)
 - [ ] App signing configured (Play App Signing)
+- [ ] Trader status submitted at account level; for traders, verify app-level confirmation, self-certification and terms links (§15.4)
 - [ ] Store listing complete (icon, screenshots, descriptions)
-- [ ] Financial Features Declaration completed
+- [ ] Financial Features Declaration completed for applicable tracks, even when there are no financial features (§4.1)
 - [ ] Content rating questionnaire completed
-- [ ] Data Safety form completed (ALL SDKs audited)
+- [ ] Data Safety covers applicable versions of this package distributed on Play and their actual SDK data flows (§5.2)
 - [ ] Privacy policy URL active and linked
-- [ ] Account deletion web link provided
+- [ ] If account creation is supported, verify in-app and web deletion requests plus server and applicable service-provider handling (§6)
 - [ ] Contact email configured
 - [ ] Pricing & distribution set (free/paid, target countries, in-app purchases declared)
 - [ ] All Permissions Declaration Forms submitted
 
 ## Financial App Specific
 - [ ] App category = "Finance"
-- [ ] Loan terms in app description (APR, repayment, representative cost)
-- [ ] Licensing documents uploaded for target countries
-- [ ] No short-term loans (< 60 days)
+- [ ] Personal loan terms in app description (APR, repayment, representative cost); apply the separate EWA disclosure checklist where relevant (§4.5.1)
+- [ ] Confirm exact African and Latin American target countries, lender/facilitator role, applicable licences and Console evidence (§4.4)
+- [ ] No personal loan requires full repayment in 60 days or less from issuance, unless a documented exception applies
 - [ ] No access to photos/contacts for lending decisions — applies to loan apps, accessory loan/credit apps (calculators, guides), and EWA apps (SMS governed by Section 3.1 exception policy)
-- [ ] EWA apps: fees transparent ($1–$5 or 1–5%), no debt creation, no credit bureau reporting
+- [ ] EWA apps: verify earned-wage scope, repayment conditions, all fees and a representative total-cost example (§4.5.1)
 
 ## Spyware & Privacy (Section 11)
 - [ ] Prominent disclosure shown BEFORE any data collection or SDK init
@@ -273,11 +299,12 @@ Pending confirmation: <N> NEEDS_CONFIRMATION (not part of the verdict; require d
 - [ ] No hidden functionality or remote code execution
 - [ ] Disclosure-vs-reality gap audit passed (all collected data is disclosed)
 - [ ] No behavior changes based on undisclosed server flags
+- [ ] Reviewer and production-user loan flows compared for equivalent eligible accounts, locales and product conditions (§10.5).
 
 ## Device Abuse (Section 12)
 - [ ] No device settings modification
-- [ ] No accessibility service abuse
-- [ ] No autonomous action initiation/planning/execution via Accessibility API (Oct 2025 update)
+- [ ] No accessibility service abuse; verify applicable Console approval and any required disclosure and consent
+- [ ] Distinguish prohibited autonomous behavior from deterministic rules; verify any accessibility-tool exemption and its core assistive purpose (§12.2)
 - [ ] No app interference or preventing uninstallation
 - [ ] App respects FLAG_SECURE set by other apps (no screen capture of secure content)
 
@@ -296,17 +323,20 @@ Pending confirmation: <N> NEEDS_CONFIRMATION (not part of the verdict; require d
 ## Policy
 - [ ] No deceptive behavior
 - [ ] Permissions minimal and justified
-- [ ] Account deletion available in-app and via web link
+- [ ] If account creation is supported, verify accessible deletion paths and associated data handling (§6)
 - [ ] Privacy policy matches Data Safety declarations
 - [ ] No trademark / copyright / counterfeit issues (IP section) — no unauthorized bank, lender, or regulator logos
 - [ ] No restricted content in strings, notifications, or store listing (RC section) — especially no harassing / shaming language in collection notifications
 
 ## Testing
 - [ ] Internal testing track verified
-- [ ] Closed testing track passed review
+- [ ] Check the testing track actually used for this release
+- [ ] For restricted flows, replay Play Console App access instructions with reusable test credentials (§16.3)
 - [ ] Pre-launch report reviewed (no critical issues)
 - [ ] Tested on Pixel devices
 - [ ] No crashes or ANRs above threshold
+- [ ] Check Play Vitals memory and the intended bundle's DEX metrics against §17.4; record upcoming gaps, not just R8 flags
+- [ ] Where applicable, verify zero-tap sign-in restoration or check Console exemption evidence (§17.4.3)
 
 ## Submit
 - [ ] Release notes written (what's new)
@@ -321,7 +351,7 @@ Pending confirmation: <N> NEEDS_CONFIRMATION (not part of the verdict; require d
 
 **How to use this table**: It is a quick reference for the most common compliance paths — NOT a finding template. When drafting an actual finding, use the Output Format above and per Rule 6 separate the `Fix` content below into:
 
-- `Required by policy:` — only the outcome-level requirement that maps to verbatim policy text (e.g., "stop using SMS data for credit underwriting").
+- `Required by policy:` — only the outcome-level requirement grounded in the cited text (e.g., the Personal Loans ban on `READ_CONTACTS`).
 - `Suggested implementation:` — any specific mechanism listed below (e.g., "switch to Photo Picker", "use Geofence API", "delete the manifest entry") — prefixed "non-policy, auditor's suggestion only".
 
 The `Fix` column may bundle both for brevity; the Output Format must keep them apart.
@@ -331,10 +361,12 @@ The `Fix` column may bundle both for brevity; the Output Format must keep them a
 | Deceptive behavior | Metadata doesn't match functionality | Align descriptions with actual features | BLOCKER |
 | Data Safety mismatch | SDK collects data not declared | Audit all SDKs, update Data Safety form | BLOCKER |
 | Privacy policy missing/broken | No policy URL or returns 404 | Host policy and link in Console + app | BLOCKER |
-| Financial declaration missing | Not completed in Play Console | Complete Financial Features Declaration | BLOCKER |
-| Restricted permission misuse | READ_SMS without exception, or READ_CONTACTS in loan app | Submit exception form, or remove prohibited permissions | BLOCKER |
+| Financial declaration missing | Required by the distribution track and confirmed incomplete in Play Console | Submit the Financial Features Declaration, including a no-features response when appropriate | BLOCKER |
+| Incorrect developer account type | Play Console confirms a covered loan app is owned by a Personal account | Publish from an eligible verified Organization account | BLOCKER |
+| Loan-banned permission | `READ_CONTACTS`, `ACCESS_FINE_LOCATION` or another listed permission confirmed in the submitted manifest of a covered loan app | Remove the prohibited permission; no general declaration can waive it | BLOCKER |
+| SMS/Call Log eligibility | Permission found, but use case or Play Console approval is not verified | Trace actual use and obtain the applicable eligibility and declaration evidence | NEEDS_CONFIRMATION |
 | Over-permissioning | Unnecessary permissions | Remove unused permissions from manifest | BLOCKER |
-| No account deletion | Missing in-app or web deletion | Implement account + data deletion flow | BLOCKER |
+| Account deletion unmet | Confirmed missing required in-app or web request path, or verified failure to delete covered data | Enable requests and delete associated data subject to disclosed legitimate retention | BLOCKER |
 | Minimum functionality | App is essentially a WebView wrapper | Add native functionality beyond WebView | BLOCKER |
 | Spyware - no consent | Data collected before user consent shown | Move SDK init after consent dialog | BLOCKER |
 | Spyware - SMS exfiltration | Non-financial or personal SMS history exfiltrated or shared | Stop transmitting non-financial/personal SMS (HOW is the developer's choice — see spyware-policy.md §11.4 two-gate model) | BLOCKER |
@@ -342,11 +374,11 @@ The `Fix` column may bundle both for brevity; the Output Format must keep them a
 | Consent decline ineffective | Decline/Cancel does same as Accept | Make decline genuinely prevent data collection | BLOCKER |
 | Disclosure gap | Collected data not in consent dialog | Update consent dialog to list all data types | BLOCKER |
 | Loan harassment | Contact data used for debt collection | Stop using contact data for collection/harassment (policy outcome); removing READ_CONTACTS is one common implementation | BLOCKER |
-| Predatory lending | Loan terms < 60 days or hidden fees | Ensure minimum 60 day terms, disclose all fees | BLOCKER |
+| Short-term personal loan | Actual offer requires full repayment in 60 days or less from issuance without a verified exception | Remove the ineligible offer | BLOCKER |
+| Hidden loan fees | Required fees omitted from the actual user-facing disclosures | Disclose all required fees | BLOCKER |
 | Hidden functionality | DexClassLoader or remote code execution | Remove dynamic code loading | BLOCKER |
-| Broad contacts access without justification | `READ_CONTACTS` declared without Contact Picker evaluation (Android 17+) | Switch to Android Contact Picker, or submit Play Developer Declaration for broad access | BLOCKER (Oct 28, 2026) |
-| Precise location without location button | Fine location for one-time use but no `onlyForLocationButton` flag and no persistent-location declaration | Add `onlyForLocationButton` for discrete use, or submit Play Developer Declaration for persistent access | WARNING (May 15, 2026) |
-| Geofencing via foreground service | Location FGS used as geofencing transport | Use Geofence API directly; remove FGS for geofencing | WARNING (May 15, 2026) |
+| General contacts/location minimum scope | Target API 37+ broad contacts or one-time/infrequent precise location; check the precise-location declaration separately for effective `ACCESS_FINE_LOCATION` | Verify picker or location button suitability, actual use and declaration where required; apply the loan ban separately | Apply the January 27, 2027 date and declaration/evidence gates |
+| Geofencing via foreground service | Service actually implements the geofence; January 27, 2027 rule applies | Remove the geofencing FGS use; assess permissions separately | Assess confirmed service behavior |
 | Missing FGS type | Foreground service without type | Add foregroundServiceType in manifest | WARNING |
 | Photo permission without declaration | READ_MEDIA_IMAGES without form | Submit declaration or switch to Photo Picker | WARNING |
 | Trademark / copyright infringement | Unauthorized bank, lender, or regulator logo in icon, screenshots, or store listing | Replace with owned or licensed assets; remove brand references | BLOCKER |
@@ -355,30 +387,33 @@ The `Fix` column may bundle both for brevity; the Output Format must keep them a
 
 ---
 
-## 21. Key Policy Deadlines (2025-2026)
+## 21. Key Policy Deadlines (2025-2027)
 
 | Date | Requirement | Impact |
 |------|------------|--------|
-| July 15, 2026 | READ_CALL_LOG for account verification removed ([source](https://support.google.com/googleplay/android-developer/answer/17134731)) | 30 days compliance — use Digital Credentials API or SMS Retriever API |
-| August 31, 2026 | Target API level requirement | Submission blocked |
 | May 28, 2025 | Photo/Video permissions full compliance | App removal if non-compliant |
 | May 28, 2025 | Line of credit apps must comply with Personal Loan policy | BLOCKER |
-| August 31, 2025 | Target API 35 for new apps and updates | Submission blocked |
-| November 1, 2025 | API 35 extension deadline | No more extensions |
 | January 1, 2026 | Age Signals API data use restriction (announced Nov 19, 2025) | Policy enforcement |
 | January 28, 2026 | Accessibility API: autonomous action prohibition enforced | Policy enforcement |
-| January 28, 2026 | India personal loan apps: must be on government approved list | Policy enforcement |
 | March 4, 2026 | Updated Developer Program Policies effective | Full enforcement |
-| March 4, 2026 | Thailand loan app listing requirements (service provider, rates, fees) | Existing apps |
-| May 15, 2026 | Location button (`onlyForLocationButton`) / Geofencing removed from FGS / Photo & Video clarifications (announced April 15, 2026) | Policy enforcement |
-| October 27, 2026 | Play Console pre-review checks for contacts and location permissions go live | Tooling |
-| October 28, 2026 | Contacts Permissions policy enforcement (Android 17+ / API 37+) — Contact Picker required for non-broad access | Policy enforcement |
-| July 2024+ | Financial/health/VPN/government developers must register as Organization | Rolling out |
+| August 31, 2026 | Mobile submissions target API 36+; existing mobile app discoverability requires API 35+; applicable Play Billing submissions use version 8+ | Submission or availability restrictions, depending on the rule |
+| November 1, 2026 | General 2026 target API and Play Billing extensions ended | No longer rely on the extensions |
+| January 27, 2027 | Contacts and Location minimum scope, geofencing FGS removal, `READ_CALL_LOG` phone account verification removal, ongoing eligibility-based subscription disclosures | Policy enforcement |
+| February 1, 2027 | Trader status declaration for all active developer accounts | Possible update blocks or global app removal |
+| February 1, 2027 | 16 KB memory page compatibility for applicable app updates | Incompatible updates cannot be released |
+| February 2027 | Memory and DEX quality requirements for in-scope apps and games | May affect visibility and publishing capabilities |
+| April 14, 2027 | AppFunctions API policy | Policy enforcement |
+| April 2027 | Zero-tap sign-in restoration for in-scope mobile/tablet apps with sign-in | May affect visibility and publishing capabilities; verify any exemption |
+| August 25, 2027 | Local network (target API 37+) and manage contacts (target API 38+) | Policy enforcement |
 
 ---
 
 ## References
 
+- [Policy Announcement: October 29, 2026](https://support.google.com/googleplay/android-developer/answer/18100766)
+- [Trader Status Declaration](https://support.google.com/googleplay/android-developer/answer/17594752)
+- [Play Console Technical Quality Requirements](https://support.google.com/googleplay/android-developer/answer/17492799)
+- [Upcoming Sensitive Permissions and APIs](https://support.google.com/googleplay/android-developer/answer/16909972)
 - [Policy Announcement: July 15, 2026](https://support.google.com/googleplay/android-developer/answer/17134731?hl=en)
 - [Google Play Developer Program Policy](https://support.google.com/googleplay/android-developer/answer/16810878?hl=en)
 - [Policy Deadlines](https://support.google.com/googleplay/android-developer/table/12921780?hl=en)

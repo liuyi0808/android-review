@@ -17,8 +17,11 @@
 - [3.6 Foreground Service Types](#36-foreground-service-types-android-14--api-34)
 - [3.7 Exact Alarm Permissions](#37-exact-alarm-permissions)
 - [3.8 Full-Screen Intent Permission](#38-full-screen-intent-permission-january-2025)
-- [3.9 Contacts Permissions (NEW, effective Oct 28, 2026)](#39-contacts-permissions-new-effective-oct-28-2026)
+- [3.9 Contacts Permissions](#39-contacts-permissions)
 - [3.10 Permissions Checklist Summary](#310-permissions-checklist-summary)
+- [3.11 Local Network and Manage Contacts](#311-local-network-and-manage-contacts)
+- [3.12 All Files Access and Accessibility](#312-all-files-access-and-accessibility)
+- [3.13 AppFunctions](#313-appfunctions)
 
 ---
 
@@ -41,10 +44,14 @@ Google Play may provide a temporary exception to apps that aren't Default SMS, P
 | Exception Category | Description (official) | Eligible Permissions |
 |---|---|---|
 | **SMS-based financial transactions** | For example, Unified Payments Interface (UPI), verifications for financial transactions | `READ_SMS`, `RECEIVE_MMS`, `RECEIVE_SMS`, `RECEIVE_WAP_PUSH`, `SEND_SMS` |
-| ~~**Call-based authentication and authorization in banking or brokerage apps**~~ | ⚠️ **REMOVED July 15, 2026** ([source](https://support.google.com/googleplay/android-developer/answer/17134731)): `READ_CALL_LOG` is no longer permitted for account verification via phone call. Google removed this exception because secure alternatives now exist — use [Digital Credentials API](https://developer.android.com/identity/sign-in/credential-manager) or [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview) instead. Apps still using this permission for verification have 30 days from July 15, 2026 to migrate. | ~~`READ_CALL_LOG`, `PROCESS_OUTGOING_CALLS`~~ |
+| **Call-based authentication and authorization in banking or brokerage apps** | Until January 27, 2027, check the current banking/brokerage exception and evidence of approval. A loan app does not qualify merely because it offers loans. From January 27, `READ_CALL_LOG` is not allowed for phone-call account verification ([preview](https://support.google.com/googleplay/android-developer/answer/17225965)). | Check the exact permissions and purpose in the current exception table. |
 | **SMS-based money management** | For example, apps that track and manage budget | `READ_SMS`, `RECEIVE_MMS`, `RECEIVE_SMS`, `RECEIVE_WAP_PUSH` |
 
 > **Note**: All eligible permissions are subject to Google Play review and approval. The full exception table includes additional non-financial categories (caller ID, backup & restore, connected device companion, device automation, enterprise archive, etc.) — see [full list](https://support.google.com/googleplay/android-developer/answer/10208820).
+
+**October 29 clarifications** ([current policy](https://support.google.com/googleplay/android-developer/answer/10208820)): The `READ_CALL_LOG` exception for government-mandated telecommunications quality-of-service reporting is for qualifying government or authorized mobile network operator apps. It is not an exception for loan credit checks, KYC or collection. For a backup/restore claim, require evidence that the app restores the data to the original default handler; a cloud upload or in-app export alone is insufficient.
+
+**Evidence for loan apps**: Separate account OTP, financial transaction verification, SMS-based money management, underwriting, and collections. Trace the provider or receiver to the actual fields, decisions, destinations and user flow, then compare with the approved Play Console use case. A keyword filter, a disclosure, or a field named `financialSms` does not establish an eligible use. Missing evidence is `NEEDS_CONFIRMATION`; an independently proven prohibited use does not become acceptable through disclosure or declaration.
 
 **Requirements for exception approval**:
 1. SMS/Call Log access must enable **core app functionality** (without which the app is broken or unusable)
@@ -76,16 +83,17 @@ From the [Permissions and APIs that Access Sensitive Information](https://suppor
 
 #### 3.1.4 Personal Loan Apps — Additional Restrictions
 
-The **Personal Loans policy** (separate from SMS/Call Log policy) explicitly prohibits personal loan apps from accessing certain sensitive data for risk assessment:
+Apply the [Financial Services General Requirements](https://support.google.com/googleplay/android-developer/answer/9876821) first to the submitted app: personal loans, apps primarily facilitating access to personal loans or lines of credit, accessory loan/credit apps, and EWA apps. The listed permission bans do not depend on whether access is used for underwriting. Verify effective declarations in the submitted variant's merged manifest or supplied artifact, including SDK contributions and manifest removals. Do not infer a ban from a name in a comment or from a declaration removed in the submitted variant.
 
 **Prohibited permissions for personal loan apps** (since May 31, 2023, updated April 2025):
 - `READ_CONTACTS`
 - `READ_PHONE_NUMBERS`
 - `ACCESS_FINE_LOCATION`
-- `READ_EXTERNAL_STORAGE`
+- `READ_EXTERNAL_STORAGE` / `WRITE_EXTERNAL_STORAGE`
 - `READ_MEDIA_IMAGES` / `READ_MEDIA_VIDEO`
+- `QUERY_ALL_PACKAGES`
 
-**Note on `READ_SMS` for loan apps**: `READ_SMS` is NOT in the explicit Personal Loans prohibited permissions list above. It is governed by the separate **SMS/Call Log permission policy** (Section 3.1.1). However, personal loan apps face heightened scrutiny — the Spyware Policy explicitly states that personal loans or budgeting apps may not exfiltrate or share non-financial or personal SMS history of a user (Section 3.1.2).
+**SMS and Call Log**: Neither group is on the eight-permission list. Apply the separate SMS/Call Log permission policy and Spyware policy (Sections 3.1.1–3.1.2). An approval for transaction verification or money management does not authorize underwriting or collections. Sharing or exfiltrating non-financial or personal SMS history is a separate policy issue.
 
 #### 3.1.5 Financial App SMS Restrictions (Spyware Policy)
 
@@ -118,7 +126,7 @@ grep -rn "sms.*upload\|sms.*send\|sms.*post\|sms.*api" --include="*.kt" --includ
 The following use cases will NOT be permitted to access SMS and Call Log permissions ([source](https://support.google.com/googleplay/android-developer/answer/10208820)):
 
 - Account verification via SMS (see Alternatives)
-- Account verification via phone call (removed July 2026 — use Digital Credentials API or SMS Retriever API)
+- Account verification via phone call using `READ_CALL_LOG` (from January 27, 2027; before then check the narrow existing exception in §3.1.1)
 - Content sharing or invites (see Alternatives)
 - Contact prioritization (when not the default handler or System level default contacts handler)
 - Social graph and personality profiling
@@ -144,8 +152,8 @@ From the [official alternatives table](https://support.google.com/googleplay/and
 
 | Use | Alternative |
 |-----|-------------|
-| **SMS OTP & account verification** | [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview) — performs SMS-based user verification automatically, without requiring manual code entry and without extra app permissions. If not an option, users can manually enter verification codes. |
-| **Account verification via phone call** | ⚠️ **No longer permitted** (July 2026, [source](https://support.google.com/googleplay/android-developer/answer/17134731)). Use [Digital Credentials API](https://developer.android.com/identity/sign-in/credential-manager) or SMS Retriever API instead. |
+| **SMS OTP & account verification** | [SMS Retriever API](https://developers.google.com/identity/sms-retriever/overview), [SMS User Consent API](https://developers.google.com/identity/sms-retriever/user-consent/overview) for user-approved access to a single verification message, or manual entry. None justifies SMS history access. |
+| **Migration away from `READ_CALL_LOG` account verification** | [Digital Credentials API for phone-number verification](https://developer.android.com/identity/digital-credentials/phone-number-verification) or a permissionless SMS verification flow. Check which API fits the product; these are alternatives, not a required SDK. |
 | **Initiate a text message** | [SMS Intent](https://developer.android.com/guide/components/intents-common#SendMessage) — initiates an SMS or MMS text message via the default handler. |
 | **Share content** | [Share Intent](https://developer.android.com/training/sharing/) — enables sharing content or sending invitations through supporting apps without sensitive permissions. |
 | **Initiate a phone call** | [Dial Intent](https://developer.android.com/reference/android/content/Intent#ACTION_DIAL) — opens the phone app with a specified number. Does not require `CALL_PHONE` permission. |
@@ -228,31 +236,31 @@ grep -n "READ_MEDIA_IMAGES\|READ_MEDIA_VIDEO\|READ_EXTERNAL_STORAGE" AndroidMani
 
 ### 3.4 Location Permissions
 
-**Policy** ([source](https://support.google.com/googleplay/android-developer/answer/16926792)): Location access must be core to app functionality and clearly disclosed. Updated April 15, 2026 to introduce the **location button** as the recommended minimum scope for precise location.
+**Policy** ([policy preview](https://support.google.com/googleplay/android-developer/answer/16909972#location-permissions), [foreground location guide and FAQ](https://support.google.com/googleplay/android-developer/answer/17033915)): Use the minimum location scope necessary for core functionality; prefer approximate location when sufficient. The updated requirements take effect January 27, 2027. Apply the 30-day Play Console self-extension only if the developer can show it was obtained for the app and verify the resulting deadline.
 
-**Location button (Android 17+, effective ~May 15, 2026)**: Apps that use precise location for discrete, one-time actions (e.g., "find a store", "tag a photo") should implement the location button by adding the `onlyForLocationButton` flag in the manifest. This replaces the traditional precise-location permission dialog with a single-tap button.
+**Location button (target API 37+, effective January 27, 2027)**: For one-time or infrequent foreground precise location, use the Android location button. When the button is the only precise-location path, verify `android:usesPermissionFlags="onlyForLocationButton"` on the effective `ACCESS_FINE_LOCATION` entry in the submitted variant's merged manifest or packaged manifest. Verify the real entry point and session-limited access; a flag alone is not proof. For covered loan apps the `ACCESS_FINE_LOCATION` ban still applies, including when the flag is present. Audit approximate location independently for necessity, disclosure, and actual use.
 
 ```xml
 <uses-permission
     android:name="android.permission.ACCESS_FINE_LOCATION"
-    android:onlyForLocationButton="true" />
+    android:usesPermissionFlags="onlyForLocationButton" />
 ```
 
-**Persistent precise location**: Apps that require always-on precise location to function must submit a **Play Developer Declaration** in Play Console justifying why the location button or coarse location is insufficient for core features. Pre-review checks in Play Console begin **October 27, 2026**.
+**Play Console declaration**: Google's foreground location guide requires apps requesting `ACCESS_FINE_LOCATION` to complete a declaration. For an effective request where the loan ban does not apply, verify the applicable form and its status in Play Console, including for button-only manifests; do not limit this check to persistent tracking. When the app requests precise location outside the button path, verify the core feature and the documented technical reason why approximate location or the button is insufficient. Record missing declaration evidence as `NEEDS_CONFIRMATION`. Evaluate background location and location FGS under their separate requirements; the button does not authorize background use.
 
 **For loan apps**: `ACCESS_FINE_LOCATION` is **entirely prohibited** by the Personal Loans policy regardless of purpose (see Section 3.1.4 and loan-harassment.md). If location is genuinely required for anti-fraud, use `ACCESS_COARSE_LOCATION` only, declare it in Data Safety, and explain the use to users.
 
 **Code audit**:
 ```bash
-# Check for location button flag (required for one-time precise location, Android 17+):
-grep -n "onlyForLocationButton" AndroidManifest.xml
+# Discovery only: inspect the complete permission element in the effective manifest.
+grep -nE 'usesPermissionFlags|onlyForLocationButton' AndroidManifest.xml
 grep -n "ACCESS_FINE_LOCATION\|ACCESS_COARSE_LOCATION\|ACCESS_BACKGROUND_LOCATION" AndroidManifest.xml
 ```
 
 - [ ] `ACCESS_FINE_LOCATION` only if precise location is core functionality (prohibited for loan apps)
 - [ ] `ACCESS_COARSE_LOCATION` preferred over fine location when possible
-- [ ] One-time precise location uses `onlyForLocationButton` flag (Android 17+)
-- [ ] Persistent precise location has an approved Play Developer Declaration
+- [ ] One-time or infrequent precise location uses the system button when required; verify the effective fine-location entry's `usesPermissionFlags` for button-only access
+- [ ] For effective `ACCESS_FINE_LOCATION`, verify the applicable Play Console declaration status and the case for any access outside the button path
 - [ ] No `ACCESS_BACKGROUND_LOCATION` unless absolutely necessary (triggers additional review)
 - [ ] Pre-permission dialog explaining why location is needed
 - [ ] Graceful degradation when location denied
@@ -273,7 +281,7 @@ grep -n "ACCESS_FINE_LOCATION\|ACCESS_COARSE_LOCATION\|ACCESS_BACKGROUND_LOCATIO
 
 Available types: `camera`, `connectedDevice`, `dataSync`, `health`, `location`, `mediaPlayback`, `mediaProjection`, `mediaProcessing`, `microphone`, `phoneCall`, `remoteMessaging`, `shortService`, `specialUse`, `systemExempted`
 
-**Geofencing removed from approved FGS use cases (April 15, 2026, effective ~May 15, 2026)** ([source](https://support.google.com/googleplay/android-developer/answer/16926792)): Geofencing is no longer an approved foreground service use case. Apps must use the [Geofence API](https://developer.android.com/develop/sensors-and-location/location/geofencing) directly instead of running a foreground service. Using FGS for geofencing after the effective date will trigger policy rejection.
+**Geofencing (January 27, 2027)** ([Policy Deadlines](https://support.google.com/googleplay/android-developer/table/12921780)): Geofencing is removed as an approved location FGS use case. Trace the actual service purpose; `GeofencingClient` and a location FGS in the same app do not prove the service performs geofencing. The Geofence API does not exempt a loan app from the precise-location ban.
 
 ```xml
 <!-- Manifest declaration required -->
@@ -309,31 +317,18 @@ grep -n "<service" AndroidManifest.xml | grep -v "foregroundServiceType"
 
 - [ ] No `USE_FULL_SCREEN_INTENT` in loan apps
 
-### 3.9 Contacts Permissions (NEW, effective Oct 28, 2026)
+### 3.9 Contacts Permissions
 
 **Policy** (announced April 15, 2026, [source](https://support.google.com/googleplay/android-developer/answer/16926792)): Google Play introduced the Contacts Permissions policy to govern **broad access** of users' contacts. Apps that do not need broad access must use the **Android Contact Picker**, a standardized secure picker introduced in Android 17 that grants access only to the specific contacts the user selects.
 
 **Scope**: Apps that target Android 17+ (API level 37+) may only request `READ_CONTACTS` if the Android Contact Picker is insufficient for core functionality. Apps that continue to request broad contacts access without a justified use case will be subject to enforcement, including removal from Google Play.
 
 **Enforcement timeline**:
-- **October 27, 2026** — Play Console pre-review checks flag potential contacts permission policy issues
-- **October 28, 2026** — Contacts Permissions policy enforcement begins
+- **January 27, 2027** — general `READ_CONTACTS` minimum-scope policy takes effect for target API 37+ ([preview](https://support.google.com/googleplay/android-developer/answer/16909972), [deadlines](https://support.google.com/googleplay/android-developer/table/12921780)). The Personal Loans ban is already in effect.
 
-**For personal loan apps**: `READ_CONTACTS` is **entirely prohibited** by the Personal Loans policy regardless of purpose (see Section 3.1.4). The new Contacts Permissions policy is an **additional enforcement layer** — even switching to Contact Picker does NOT satisfy the Personal Loans policy if contact selection is used for:
-- Credit scoring or risk assessment
-- Collecting "emergency contacts" for debt collection
-- Any form of lending decision or recovery workflow
+**For covered loan apps**: `READ_CONTACTS` is prohibited regardless of purpose (§3.1.4). A contact picker or a manually entered reference is not itself proof of a broad-read permission violation. Trace which contact fields are obtained, whether they're required for the loan, where they're sent, who can access them, and whether they feed risk assessment or collection. A picker is not a safe harbor for prohibited sensitive-data access or harassment; cite each independently proven outcome rather than issuing an automatic double finding.
 
-A loan app using Contact Picker to gather emergency contacts is in **double violation** (Personal Loans policy + Contacts Permissions policy).
-
-**Recommended implementation for apps with legitimate contact sharing**:
-
-```kotlin
-// Use Android Contact Picker — user selects specific contacts only, no READ_CONTACTS needed
-val pickContact = registerForActivityResult(ActivityResultContracts.PickContact()) { uri ->
-    // uri points to the single contact the user chose
-}
-```
+**For a legitimate contact-sharing feature**: verify the app uses the [Android 17 Contact Picker](https://developer.android.com/about/versions/17/features/contact-picker) where required. Do not assume a legacy `ACTION_PICK` intent is the same API.
 
 **Play Developer Declaration**: Apps that truly require broad contact access (e.g., messaging apps syncing full address book) must submit a declaration in Play Console justifying why Contact Picker is insufficient. See [Understanding restricted permissions with minimum scope alternatives](https://support.google.com/googleplay/android-developer/answer/16935362).
 
@@ -351,7 +346,7 @@ grep -rn "ActivityResultContracts\.PickContact\|ACTION_PICK.*Contacts" --include
 
 - [ ] If `READ_CONTACTS` is declared, Contact Picker was evaluated and documented as insufficient
 - [ ] Play Developer Declaration submitted for broad contacts access, if required
-- [ ] No broad contacts access in personal loan / accessory loan / EWA apps (double violation with Personal Loans policy)
+- [ ] No prohibited contacts access in covered loan apps; assess picker/manual flows by data and purpose
 - [ ] Contact Picker used for one-time contact selection use cases
 - [ ] Contact data not exfiltrated or transmitted beyond declared use
 
@@ -362,3 +357,25 @@ grep -rn "ActivityResultContracts\.PickContact\|ACTION_PICK.*Contacts" --include
 - [ ] App functions gracefully when ANY permission is denied
 - [ ] All Permissions Declaration Forms submitted in Play Console
 - [ ] No permissions declared "just in case" — unused permissions removed
+
+### 3.11 Local Network and Manage Contacts
+
+**Effective August 25, 2027** ([policy preview](https://support.google.com/googleplay/android-developer/answer/16909972), [deadlines](https://support.google.com/googleplay/android-developer/table/12921780)). Apply only to the relevant permission/use:
+
+| Permission | Trigger | Evidence to review |
+|---|---|---|
+| `ACCESS_LOCAL_NETWORK` | Target API 37+ | Identify the feature that discovers or connects to local devices, data actually accessed and shared, why a device picker cannot support the core feature, and the Play Console declaration. For a loan app, distinguish normal internet API traffic from LAN access; trace any SDK-driven discovery or risk-data collection. |
+| `MANAGE_CONTACTS` | Target API 38+ | Identify the edit/write/management operations and why scoped insert/edit intents cannot support the core feature; verify the Play Console declaration. Do not treat this as `READ_CONTACTS` or assume declaration makes prohibited loan data access acceptable. |
+
+### 3.12 All Files Access and Accessibility
+
+**All Files Access** ([current policy](https://support.google.com/googleplay/android-developer/answer/16558241#all_files)): For `MANAGE_EXTERNAL_STORAGE` on target API 30+, verify the core file-management need, why scoped platform alternatives are insufficient, the declaration, and the special-app-access prompt if granted. Apps must not request device storage access on a third party's behalf for any purpose unrelated to core functionality. This is an active restriction clarified in the October 2026 announcement, not an upcoming requirement. Trace SDK and partner-driven requests as well as app code; record whose purpose the access serves. In loan flows, trace what the app actually reads (for example, borrower-selected documents versus unrelated storage); distinguish the separate loan ban on listed storage/media permissions from the All Files Access declaration question.
+
+**Accessibility** ([policy](https://support.google.com/googleplay/android-developer/answer/16558241#accessibility), [declaration and FAQ](https://support.google.com/googleplay/android-developer/answer/10964491)): For target API 31+ with `AccessibilityService`, verify Play Console declaration and approval, including applicable demo video evidence. Inspect the service XML, `isAccessibilityTool` designation and actual behavior. Non-tool apps must document API use in the Play listing, show prominent in-app disclosure and obtain affirmative consent. Use narrower APIs when possible. Bypassing Android security/privacy controls or recording remote call audio is prohibited. Automation on the user's behalf must have a narrow, clearly understood purpose; deterministic rules are not prohibited by the autonomy rule alone. Only eligible, verified accessibility tools may invoke the autonomy exception, and only for their core purpose of assisting people with disabilities. A service class, flag, gesture API or action constant alone is not evidence of abuse or exemption.
+
+### 3.13 AppFunctions
+
+**Effective April 14, 2027** ([policy preview](https://support.google.com/googleplay/android-developer/answer/16909972#appfunctions)). If the app exposes functions, compare each function's declared name, description and inputs to its runtime behavior. Verify inputs are limited to the operation; review actual data access, share/collect behavior and Data Safety coverage. Check for deceptive agent-facing instructions, attempts to bypass security/privacy controls, or interference with other apps or tools. For loan functions, exercise application/repayment actions with test data and verify the documented result and applicable consent and authorization boundaries; the API does not displace Financial Services or User Data rules.
+
+- Runtime responses must not dynamically return hidden system instructions or prompts. Verify that instructions intended for agents are declared at function registration or metadata ingestion.
+- AppFunctions must not reference or attempt to dictate execution rules for another app's AppFunctions. Inspect registered metadata and representative runtime responses, not just the dependency or annotation.

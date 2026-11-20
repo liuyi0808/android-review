@@ -18,7 +18,7 @@ Run a "three-way comparison" privacy compliance audit on an Android loan app to 
 Loan apps are subject to extra privacy policy requirements on Google Play. This skill performs:
 
 1. **Three-way consistency comparison**: privacy policy ↔ in-app dialogs ↔ code implementation
-2. **Google Play policy compliance**: global policy plus region-specific requirements
+2. **Google Play policy compliance**: global policy plus applicable requirements for the app's actual African and Latin American target countries. Assess additional regions upon explicit request.
 3. **Sensitive permission checks**: permissions banned for loan apps, sensitive data collection
 4. **Third-party SDK audit**: completeness of data-sharing disclosure
 
@@ -68,6 +68,8 @@ Read app/src/main/res/values/strings.xml    # dialog text
 3. **Start from permissions**
    - For each permission declared in AndroidManifest, search for the code that uses it
    - Do not assume a permission maps to a fixed API — search and verify
+   - Verify the submitted variant's effective manifest where available; record source-only hits or SDK/removal uncertainty as leads, not confirmed declarations.
+   - For contacts (including picker/manual reference flows), location, SMS/Call Log, and SDK collection, record the exact data, purpose, trigger, recipient, and whether the data enters underwriting or collection. Verify comparable ordinary-user and review-account paths when evidence suggests the disclosure or collection flow differs.
 
 4. **Start from SDKs**
    - Collect every third-party SDK from build.gradle
@@ -221,22 +223,11 @@ App version: X.X.X (Build)
 
 See `references/google-play-policies.md` for details.
 
-### Permissions banned for loan apps (must use tools:node="remove")
-- READ_CONTACTS / WRITE_CONTACTS
-- READ_CALL_LOG / WRITE_CALL_LOG
-- READ_EXTERNAL_STORAGE / WRITE_EXTERNAL_STORAGE
-- READ_MEDIA_IMAGES / READ_MEDIA_VIDEO
-- ACCESS_FINE_LOCATION (COARSE only)
-- READ_PHONE_STATE / READ_PHONE_NUMBERS
-- QUERY_ALL_PACKAGES
-- CAMERA (banned in some regions)
+### Permissions expressly prohibited by Financial Services
+Use the [eight-permission list](references/google-play-policies.md#53-banned-permissions-core-restriction). Confirm the actual submission manifest, including dependency contributions. Detecting a permission in source is not evidence that a manifest removal is needed or that the permission survived merging. The list is separate from restricted-use review for SMS, Call Log and other permissions.
 
-### READ_SMS special requirements
-A loan app that needs to read SMS must:
-1. Read only finance-related messages (filter by keyword)
-2. State this explicitly in the privacy policy
-3. Inform the user explicitly in the app
-4. Implement the filtering logic in code
+### SMS and Call Log evidence
+Verify the actual permitted core use and Play Console declaration/approval where required; a three-way disclosure match does not make an ineligible use compliant. Trace source, collected fields, transmission/sharing destinations, and any downstream lending decision. Check non-financial/personal SMS sharing separately. A keyword filter is not a policy requirement or evidence of approval. See [SMS/Call Log rules](references/google-play-policies.md#10-sms--call-log-permissions-policy) for use-case distinctions, the phone-verification cutoff and the October clarifications.
 
 ### Data minimization principle
 - Collect only the data the business genuinely requires

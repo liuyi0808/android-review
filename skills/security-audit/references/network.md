@@ -23,13 +23,15 @@ val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
     </base-config>
     <domain-config>
         <domain includeSubdomains="true">api.example.com</domain>
-        <pin-set expiration="2025-12-31">
+        <pin-set>
             <pin digest="SHA-256">BASE64_PRIMARY_PIN=</pin>
             <pin digest="SHA-256">BASE64_BACKUP_PIN=</pin>
         </pin-set>
     </domain-config>
 </network-security-config>
 ```
+
+The pins above are placeholders. If a production configuration uses [`expiration`](https://developer.android.com/privacy-and-security/security-config#CertificatePinning), Android stops enforcing that pin set after the date. Verify the effective expiry, backup pins and rotation plan; an already expired set is not active pinning.
 
 ```kotlin
 // GOOD: OkHttp CertificatePinner as defense-in-depth
@@ -43,7 +45,7 @@ val client = OkHttpClient.Builder().certificatePinner(pinner).build()
 ## Checklist
 
 - [ ] `cleartextTrafficPermitted="false"` in network security config
-- [ ] Certificate pinning with backup pins; no custom `TrustManager` bypasses
+- [ ] Any configured pin set has backup pins, is not expired and has a rotation plan; no custom `TrustManager` bypasses
 - [ ] No permissive `HostnameVerifier`; TLS 1.2+ enforced
 - [ ] No sensitive data in URL query parameters; API keys in headers
 

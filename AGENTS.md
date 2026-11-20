@@ -20,7 +20,7 @@ the review reaches that topic (progressive disclosure — do not preload everyth
 | compose-ui | `skills/compose-ui/SKILL.md` | Writing or reviewing Compose UI; state hoisting; side effects (LaunchedEffect, DisposableEffect); type-safe navigation; responsive layouts; accessibility; animations; reusable composables. |
 | kotlin-quality | `skills/kotlin-quality/SKILL.md` | Reviewing Kotlin in PRs; auditing coroutine/structured concurrency; Flow operators; null safety; type design (sealed/data/value classes); collection & functional patterns. |
 | performance | `skills/performance/SKILL.md` | Cold start > 500ms; UI jank; memory leaks/OOM; ANR rate > 0.47%; recomposition waste; missing baseline profiles; battery drain; pre-release performance review. |
-| play-store | `skills/play-store/SKILL.md` | Pre-submission Google Play compliance; permissions; Data Safety; Financial Features Declaration / loan apps; sensitive-permission and spyware policy; account deletion; code-level audit. Updated for the 2025-2026 policy cycle. |
+| play-store | `skills/play-store/SKILL.md` | Pre-submission Google Play compliance; permissions; Data Safety; Financial Features Declaration / loan apps; sensitive-permission and spyware policy; account deletion; code-level audit. Covers the October 2026 policy cycle and 2027 release readiness. |
 | privacy-audit | `skills/privacy-audit/SKILL.md` | Three-way privacy compliance audit for loan apps: privacy policy vs in-app disclosure dialogs vs code implementation; banned loan-app permissions; READ_SMS filtering; third-party SDK data sharing. Runs a fixed 5-step workflow and writes a report file. |
 | security-audit | `skills/security-audit/SKILL.md` | Sensitive-data storage; cryptography/Keystore; authentication/biometrics; network security (TLS, cert pinning); WebView hardening; Content Provider security; RE resilience; user privacy. OWASP MASVS v2.0. |
 
@@ -42,9 +42,9 @@ report (`privacy-audit-report-[YYYY-MM-DD].md`) for privacy-audit.
 
 ## Scripts
 
-- `skills/play-store/scripts/audit.sh` — automated grep-based Play Store audit.
-  Run it from the target Android project root; it flags manifest, permission, and
-  build-config issues for the play-store skill to interpret.
+- `bash skills/play-store/scripts/audit.sh <project-root-path>` runs the Play Store
+  checks with Bash and Python 3. Pass `--manifest <variant-manifest.xml>` to use
+  the audited variant's merged or packaged text XML for manifest checks.
 
 ## Setup
 

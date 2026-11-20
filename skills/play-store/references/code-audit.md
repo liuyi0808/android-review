@@ -10,7 +10,9 @@
 
 ---
 
-Run these checks against your codebase before submission:
+Run these checks to discover leads before submission. A source grep cannot confirm app category, the effective submitted manifest, runtime behavior or Play Console approval. For loan-sensitive findings record which of those was verified before assigning severity.
+
+Run `bash scripts/audit.sh <project-root-path>` from the play-store skill directory. With Bash and Python 3 the script parses permission XML and scans supported source assignments for literal credentials. Use `--manifest <variant-manifest.xml>` with the merged or packaged text XML from the audited variant. In source mode, `tools:node="remove"` and `removeAll` are merge directives and appear apart from permission declarations. Review the actual merged result before closing any permission finding.
 
 ### 18.1 Manifest Audit
 
@@ -18,28 +20,30 @@ Run these checks against your codebase before submission:
 # SMS/Call Log permissions — requires Permissions Declaration Form and exception approval:
 grep -n "READ_SMS\|SEND_SMS\|RECEIVE_SMS\|RECEIVE_MMS\|RECEIVE_WAP_PUSH\|WRITE_SMS\|READ_CALL_LOG\|WRITE_CALL_LOG\|PROCESS_OUTGOING_CALLS" AndroidManifest.xml
 
-# BLOCKER for personal loan apps — explicitly prohibited by Personal Loans policy:
-grep -n "READ_CONTACTS\|READ_PHONE_NUMBERS" AndroidManifest.xml
-grep -n "QUERY_ALL_PACKAGES" AndroidManifest.xml
+# Loan-policy leads; confirm product scope and check the merged manifest for the submitted variant:
+grep -En 'READ_CONTACTS|READ_PHONE_NUMBERS|ACCESS_FINE_LOCATION|READ_MEDIA_IMAGES|READ_MEDIA_VIDEO|READ_EXTERNAL_STORAGE|WRITE_EXTERNAL_STORAGE|QUERY_ALL_PACKAGES' AndroidManifest.xml
 
-# Contacts Permissions Policy (effective 2026-10-28, Android 17+ / API 37+):
-# Direct ContactsContract query indicates broad access, not Contact Picker.
+# Contacts Permissions Policy (effective 2027-01-27, target API 37+):
+# Trace the queried URI; a picker-scoped URI is not proof of broad access.
 grep -rn "ContactsContract\.Contacts\.CONTENT_URI\|CommonDataKinds\.Phone\.CONTENT_URI" --include="*.kt" --include="*.java"
 grep -rn "ActivityResultContracts\.PickContact\|ACTION_PICK.*Contacts" --include="*.kt" --include="*.java"
 # — If READ_CONTACTS is declared but Contact Picker is not used, broad access must be justified via Play Developer Declaration.
 
-# Location button flag (required for one-time precise location, Android 17+, effective ~2026-05-15):
-grep -n "onlyForLocationButton" AndroidManifest.xml
-grep -n "ACCESS_FINE_LOCATION" AndroidManifest.xml
-# — FINE_LOCATION without onlyForLocationButton flag and without persistent-location declaration = policy risk.
+# Location leads (2027-01-27; button for one-time or infrequent precise location on target API 37+):
+grep -nE 'ACCESS_FINE_LOCATION|ACCESS_COARSE_LOCATION|ACCESS_BACKGROUND_LOCATION|onlyForLocationButton' AndroidManifest.xml
+# Inspect the effective ACCESS_FINE_LOCATION element for usesPermissionFlags="onlyForLocationButton" when button-only.
+# Trace purpose and duration, verify the applicable Console declaration, and apply the loan ban independently (permissions.md §3.4).
 
-# Geofencing via FGS (removed from approved FGS use cases 2026-04-15):
+# Geofencing via FGS (removed from approved use cases 2027-01-27):
 grep -rn "GeofencingClient\|addGeofences" --include="*.kt" --include="*.java"
 grep -n "FOREGROUND_SERVICE_LOCATION\|foregroundServiceType=\"location\"" AndroidManifest.xml
 # — If GeofencingClient is used alongside a location FGS, confirm FGS is not the geofencing transport; use Geofence API directly.
 
 # Photo/Video permissions (need declaration):
 grep -n "READ_MEDIA_IMAGES\|READ_MEDIA_VIDEO\|READ_EXTERNAL_STORAGE" AndroidManifest.xml
+
+# Conditional permissions: verify SDK, dates, core use, alternatives and declaration (permissions.md §§3.11–3.12):
+grep -En 'ACCESS_LOCAL_NETWORK|MANAGE_CONTACTS|MANAGE_EXTERNAL_STORAGE' AndroidManifest.xml
 
 # Foreground service type check:
 grep -n "<service" AndroidManifest.xml | grep -v "foregroundServiceType"
@@ -67,8 +71,10 @@ grep -rn -B 3 "Log\.\(d\|v\|i\)\(" --include="*.kt" --include="*.java" app/src/m
 grep -rn -B 3 "printStackTrace" --include="*.kt" --include="*.java" app/src/main/
 # Verify each has BuildConfig.DEBUG guard within 1-3 lines above.
 
-# Hardcoded secrets:
-grep -rn "apiKey\|api_key\|secret\|password\|token" --include="*.kt" --include="*.java" --include="*.gradle*" | grep -v "BuildConfig\." | grep -v "test/"
+# Literal credentials: use `scripts/audit.sh` for redacted file and line evidence.
+# It skips generated/build/test files, detects common Kotlin/Java/Gradle literal assignments,
+# and reports quoted BuildConfig values as leads for purpose and privilege review.
+# Inspect assignments locally. Keep actual values out of findings and logs.
 
 # Sensitive data in URLs:
 grep -rn "token=\|key=\|password=\|secret=" --include="*.kt" --include="*.java" app/src/main/
@@ -86,14 +92,20 @@ grep -rn "getInstalledPackages\|getInstalledApplications\|queryIntentActivities"
 ### 18.3 Build Config Audit
 
 ```bash
-# Check targetSdk:
+# Source leads; verify effective targetSdk and the applicable submission/availability threshold in §1.1:
 grep -rn "targetSdk\|targetSdkVersion" --include="*.gradle*"
+
+# Billing leads; verify the resolved dependency for the submitted variant (§1.3):
+grep -rn 'com\.android\.billingclient' --include="*.gradle*" --include="*.toml"
+
+# Native source leads; inspect the actual bundle for all native libraries and 16 KB compatibility (§1.5):
+find . -type f -path '*/src/*/jniLibs/*.so'
 
 # Check minify/shrink:
 grep -rn "minifyEnabled\|shrinkResources" --include="*.gradle*"
 
-# Check signing configs for hardcoded values:
-grep -rn "storePassword\|keyPassword" --include="*.gradle*"
+# Review signing password literals at the redacted locations from `scripts/audit.sh`.
+# Trace secret-provider calls in signing configs separately.
 
 # Check for debug-only code that might leak to release:
 grep -rn "BuildConfig.DEBUG" --include="*.kt" --include="*.java" -c
@@ -135,10 +147,10 @@ grep -rn "LIKE\|like" --include="*.kt" --include="*.java" | grep -i "sms\|body\|
 # Device settings modification:
 grep -rn "Settings.System\|Settings.Secure\|Settings.Global" --include="*.kt" --include="*.java" | grep -i "put\|write\|set"
 
-# Accessibility service abuse:
+# Accessibility service leads: confirm Console approval and actual behavior (permissions.md §3.12).
 grep -rn "AccessibilityService\|BIND_ACCESSIBILITY_SERVICE" --include="*.xml" --include="*.kt" --include="*.java"
 
-# Accessibility autonomous actions (PROHIBITED since Oct 2025):
+# Action APIs identify code to inspect, not autonomous behavior or a policy violation:
 grep -rn "performAction\|performGlobalAction\|dispatchGesture" --include="*.kt" --include="*.java"
 grep -rn "AccessibilityNodeInfo.*ACTION_" --include="*.kt" --include="*.java"
 grep -rn "GestureDescription\|StrokeDescription" --include="*.kt" --include="*.java"

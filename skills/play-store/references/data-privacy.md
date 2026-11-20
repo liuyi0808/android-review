@@ -32,6 +32,8 @@ Only exempted: internal testing track.
 
 ### 5.2 What to Declare
 
+Use one global Data Safety form per package. Combine actual data collection and sharing across the applicable versions currently distributed on Play, including regional differences and SDKs absent from the new submission. Record the versions, markets, data flows and SDKs used to establish coverage. If evidence is limited to the submitted variant, mark package-wide coverage `NEEDS_CONFIRMATION`. See the [Data Safety guide and regional FAQ](https://support.google.com/googleplay/android-developer/answer/10787469).
+
 For EVERY piece of data your app or ANY SDK collects:
 
 | Data Category | Examples ([source](https://support.google.com/googleplay/android-developer/answer/10787469)) |
@@ -141,7 +143,7 @@ You MUST answer data deletion questions in the Data Safety form:
 ### 6.1 Policy
 
 If your app allows users to create an account, you MUST:
-1. Allow users to **delete their account** from within the app
+1. Provide a discoverable in-app path for users to request deletion of their account and associated data
 2. Provide a **web link** where users can request account and data deletion (for users who already uninstalled)
 3. **Delete associated user data** when account is deleted
 
@@ -158,6 +160,8 @@ All user data associated with the account ([source](https://support.google.com/g
 - Inventory of other apps on the device
 - Microphone, camera, and other sensitive device or usage data
 - Any other data linked to the account
+
+Verify deletion on the developer's servers and requests for service providers processing the data to delete their copies, subject to applicable retention. When the server or service-provider evidence is unavailable, record `NEEDS_CONFIRMATION`.
 
 ### 6.3 Exceptions
 
@@ -177,7 +181,9 @@ All user data associated with the account ([source](https://support.google.com/g
 
 - [ ] Account deletion available in-app
 - [ ] Web link for account deletion provided in Play Console
-- [ ] Web link is publicly accessible and functional
+- [ ] Web link works without reinstalling the app, identifies the app or developer as shown on Play, and makes the deletion request path easy to find
+- [ ] Any prerequisite is clearly described and users have a support path to initiate the process
+- [ ] Backend deletion and requests to applicable service providers are evidenced for a test account
 - [ ] Data deletion questions answered in Data Safety form
 - [ ] Privacy policy documents data retention policy
 

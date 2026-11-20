@@ -128,9 +128,9 @@ android-review/
 │   ├── performance/
 │   │   └── SKILL.md             # 7-category performance audit
 │   ├── play-store/
-│   │   ├── SKILL.md             # Google Play compliance (2025-2026)
-│   │   ├── scripts/audit.sh     # Automated grep-based audit script
-│   │   └── references/          # 12 detailed reference docs
+│   │   ├── SKILL.md             # Google Play compliance and upcoming requirements
+│   │   ├── scripts/             # Audit entry point, evidence parser, and regression tests
+│   │   └── references/          # 14 detailed reference docs
 │   ├── privacy-audit/
 │   │   ├── SKILL.md             # Three-way privacy compliance audit (loan apps)
 │   │   └── references/          # Google Play policy digest + report template
@@ -198,23 +198,39 @@ Runs a 3-phase audit: triage applicable categories, parallel anti-pattern scan, 
 
 ### play-store
 
-Comprehensive pre-submission audit covering 18+ Google Play policy areas. Updated for the 2025-2026 policy cycle (policy effective date: March 4, 2026).
+Comprehensive pre-submission audit covering 18+ Google Play policy areas, with a focus on personal loan apps. Enforcement dates and scope are tracked per requirement.
 
 **Key deadlines tracked:**
 
 | Deadline | Policy |
 |----------|--------|
 | May 28, 2025 | Photo/Video permissions full compliance; line of credit → Personal Loan policy |
-| August 31, 2025 | Target API 35 for new apps and updates |
-| November 1, 2025 | API 35 extension deadline (no more extensions) |
-| January 2026 | Age Signals API, Accessibility API autonomous action, India loan app list |
+| January 2026 | Age Signals API and Accessibility API autonomous action |
 | March 4, 2026 | Updated Developer Program Policies full enforcement |
-| May 15, 2026 | Location button, Geofencing removed from FGS (April 15, 2026 announcement) |
-| October 28, 2026 | Contacts Permissions policy — Contact Picker required (Android 17+) |
+| August 31, 2026 | Mobile submissions target API 36+; existing mobile app discoverability requires API 35+; applicable Play Billing submissions use version 8+ |
+| November 1, 2026 | General 2026 target API and Play Billing extensions ended |
+| January 27, 2027 | Contacts and Location minimum scope, geofencing FGS removal, `READ_CALL_LOG` phone account verification removal, eligibility-based subscription disclosures |
+| February 1, 2027 | Trader status declaration for all active Play developer accounts |
+| February 1, 2027 | 16 KB memory page compatibility required to release applicable updates |
+| February 2027 | Play Vitals memory and DEX optimization requirements for in-scope apps and games |
+| April 14, 2027 | AppFunctions policy, when the app exposes functions |
+| April 2027 | Zero-tap sign-in restoration for in-scope apps with sign-in; regulatory exemptions require a Play Console request |
+| August 25, 2027 | Local network (target API 37+) and manage contacts (target API 38+) |
 
-**Special coverage for financial/loan apps:** Financial Features Declaration, Personal Loan policy, loan harassment, predatory lending, prohibited credit scoring data, country-specific rules (India, Thailand).
+**Default loan audit scope** is Africa and Latin America. Verify the Play Console Organization account, Financial Features Declaration and requirements in each actual distribution country. Kenya and Nigeria have specific Play documentation checks. Apply the applicable local requirements in each Latin American market. Personal developer account production-access criteria are out of scope.
 
-**Output uses three severity levels:** `BLOCKER` (will cause rejection), `WARNING` (risk of rejection), `INFO` (recommendation).
+**Loan-first verdicts:** Verify the product category and submitted merged manifest before enforcing the loan permission bans. SMS/Call Log use, Accessibility, and other restricted capabilities require runtime and declaration evidence as applicable. Source matches in `audit.sh` are review leads, not confirmed violations; upcoming requirements are reported separately from current violations.
+
+Run the automated checks with Bash and Python 3 (standard library):
+
+```bash
+bash skills/play-store/scripts/audit.sh /path/to/android-project
+bash skills/play-store/scripts/audit.sh /path/to/android-project --manifest /path/to/merged/AndroidManifest.xml
+```
+
+Use `--manifest` with the text XML merged or packaged for the audited variant. The default source scan lists explicit permission removals separately and leaves dependency and variant merging for follow-up. The credential scan reports file and line only. Exit `0` means no automated blockers, `1` means an automated blocker was found, and `2` means an argument or evidence read error.
+
+Findings use `BLOCKER`, `WARNING`, and `INFO`. `NEEDS_CONFIRMATION` identifies an item that requires additional evidence. The automated scan is one input to the full compliance verdict.
 
 ### privacy-audit
 
@@ -232,7 +248,7 @@ Runs a "three-way comparison" for loan apps, verifying that the **privacy policy
 
 **Comparison is bidirectional:** data collected in code but not disclosed is a `BLOCKER`; data declared in the policy but never collected is a `WARNING` (over-promising). A generic phrase such as "hardware information" does not count as explicit disclosure.
 
-**Also checks:** permissions banned for loan apps (`READ_CONTACTS`, `QUERY_ALL_PACKAGES`, `ACCESS_FINE_LOCATION`, …), READ_SMS keyword filtering, `queries` tag scope, third-party SDK data sharing, and privacy policy quality (retention, deletion, contact details).
+**Also checks:** permissions banned for loan apps (`READ_CONTACTS`, `QUERY_ALL_PACKAGES`, `ACCESS_FINE_LOCATION`, …), SMS/Call Log eligibility and actual data flows, `queries` tag scope, third-party SDK data sharing, and privacy policy quality (retention, deletion, contact details).
 
 Step 3 falls back to Playwright MCP when `WebFetch` cannot render the policy page; without it, paste the policy text or pass a local file instead.
 
@@ -256,14 +272,17 @@ Versions follow [semver](https://semver.org/). The `plugin.json` version, git ta
 
 **To release a new version:**
 
+Update `RELEASE-NOTES.md`, then run the scanner regression suite before committing the release changes.
+
 ```bash
-./scripts/release.sh 1.2.0
+bash skills/play-store/scripts/tests/audit-policy.sh
+./scripts/release.sh 1.9.0
 ```
 
 This will:
 1. Validate you are on `main` with a clean working tree
 2. Bump the version in `plugin.json` and `marketplace.json`
-3. Commit, tag `v1.2.0`, and push
+3. Commit, tag the version, and push
 4. GitHub Actions automatically creates a Release from the tag
 
 See [RELEASE-NOTES.md](RELEASE-NOTES.md) for the full changelog.
@@ -272,6 +291,7 @@ See [RELEASE-NOTES.md](RELEASE-NOTES.md) for the full changelog.
 
 - Claude Code CLI **or** Codex CLI
 - An Android project using Kotlin and Jetpack Compose
+- Bash and Python 3 for the optional Play Store scanner and its regression suite
 
 ## Contributing
 

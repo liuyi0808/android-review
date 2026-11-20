@@ -177,7 +177,7 @@ Even if your app has a valid SMS exception (Section 3.1), all SMS and Call Log u
 
 The policy creates **two independent compliance gates**. Final severity = the worst of the two.
 
-The auditor's job is to judge the **OUTCOME** against the policy text, not to prescribe **HOW** the developer must achieve it. Whether the developer uses sender allow-lists, keyword filters, server-side re-filtering, or any other mechanism is the developer's choice. The auditor's only question is: *does the actually-exfiltrated set include non-financial or personal SMS?*
+Judge both the approved scope and the actual outcome. Sender allow-lists, keyword filters, and other filtering mechanisms do not establish either approval or which messages were actually shared.
 
 **Gate 1 — Permissions Declaration (right to use READ_SMS)**
 
@@ -185,11 +185,13 @@ Source: [SMS and Call Log Permission Policy](https://support.google.com/googlepl
 - (viii) SMS-based financial transactions and related activity including OTP and fraud detection
 - (ix) Track, budget, manage SMS-based financial transactions and related account verification
 
-| Declaration Status | Severity |
-|--------------------|----------|
-| Approved for use case (viii)/(ix) | passes Gate 1 |
-| Pending, not submitted, or rejected | BLOCKER — no right to use READ_SMS |
-| Status unknown to auditor | NEEDS_CONFIRMATION |
+| Approval and use evidence | Severity |
+|---------------------------|----------|
+| Actual core use and downstream handling match an eligible, approved use case | passes Gate 1 |
+| Confirmed restricted access outside the permitted and approved use, or confirmed lack of required approval | BLOCKER |
+| Approval status, approved scope, or actual use is unknown | NEEDS_CONFIRMATION |
+
+Approval for SMS-based transaction verification or money management does not cover using the same data for underwriting or collections. Assess an alleged alternate permitted purpose against the official use-case table and the app's actual evidence rather than assuming any use of financial SMS passes.
 
 **Gate 2 — Spyware Cat.4 (actually-exfiltrated content)**
 
